@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- App Header -->
     <header class="app-header">
         <div class="header-content container">
             <div class="logo">
@@ -26,223 +25,425 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-badge mb-4">
-                    <i class="fas fa-star"></i> Di Chuyển Chuyên Nghiệp
+    <section class="hero-section" id="hero">
+    <div class="hero-gradient"></div>
+    <div class="hero-particles" id="heroParticles"></div>
+    
+    <div class="container">
+        <div class="hero-content">
+            <!-- Welcoming Badge -->
+            <div class="hero-badge-container">
+                <div class="hero-badge-animation">
+                    <div class="hero-badge">CHÀO MỪNG BẠN</div>
+            </div>
+
+            <!-- Main Title - Inclusive & Welcoming -->
+            <div class="hero-title-container">
+                <h1 class="hero-title">
+                    <span class="title-line">Di Chuyển Tin Cậy</span>
+                    <span class="title-line highlight">Cho Mọi Người</span>
+               
+                
+                <!-- Divider with Heart Icon -->
+                <div class="title-divider">
+                    <div class="divider-line"></div>
+                    <div class="divider-icon"><i class="fas fa-heart"></i></div>
+                    <div class="divider-line"></div>
+            </div>
+
+            <!-- Value Propositions for Everyone -->
+            <div class="hero-value-props">
+                <div class="value-prop">
+                    <div class="value-icon"><i class="fas fa-home"></i></div>
+                    <div class="value-text">Cho Gia Đình<br>Ấm Cúng</div>
                 </div>
-                <h1 class="hero-title mb-3">
-                    Trải Nghiệm<br>Dịch Vụ Chuyên nghiệp
-                </h1>
-                <p class="hero-subtitle mb-5">
-                    Dịch vụ vận chuyển chuyên nghiệp với tiêu chuẩn cao nhất. 
-                    Cam kết an toàn, đúng giờ và thoải mái.
-                </p>
-                <div class="hero-buttons">
-                    <a href="#booking" class="btn btn-primary mb-2">Đặt Xe Ngay</a>
-                    <a href="#services" class="btn btn-outline">Dịch Vụ</a>
+                <div class="value-prop">
+                    <div class="value-icon"><i class="fas fa-users"></i></div>
+                    <div class="value-text">Cho Bạn Bè<br>Vui Vẻ</div>
+                </div>
+                <div class="value-prop">
+                    <div class="value-icon"><i class="fas fa-briefcase"></i></div>
+                    <div class="value-text">Cho Công Việc<br>Chuyên Nghiệp</div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Benefits Section -->
+            <!-- Authentic Description -->
+            <div class="hero-elevated">
+                <p class="hero-subtitle">
+                    Chúng tôi tin rằng mọi hành trình đều đáng trân trọng. Dù bạn là ai, đi đâu, chúng tôi luôn sẵn sàng đồng hành với sự <span class="text-highlight">tận tâm, an toàn và thoải mái</span> nhất.
+                </p>
+                
+                <!-- Real Features - No Exaggeration -->
+                <div class="premium-features">
+                    <div class="feature">
+                        <i class="fas fa-check-circle feature-icon"></i>
+                        <span>Xe đời mới, sạch sẽ</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-check-circle feature-icon"></i>
+                        <span>Tài xế thân thiện, kinh nghiệm</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-check-circle feature-icon"></i>
+                        <span>Giá cả minh bạch, công khai</span>
+                    </div>
+                </div>
+            </div>
+
+            
+                
+                <!-- Real Commitments -->
+                <div class="commitments">
+                    <div class="commitment-item">
+                        <div class="commitment-icon"><i class="fas fa-handshake"></i></div>
+                        <div class="commitment-text">Đúng Giờ<br>Thực Tế</div>
+                    </div>
+                    <div class="commitment-item">
+                        <div class="commitment-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="commitment-text">An Toàn<br>Trên Hết</div>
+                    </div>
+                    <div class="commitment-item">
+                        <div class="commitment-icon"><i class="fas fa-heart"></i></div>
+                        <div class="commitment-text">Phục Vụ<br>Tận Tâm</div>
+                    </div>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <!-- Simple Background Elements -->
+    <div class="hero-bg-elements">
+        <div class="bg-element community-1"></div>
+        <div class="bg-element community-2"></div>
+    </div>
+</section>
+
     <section class="benefits-section" id="benefits">
         <div class="container">
-            <div class="section-header mb-5">
-                <h2 class="section-title">Lợi Ích Nổi Bật</h2>
-                <p class="section-subtitle">Những giá trị chúng tôi mang đến cho bạn</p>
+            <div class="section-header">
+                <h2 class="section-title">Tại Sao Chọn Chúng Tôi?</h2>
+                <p class="section-subtitle">Cam kết mang lại giá trị tốt nhất cho mọi chuyến đi</p>
             </div>
             
             <div class="benefits-grid">
-                <div class="benefit-card" data-service="safety">
-                    <div class="benefit-icon">
-                        <i class="fas fa-shield-alt"></i>
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-clock"></i></div>
+                    <div class="benefit-info">
+                        <h3 class="benefit-title">Đúng giờ 100%</h3>
+                        <p class="benefit-desc">Cam kết đón đúng giờ, không để khách chờ đợi.</p>
                     </div>
-                    <h3 class="benefit-title">An Toàn</h3>
-                    <p class="benefit-desc">Xe mới, BH đầy đủ</p>
                 </div>
-                
-                <div class="benefit-card" data-service="punctuality">
-                    <div class="benefit-icon">
-                        <i class="fas fa-clock"></i>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-user-tie"></i></div>
+                    <div class="benefit-info">
+                        <h3 class="benefit-title">Tài xế chuyên nghiệp</h3>
+                        <p class="benefit-desc">Lịch sự, am hiểu đường phố, lái xe an toàn.</p>
                     </div>
-                    <h3 class="benefit-title">Đúng Giờ</h3>
-                    <p class="benefit-desc">Cam kết 100%</p>
                 </div>
-                
-                <div class="benefit-card" data-service="transparency">
-                    <div class="benefit-icon">
-                        <i class="fas fa-money-bill-wave"></i>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-car-side"></i></div>
+                    <div class="benefit-info">
+                        <h3 class="benefit-title">Xe đời mới</h3>
+                        <p class="benefit-desc">Dòng xe 4-7-16 chỗ sang trọng, sạch sẽ.</p>
                     </div>
-                    <h3 class="benefit-title">Giá Rõ</h3>
-                    <p class="benefit-desc">Không phát sinh</p>
                 </div>
-                
-                <div class="benefit-card" data-service="fleet">
-                    <div class="benefit-icon">
-                        <i class="fas fa-car"></i>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div class="benefit-info">
+                        <h3 class="benefit-title">An tâm tuyệt đối</h3>
+                        <p class="benefit-desc">Bảo hiểm hành khách đầy đủ trên mỗi hành trình.</p>
                     </div>
-                    <h3 class="benefit-title">Xe Mới</h3>
-                    <p class="benefit-desc">Đời mới, sạch sẽ</p>
                 </div>
-                
-                <div class="benefit-card" data-service="drivers">
-                    <div class="benefit-icon">
-                        <i class="fas fa-map-marker-alt"></i>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-headset"></i></div>
+                    <div class="benefit-info">
+                        <h3 class="benefit-title">Hỗ trợ 24/7</h3>
+                        <p class="benefit-desc">Luôn sẵn sàng giải đáp thắc mắc bất kể lúc nào.</p>
                     </div>
-                    <h3 class="benefit-title">Tài Xế</h3>
-                    <p class="benefit-desc">Kinh nghiệm địa phương</p>
                 </div>
-                
-                <div class="benefit-card" data-service="support">
-                    <div class="benefit-icon">
-                        <i class="fas fa-headset"></i>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-credit-card"></i></div>
+                    <div class="benefit-info">
+                        <h3 class="benefit-title">Thanh toán linh hoạt</h3>
+                        <p class="benefit-desc">Tiền mặt, chuyển khoản hoặc qua ví điện tử.</p>
                     </div>
-                    <h3 class="benefit-title">Hỗ Trợ 24/7</h3>
-                    <p class="benefit-desc">Luôn sẵn sàng</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Services Section -->
     <section class="services-section" id="services">
-        <div class="container">
-            <div class="section-header mb-5">
-                <h2 class="section-title">Dịch Vụ Chính</h2>
-                <p class="section-subtitle">Đa dạng dịch vụ phù hợp mọi nhu cầu</p>
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Trải Nghiệm Dịch Vụ Thực Tế</h2>
+            <p class="section-subtitle">Không chỉ là vận chuyển, mà là sự đồng hành tin cậy</p>
+        </div>
+        
+        <!-- Main Services Grid -->
+        <div class="services-grid" id="mainServicesGrid">
+            <!-- Sân Bay -->
+            <div class="service-card" data-service="airport">
+                <div class="service-icon"><i class="fas fa-plane"></i></div>
+                <h3 class="service-name">Sân Bay</h3>
+                <div class="service-experience">
+                    <div class="experience-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Theo dõi chuyến bay</span>
+                    </div>
+                    <div class="experience-item">
+                        <i class="fas fa-language"></i>
+                        <span>Hỗ trợ tiếng nước ngoài</span>
+                    </div>
+                    <div class="experience-item">
+                        <i class="fas fa-suitcase"></i>
+                        <span>Đón khách trong sân bay</span>
+                    </div>
+                </div>
             </div>
             
-            <div class="services-grid">
-                <a href="#" class="service-card" data-service="airport">
-                    <div class="service-icon">
-                        <i class="fas fa-plane"></i>
+            <!-- Du Lịch -->
+            <div class="service-card" data-service="tour">
+                <div class="service-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <h3 class="service-name">Du Lịch</h3>
+                <div class="service-experience">
+                    <div class="experience-item">
+                        <i class="fas fa-camera"></i>
+                        <span>Du lịch sinh thái địa phương</span>
                     </div>
-                    <div class="service-name">Sân Bay</div>
-                </a>
-                
-                <a href="#" class="service-card" data-service="tour">
-                    <div class="service-icon">
-                        <i class="fas fa-umbrella-beach"></i>
+                    <div class="experience-item">
+                        <i class="fas fa-utensils"></i>
+                        <span>Gợi ý ẩm thực địa phương</span>
                     </div>
-                    <div class="service-name">Du Lịch</div>
-                </a>
-                
-                <a href="#" class="service-card" data-service="business">
-                    <div class="service-icon">
-                        <i class="fas fa-building"></i>
+                    <div class="experience-item">
+                        <i class="fas fa-history"></i>
+                        <span>Lịch trình linh hoạt</span>
                     </div>
-                    <div class="service-name">Doanh Nghiệp</div>
-                </a>
-                
-                <a href="#" class="service-card" data-service="rental">
-                    <div class="service-icon">
-                        <i class="fas fa-car-side"></i>
+                </div>
+            </div>
+            
+            <!-- Doanh Nghiệp -->
+            <div class="service-card" data-service="business">
+                <div class="service-icon"><i class="fas fa-briefcase"></i></div>
+                <h3 class="service-name">Doanh Nghiệp</h3>
+                <div class="service-experience">
+                    <div class="experience-item">
+                        <i class="fas fa-car"></i>
+                        <span>Xe biển trắng, biển số đẹp</span>
                     </div>
-                    <div class="service-name">Thuê Xe</div>
-                </a>
-                
-                <a href="#" class="service-card" data-service="mountain">
-                    <div class="service-icon">
-                        <i class="fas fa-mountain"></i>
+                    <div class="experience-item">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Xuất hóa đơn VAT đầy đủ</span>
                     </div>
-                    <div class="service-name">Tour</div>
-                </a>
-                
-                <a href="#" class="service-card" data-service="wedding">
-                    <div class="service-icon">
-                        <i class="fas fa-glass-cheers"></i>
+                    <div class="experience-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Báo cáo chi tiết định kỳ</span>
                     </div>
-                    <div class="service-name">Cưới Hỏi</div>
-                </a>
+                </div>
+            </div>
+            
+            <!-- Thuê Xe -->
+            <div class="service-card" data-service="rental">
+                <div class="service-icon"><i class="fas fa-key"></i></div>
+                <h3 class="service-name">Thuê Xe</h3>
+                <div class="service-experience">
+                    <div class="experience-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Xe mới, bảo hiểm, đăng kiểm đầy đủ</span>
+                    </div>
+                    <div class="experience-item">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Hỗ trợ kỹ thuật 24/7</span>
+                    </div>
+                    <div class="experience-item">
+                        <i class="fas fa-map-pin"></i>
+                        <span>Giao - trả xe linh hoạt</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
+        
+        <!-- Additional Services Grid -->
+        <div class="services-grid additional-services" id="additionalServicesGrid" style="display: none;">
+            <!-- Liên Tỉnh -->
+            <div class="service-card" data-service="mountain">
+                <div class="service-icon"><i class="fas fa-mountain"></i></div>
+                <h3 class="service-name">Liên Tỉnh</h3>
+                <div class="service-experience">
+                    <div class="experience-item">
+                        <i class="fas fa-coffee"></i>
+                        <span>Điểm nghỉ an toàn theo yêu cầu</span>
+                    </div>
+                    <div class="experience-item">
+                        <i class="fas fa-first-aid"></i>
+                        <span>Túi y tế cơ bản trên xe</span>
+                    </div>
+                    <div class="experience-item">
+                        <i class="fas fa-wifi"></i>
+                        <span>Wi-fi di động</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Xe Hoa -->
+            <div class="service-card" data-service="wedding">
+                <div class="service-icon"><i class="fas fa-heart"></i></div>
+                <h3 class="service-name">Xe Hoa</h3>
+                <div class="service-experience">
+                    <div class="experience-item">
+                        <i class="fas fa-ribbon"></i>
+                        <span>Trang trí hoa tươi theo đúng đám cưới</span>
+                    </div>
+                    <div class="experience-item">
+                        <i class="fas fa-users"></i>
+                        <span>Tài xế mặc vest, am hiểu phong tục</span>
+                    </div>
+                    <div class="experience-item">
+                        <i class="fas fa-umbrella"></i>
+                        <span>Dù che mưa/nắng đột xuất</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Đưa Đón Học Sinh -->
+            <div class="service-card" data-service="student">
+                <div class="service-icon"><i class="fas fa-school"></i></div>
+                <h3 class="service-name">Đưa Đón Học Sinh</h3>
+                <div class="service-experience">
+                    <div class="experience-item">
+                        <i class="fas fa-child"></i>
+                        <span>Điểm đón/trả chi tiết từng nhà</span>
+                    </div>
+                    <div class="experience-item">
+                        <i class="fas fa-bell"></i>
+                        <span>Thông báo đến trường cho phụ huynh</span>
+                    </div>
+                    <div class="experience-item">
+                        <i class="fas fa-car-seat"></i>
+                        <span>Ghế an toàn trẻ em tiêu chuẩn</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Y Tế & Cấp Cứu -->
+            <div class="service-card" data-service="medical">
+                <div class="service-icon"><i class="fas fa-ambulance"></i></div>
+                <h3 class="service-name">Y Tế & Cấp Cứu</h3>
+                <div class="service-experience">
+                    <div class="experience-item">
+                        <i class="fas fa-stethoscope"></i>
+                        <span>Vệ sinh xe khử khuẩn đặc biệt</span>
+                    </div>
+                    <div class="experience-item">
+                        <i class="fas fa-wheelchair"></i>
+                        <span>Hỗ trợ bệnh nhân lên/xuống xe</span>
+                    </div>
+                    <div class="experience-item">
+                        <i class="fas fa-hospital"></i>
+                        <span>Thông thạo các bệnh viện khu vực</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toggle Button -->
+        <div class="services-toggle-container">
+            <button class="btn-toggle-services" id="toggleServicesBtn">
+                <span class="toggle-text">Khám phá thêm trải nghiệm</span>
+                <span class="toggle-icon">
+                    <i class="fas fa-chevron-down"></i>
+                </span>
+            </button>
+            
+            <!-- Experience Note -->
+            <div class="experience-note">
+                <i class="fas fa-lightbulb"></i>
+                <span>Tất cả dịch vụ đều chuyên nghiệp và thoải mái nhất</span>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <!-- Quick Booking -->
     <section class="quick-booking" id="booking">
         <div class="container">
             <div class="booking-card">
-                <h3 class="booking-title mb-2">Đặt Xe Nhanh</h3>
-                <p class="booking-subtitle mb-4">Để lại thông tin, chúng tôi sẽ gọi lại trong 5 phút</p>
+                <h2 class="booking-title">Đặt Xe Nhanh</h2>
+                <p class="booking-subtitle">Vui lòng điền thông tin, chúng tôi sẽ gọi lại ngay.</p>
                 
                 <form id="bookingForm">
                     <div class="form-group">
-                        <label class="form-label">Loại dịch vụ</label>
+                        <label class="form-label">Dịch vụ yêu cầu</label>
                         <select class="form-select" id="serviceType" required>
-                            <option value="">Chọn dịch vụ</option>
+                            <option value="" disabled selected>Chọn loại dịch vụ...</option>
                             <option value="airport">Đưa đón sân bay</option>
-                            <option value="tour">Du lịch</option>
-                            <option value="business">Doanh nghiệp</option>
-                            <option value="rental">Thuê xe</option>
-                            <option value="wedding">Cưới hỏi</option>
+                            <option value="intercity">Xe đi liên tỉnh</option>
+                            <option value="tour">Tour tham quan</option>
+                            <option value="wedding">Xe cưới hỏi</option>
                         </select>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Số điện thoại</label>
-                        <input type="tel" class="form-input" id="phoneNumber" placeholder="Nhập số điện thoại" required>
+                        <label class="form-label">Họ tên khách hàng</label>
+                        <input type="text" class="form-input" id="customerName" placeholder="Nhập tên của bạn" required>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">
-                        Gửi Yêu Cầu
-                    </button>
+                    <div class="form-group">
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="tel" class="form-input" id="customerPhone" placeholder="Nhập số điện thoại" required>
+                    </div>
                     
-                    <p class="form-note mt-3">
-                        Chúng tôi cam kết bảo mật thông tin của bạn
-                    </p>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Gửi Yêu Cầu Đặt Xe</button>
+                    <p class="form-note">* Thông tin của bạn được bảo mật tuyệt đối.</p>
                 </form>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="main-footer" id="contact">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
                     <h4>LuxuryMove</h4>
-                    <p class="text-tertiary mb-3" style="font-size: 14px;">
-                        Dịch vụ vận chuyển cao cấp với tiêu chuẩn 5 sao
-                    </p>
+                    <p style="font-size: 14px; color: var(--text-tertiary);">Đơn vị vận tải hành khách cao cấp hàng đầu khu vực.</p>
                     <div class="social-links">
                         <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-link">Z</a>
-                        <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
-                        <a href="tel:0236000000" class="social-link"><i class="fas fa-phone"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-zalo">Z</i></a>
+                        <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
                     </div>
                 </div>
                 
                 <div class="footer-section">
                     <h4>Liên Kết</h4>
                     <ul class="footer-links">
-                        <li><a href="#benefits">Lợi ích</a></li>
+                        <li><a href="#hero">Trang chủ</a></li>
                         <li><a href="#services">Dịch vụ</a></li>
                         <li><a href="#booking">Đặt xe</a></li>
-                        <li><a href="#contact">Liên hệ</a></li>
+                        <li><a href="#benefits">Lợi ích</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-section">
                     <h4>Liên Hệ</h4>
                     <div class="contact-info">
-                        <p><i class="fas fa-phone"></i> 0931243679</p>
-                        <p><i class="fas fa-envelope"></i> info@luxurymove.vn</p>
-                        <p><i class="fas fa-clock"></i> 24/7</p>
+                        <p><i class="fas fa-phone-alt"></i> 0931 243 679</p>
+                        <p><i class="fas fa-map-marker-alt"></i> TP. Nha Trang, Khánh Hòa</p>
+                        <p><i class="fas fa-clock"></i> Hoạt động 24/7</p>
                     </div>
                 </div>
             </div>
             
             <div class="copyright">
-                <p>&copy; 2023 LuxuryMove. All rights reserved.</p>
+                &copy; 2024 LuxuryMove. All Rights Reserved.
             </div>
         </div>
     </footer>
 
-    <!-- Bottom Tab Bar (Mobile Only) -->
     <nav class="bottom-tab-bar">
         <div class="tab-items">
             <a href="#hero" class="tab-item active">
@@ -267,7 +468,6 @@
         </div>
     </nav>
 
-    <!-- Service Details Modal -->
     <div class="service-details-overlay" id="serviceDetails">
         <div class="service-details-container">
             <div class="details-header">
@@ -277,10 +477,7 @@
                     <i class="fas fa-times"></i>
                 </div>
             </div>
-            
-            <div class="details-content" id="detailContent">
-                <!-- Nội dung sẽ được tải động bằng JS -->
-            </div>
+            <div class="details-content" id="detailContent"></div>
         </div>
     </div>
 
