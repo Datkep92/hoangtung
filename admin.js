@@ -1,5 +1,5 @@
 // admin.js - LuxuryMove Admin Panel
-const DEFAULT_ADMIN_TOKEN = 'luxurymove2024';
+const DEFAULT_ADMIN_TOKEN = '123123';
 let adminToken = DEFAULT_ADMIN_TOKEN;
 let servicesData = {};
 
@@ -1016,5 +1016,6 @@ function importData(event) {
     // Reset input
     event.target.value = '';
 }
+
 
 // Thêm các nút Export/Import vào admin-actions nếu cần
