@@ -2631,4 +2631,41 @@ a {
         overflow: hidden;
     }
 }
+.service-details-container {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* chỉ cho content cuộn */
+}
+.details-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.details-actions-bar {
+    position: sticky;
+    bottom: 0;
+    padding: 12px;
+    background: #222222;
+    border-top: 1px solid rgba(212,175,55,.25);
+    z-index: 10;
+}
+.details-actions {
+    display: flex;
+    gap: 10px;
+}
+.details-actions button {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+}
+.details-actions-bar {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+}
+.details-header h3 {
+    padding-right: 40px;
+}
+.details-content {
+    animation: slideUp .4s ease;
+}
 
