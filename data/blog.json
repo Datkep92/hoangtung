@@ -8,7 +8,12 @@
       "image": "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800",
       "excerpt": "Khám phá những điểm đến hấp dẫn, ẩm thực đặc sắc và dịch vụ di chuyển cao cấp tại Nha Trang.",
       "content": "<h2>Giới Thiệu Về Nha Trang</h2><p>Nha Trang - thành phố biển xinh đẹp với những bãi cát trắng trải dài, làn nước trong xanh và nền ẩm thực phong phú.</p><div class=\"features-section\"><h3>Điểm Đến Nổi Bật</h3><div class=\"feature-item\"><i class=\"fas fa-umbrella-beach\"></i><span>Bãi Dài - Thiên đường nghỉ dưỡng</span></div><div class=\"feature-item\"><i class=\"fas fa-water\"></i><span>Vinpearl Land - Vui chơi giải trí</span></div><div class=\"feature-item\"><i class=\"fas fa-mountain\"></i><span>Hòn Tằm - Khám phá thiên nhiên</span></div></div><h3>Dịch Vụ Di Chuyển Cao Cấp</h3><p>LuxuryMove cung cấp dịch vụ đưa đón tận nơi với đội xe sang trọng, tài xế chuyên nghiệp.</p><div class=\"pricing-section\"><h3>Bảng Giá Tham Khảo</h3><div class=\"price-item\"><i class=\"fas fa-car\"></i><span>Đưa đón sân bay: <strong>450,000 VND</strong></span></div><div class=\"price-item\"><i class=\"fas fa-road\"></i><span>Tour Nha Trang 1 ngày: <strong>1,200,000 VND</strong></span></div></div>",
-      "tags": ["nha trang", "du lịch", "biển", "kinh nghiệm"]
+      "tags": [
+        "nha trang",
+        "du lịch",
+        "biển",
+        "kinh nghiệm"
+      ]
     },
     "post2": {
       "title": "Top 5 Dịch Vụ Xe Cao Cấp Tại Miền Trung",
@@ -17,9 +22,14 @@
       "category": "service",
       "image": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800",
       "excerpt": "Khám phá những dịch vụ di chuyển cao cấp nhất tại khu vực miền Trung - Tây Nguyên.",
-      "content": "<h2>Dịch Vụ Xe Cao Cấp LuxuryMove</h2><p>Chúng tôi tự hào cung cấp những dịch vụ di chuyển cao cấp nhất với tiêu chuẩn 5 sao.</p><div class=\"features-section\"><h3>Tính Năng Đặc Biệt</h3><div class=\"feature-item\"><i class=\"fas fa-shield-alt\"></i><span>An toàn tuyệt đối - Bảo hiểm đầy đủ</span></div><div class=\"feature-item\"><i class=\"fas fa-user-tie\"></i><span>Tài xế chuyên nghiệp - Mặc vest lịch sự</span></div><div class=\"feature-item\"><i class=\"fas fa-wifi\"></i><span>WiFi miễn phí - Nước uống cao cấp</span></div></div><h3>Lợi Ích Cho Khách Hàng</h3><ul><li>Đón tận nơi - không phải chờ đợi</li><li>Hóa đơn VAT đầy đủ cho doanh nghiệp</li><li>Hỗ trợ 24/7 - luôn có mặt khi cần</li></ul>",
-      "tags": ["dịch vụ", "xe cao cấp", "luxury", "miền trung"]
+      "content": "<h2>Dịch Vụ Xe Cao Cấp LuxuryMove</h2><p>Chúng tôi tự hào cung cấp những dịch vụ di chuyển cao cấp nhất với tiêu chuẩn 5 sao.</p><div class=\"features-section\"><h3>Tính Năng Đặc Biệt</h3><div class=\"feature-item\"><i class=\"fas fa-shield-alt\"></i><span>An toàn tuyệt đối - Bảo hiểm đầy đủ</span></div><div class=\"feature-item\"><i class=\"fas fa-user-tie\"></i><span>Tài xế chuyên nghiệp - Mặc vest lịch sự</span></div><div class=\"feature-item\"><i class=\"fas fa-wifi\"></i><span>WiFi miễn phí - Nước uống cao cấp</span></div></div><h3>Lợi Ích Cho Khách Hàng</h3><ul><li>Đón tận nơi - không phải chờ đợi</li><li>Hóa đơn VAT đầy đủ cho doanh nghiệp</li><li>Hỗ trợ 24/7 - luôn có mặt khi cần</li></ul><ul>\n<li>Mục 1</li>\n<li>Mục 2</li>\n<li>Mục 3</li>\n</ul>\n<div class=\"pricing-section\">\n    <h3>Bảng giá tham khảo</h3>\n    <div class=\"price-item\">\n        <i class=\"fas fa-car\"></i>\n        <span>Dịch vụ A: <strong>500,000 VND</strong></span>\n    </div>\n    <div class=\"price-item\">\n        <i class=\"fas fa-road\"></i>\n        <span>Dịch vụ B: <strong>1,000,000 VND</strong></span>\n    </div>\n    <div class=\"price-item\">\n        <i class=\"fas fa-clock\"></i>\n        <span>Theo giờ: <strong>350,000 VND/giờ</strong></span>\n    </div>\n</div>\n<div class=\"features-section\">\n    <h3>Tính năng nổi bật</h3>\n    <div class=\"feature-item\">\n        <i class=\"fas fa-check-circle\"></i>\n        <span>Tính năng 1 - Mô tả ngắn</span>\n    </div>\n    <div class=\"feature-item\">\n        <i class=\"fas fa-check-circle\"></i>\n        <span>Tính năng 2 - Mô tả ngắn</span>\n    </div>\n    <div class=\"feature-item\">\n        <i class=\"fas fa-check-circle\"></i>\n        <span>Tính năng 3 - Mô tả ngắn</span>\n    </div>\n</div>\n<div class=\"pricing-section\">\n    <h3>Bảng giá tham khảo</h3>\n    <div class=\"price-item\">\n        <i class=\"fas fa-car\"></i>\n        <span>Dịch vụ A: <strong>500,000 VND</strong></span>\n    </div>\n    <div class=\"price-item\">\n        <i class=\"fas fa-road\"></i>\n        <span>Dịch vụ B: <strong>1,000,000 VND</strong></span>\n    </div>\n    <div class=\"price-item\">\n        <i class=\"fas fa-clock\"></i>\n        <span>Theo giờ: <strong>350,000 VND/giờ</strong></span>\n    </div>\n</div>\n<div class=\"features-section\">\n    <h3>Tính năng nổi bật</h3>\n    <div class=\"feature-item\">\n        <i class=\"fas fa-check-circle\"></i>\n        <span>Tính năng 1 - Mô tả ngắn</span>\n    </div>\n    <div class=\"feature-item\">\n        <i class=\"fas fa-check-circle\"></i>\n        <span>Tính năng 2 - Mô tả ngắn</span>\n    </div>\n    <div class=\"feature-item\">\n        <i class=\"fas fa-check-circle\"></i>\n        <span>Tính năng 3 - Mô tả ngắn</span>\n    </div>\n</div>",
+      "tags": [
+        "dịch vụ",
+        "xe cao cấp",
+        "luxury",
+        "miền trung"
+      ]
     }
   },
-  "last_updated": "2024-12-18T10:00:00.000Z"
+  "last_updated": "2025-12-18T14:58:27.248Z"
 }
