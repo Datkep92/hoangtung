@@ -153,45 +153,24 @@ async function loadServices() {
     }
 }
 
-// Sửa hàm fetchServicesFromGitHub để xử lý lỗi tốt hơn
+// ULTRA SIMPLE - Chỉ cần 1 URL
 async function fetchServicesFromGitHub() {
-    // Load cấu hình GitHub từ localStorage
-    const savedConfig = localStorage.getItem('luxurymove_github_config');
-    if (!savedConfig) {
-        console.log("ℹ️ Chưa cấu hình GitHub");
-        return null;
-    }
-    
-    const githubConfig = JSON.parse(savedConfig);
-    if (!githubConfig.token || githubConfig.token === '••••••••••') {
-        console.log("ℹ️ Chưa có GitHub token");
-        return null;
-    }
-    
-    const path = 'data/services.json';
-    const url = `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/${path}?ref=${githubConfig.branch}&t=${Date.now()}`;
+    const GITHUB_DATA_URL = "https://raw.githubusercontent.com/Datkep92/hoangtung/main/data/services.json";
     
     try {
-        const response = await fetch(url, {
-            headers: {
-                'Authorization': `token ${githubConfig.token}`,
-                'Accept': 'application/vnd.github.v3.raw'
-            }
-        });
+        const response = await fetch(`${GITHUB_DATA_URL}?t=${Date.now()}`);
         
-        if (response.ok) {
-            const data = await response.json();
-            console.log("✅ Đã tải dữ liệu từ GitHub thành công");
-            return data;
-        } else if (response.status === 404) {
-            console.log("📄 File chưa tồn tại trên GitHub");
-            return null;
-        } else {
-            console.error("❌ GitHub API error:", response.status);
+        if (!response.ok) {
+            console.log("❌ Cannot fetch from GitHub:", response.status);
             return null;
         }
+        
+        const data = await response.json();
+        console.log("✅ GitHub data loaded:", Object.keys(data.services || {}).length, "services");
+        return data;
+        
     } catch (error) {
-        console.error("❌ Lỗi kết nối GitHub:", error);
+        console.log("❌ Fetch error:", error.message);
         return null;
     }
 }
