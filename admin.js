@@ -667,103 +667,178 @@ function closeEditor() {
     currentEditingId = null;
 }
 
+// Hàm lưu dịch vụ - GỌI LẠI saveAllServices()
 function saveService() {
-    // Validate
     const serviceId = document.getElementById('serviceId').value.trim();
     const title = document.getElementById('serviceTitle').value.trim();
-    const description = document.getElementById('serviceDescription').value.trim();
     
-    if (!serviceId) {
-        showStatus('Vui lòng nhập ID dịch vụ', 'error');
+    if (!serviceId || !title) {
+        showStatus('Vui lòng nhập đầy đủ thông tin', 'error');
         return;
     }
     
-    if (!title) {
-        showStatus('Vui lòng nhập tiêu đề', 'error');
-        return;
-    }
-    
-    if (!description) {
-        showStatus('Vui lòng nhập mô tả', 'error');
-        return;
-    }
-    
-    // Collect images
+    // Collect data
     const images = [];
     document.querySelectorAll('#imagesList .image-item img').forEach(img => {
         images.push(img.src);
     });
     
-    // Collect features
     const features = [];
-    document.querySelectorAll('#featuresList .feature-item input[type="text"]').forEach(input => {
-        if (input.value.trim()) {
-            features.push(input.value.trim());
-        }
+    document.querySelectorAll('#featuresList .feature-item input').forEach(input => {
+        if (input.value.trim()) features.push(input.value.trim());
     });
     
-    // Collect pricing
     const pricing = [];
     document.querySelectorAll('#pricingList .pricing-item').forEach(item => {
-        const labelInput = item.querySelector('input[type="text"]:nth-child(1)');
-        const priceInput = item.querySelector('input[type="text"]:nth-child(2)');
-        
-        if (labelInput.value.trim() && priceInput.value.trim()) {
-            pricing.push({
-                label: labelInput.value.trim(),
-                price: priceInput.value.trim()
-            });
-        }
+        const label = item.querySelector('input:nth-child(1)').value.trim();
+        const price = item.querySelector('input:nth-child(2)').value.trim();
+        if (label && price) pricing.push({ label, price });
     });
     
-    // Create service object
-    const serviceData = {
+    // Save to local data
+    if (!servicesData.services) servicesData.services = {};
+    servicesData.services[serviceId] = {
         title: title,
         subtitle: document.getElementById('serviceSubtitle').value.trim() || title,
         images: images,
-        description: description,
-        features: features,
+        description: document.getElementById('serviceDescription').value.trim() || 'Đang cập nhật...',
+        features: features.length > 0 ? features : ['Chất lượng cao cấp', 'Đúng giờ 100%', 'Tài xế chuyên nghiệp'],
         pricing: pricing
     };
     
-    // Save to data
-    if (!servicesData.services) {
-        servicesData.services = {};
-    }
-    
-    servicesData.services[serviceId] = serviceData;
     servicesData.last_updated = new Date().toISOString();
     
-    // Update list
+    // Update UI
     renderServicesList();
     
-    // Save to storage
-    localStorage.setItem('luxurymove_services', JSON.stringify(servicesData, null, 2));
+    // GỌI HÀM ĐÃ CÓ ĐỂ LƯU TẤT CẢ
+    saveAllServices();
     
-    showStatus(`Đã lưu dịch vụ: ${title}`, 'success');
     closeEditor();
 }
 
+// Hàm xóa dịch vụ - GỌI LẠI saveAllServices()
 function deleteService(serviceId) {
     if (!serviceId && currentEditingId) {
         serviceId = currentEditingId;
     }
     
-    if (!serviceId || !confirm(`Bạn có chắc muốn xóa dịch vụ "${serviceId}"?`)) {
+    if (!serviceId || !confirm(`Xóa dịch vụ "${serviceId}"?`)) {
         return;
     }
     
     if (servicesData.services && servicesData.services[serviceId]) {
         delete servicesData.services[serviceId];
-        
-        // Update storage
-        localStorage.setItem('luxurymove_services', JSON.stringify(servicesData, null, 2));
+        servicesData.last_updated = new Date().toISOString();
         
         // Update UI
         renderServicesList();
         closeEditor();
         
-        showStatus(`Đã xóa dịch vụ: ${serviceId}`, 'success');
+        // GỌI HÀM ĐÃ CÓ ĐỂ LƯU TẤT CẢ
+        saveAllServices();
+        
+        showStatus(`✅ Đã xóa: ${serviceId}`, 'success');
+    }
+}
+
+// Hàm xóa dịch vụ khỏi GitHub
+async function deleteFromGitHub(data) {
+    if (!githubConfig.token || githubConfig.token === '••••••••••') {
+        throw new Error('Chưa cấu hình GitHub Token');
+    }
+    
+    // 1. Lấy SHA của file hiện tại
+    const getResponse = await fetch(
+        `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/data/services.json`,
+        {
+            headers: {
+                'Authorization': `token ${githubConfig.token}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        }
+    );
+    
+    if (!getResponse.ok) {
+        throw new Error('Không thể lấy thông tin file từ GitHub');
+    }
+    
+    const fileInfo = await getResponse.json();
+    const sha = fileInfo.sha;
+    
+    // 2. Encode nội dung mới
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+    
+    // 3. Cập nhật file lên GitHub
+    const putResponse = await fetch(
+        `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/data/services.json`,
+        {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${githubConfig.token}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/vnd.github.v3+json'
+            },
+            body: JSON.stringify({
+                message: `Xóa dịch vụ - ${new Date().toLocaleString('vi-VN')}`,
+                content: content,
+                branch: githubConfig.branch,
+                sha: sha
+            })
+        }
+    );
+    
+    if (!putResponse.ok) {
+        const error = await putResponse.json();
+        throw new Error(error.message || 'Lỗi khi cập nhật GitHub');
+    }
+    
+    return true;
+}
+
+// Thêm nút "Xóa khỏi GitHub" riêng
+function addGitHubDeleteButton() {
+    const deleteBtn = document.getElementById('deleteBtn');
+    if (deleteBtn) {
+        // Thêm nút xóa khỏi GitHub bên cạnh
+        deleteBtn.insertAdjacentHTML('afterend', `
+            <button class="btn btn-danger" onclick="forceDeleteFromGitHub()" id="githubDeleteBtn" style="display: none; margin-left: 10px;">
+                <i class="fab fa-github"></i> Xóa khỏi GitHub
+            </button>
+        `);
+    }
+}
+
+// Force delete từ GitHub
+async function forceDeleteFromGitHub() {
+    const serviceId = document.getElementById('serviceId').value;
+    if (!serviceId) return;
+    
+    if (!confirm(`⚠️ CẢNH BÁO!\n\nBạn sắp xóa vĩnh viễn dịch vụ "${serviceId}" khỏi GitHub.\nHành động này KHÔNG THỂ HOÀN TÁC!\n\nTiếp tục?`)) {
+        return;
+    }
+    
+    showLoading(true);
+    try {
+        // Xóa khỏi dữ liệu
+        if (servicesData.services[serviceId]) {
+            delete servicesData.services[serviceId];
+            servicesData.last_updated = new Date().toISOString();
+            
+            // Cập nhật lên GitHub
+            await deleteFromGitHub(servicesData);
+            
+            // Xóa khỏi LocalStorage
+            localStorage.setItem('luxurymove_services', JSON.stringify(servicesData, null, 2));
+            
+            showStatus(`✅ Đã xóa vĩnh viễn "${serviceId}" khỏi GitHub`, 'success');
+            renderServicesList();
+            closeEditor();
+        }
+    } catch (error) {
+        showStatus(`❌ Lỗi: ${error.message}`, 'error');
+    } finally {
+        showLoading(false);
     }
 }
 

@@ -1,0 +1,328 @@
+
+    :root {
+        --primary-black: #000000;
+        --dark-black: #111111;
+        --light-black: #1A1A1A;
+        --card-black: #222222;
+        --champagne: #D4AF37;
+        --light-champagne: #F0D89C;
+        --text-primary: #FFFFFF;
+        --text-secondary: #CCCCCC;
+        --text-tertiary: #888888;
+        --danger: #ff4444;
+        --success: #00C851;
+        --warning: #ffbb33;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent; /* Loại bỏ highlight màu xanh trên mobile */
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: var(--primary-black);
+        color: var(--text-primary);
+        min-height: 100vh;
+        font-size: 16px; /* Size chuẩn để tránh iOS zoom input */
+        line-height: 1.5;
+    }
+
+    .admin-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 15px; /* Giảm padding trên mobile */
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+        padding: 12px 20px; /* Tăng vùng bấm */
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .btn-primary { background: var(--champagne); color: var(--primary-black); }
+    .btn-primary:active { transform: scale(0.98); } /* Hiệu ứng nhấn trên mobile */
+    
+    .btn-secondary { background: transparent; color: var(--champagne); border: 1px solid var(--champagne); }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-success { background: var(--success); color: white; }
+
+    /* ===== HEADER ADMIN ===== */
+    .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--champagne);
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .admin-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .admin-logo i, .admin-logo span { color: var(--champagne); }
+
+    .admin-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap; /* Cho phép nút xuống dòng trên màn hình nhỏ */
+    }
+
+    /* ===== LOGIN SECTION ===== */
+    #loginSection {
+        max-width: 400px;
+        width: 100%;
+        margin: 40px auto; /* Margin nhỏ hơn cho mobile */
+        padding: 30px 20px;
+        background: var(--card-black);
+        border-radius: 16px;
+        border: 1px solid var(--champagne);
+        text-align: center;
+    }
+
+    .login-title { font-size: 24px; margin-bottom: 10px; color: var(--champagne); }
+    .login-subtitle { color: var(--text-tertiary); margin-bottom: 30px; font-size: 14px; }
+
+    /* ===== FORMS ===== */
+    .form-group { margin-bottom: 20px; text-align: left; }
+    .form-label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-weight: 500; font-size: 14px; }
+    
+    .form-input {
+        width: 100%;
+        padding: 12px;
+        background: var(--dark-black);
+        border: 1px solid var(--text-tertiary);
+        border-radius: 8px;
+        color: var(--text-primary);
+        font-size: 16px;
+        appearance: none; /* Reset style mặc định của iOS */
+    }
+
+    .form-input:focus { outline: none; border-color: var(--champagne); }
+    textarea.form-input { min-height: 120px; resize: vertical; }
+
+    /* ===== EDITOR SECTION ===== */
+    .section-title { font-size: 20px; color: var(--champagne); }
+    
+    /* Layout Grid/Flex cho Editor Header */
+    .editor-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    /* ===== SERVICES LIST ===== */
+    .services-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 15px;
+        margin-bottom: 40px;
+    }
+
+    .service-item {
+        background: var(--card-black);
+        border-radius: 12px;
+        padding: 15px;
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        cursor: pointer;
+    }
+
+    .service-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .service-item-title { font-size: 16px; font-weight: 600; color: var(--champagne); }
+    
+    .action-btn {
+        width: 40px; /* Tăng kích thước nút icon */
+        height: 40px;
+        border-radius: 8px;
+        border: none;
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .service-item-image {
+        width: 100%;
+        height: 140px;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 12px;
+    }
+    .service-item-image img { width: 100%; height: 100%; object-fit: cover; }
+    .service-item-desc { color: var(--text-tertiary); font-size: 13px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+    /* ===== EDITOR FORM ===== */
+    .editor-form {
+        background: var(--card-black);
+        border-radius: 16px;
+        padding: 20px;
+        border: 1px solid var(--champagne);
+        margin-bottom: 40px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    .form-full { grid-column: 1 / -1; }
+
+    /* ===== IMAGES MANAGER ===== */
+    .images-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Nhỏ hơn trên mobile */
+        gap: 10px;
+        margin: 15px 0;
+    }
+
+    .image-item { position: relative; height: 100px; border-radius: 8px; overflow: hidden; }
+    .image-item img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .image-item-remove {
+        position: absolute; top: 5px; right: 5px; width: 28px; height: 28px;
+        background: rgba(0, 0, 0, 0.7); color: white; border: none; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+
+    .image-upload-area {
+        border: 2px dashed var(--champagne); border-radius: 12px; padding: 30px 15px;
+        text-align: center; margin: 20px 0;
+    }
+
+    /* ===== PRICING & FEATURES (Mobile Optimized) ===== */
+    .pricing-item, .feature-item {
+        display: grid;
+        grid-template-columns: 2fr 1fr 40px; /* Desktop default */
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+        background: var(--light-black);
+        padding: 10px;
+        border-radius: 8px;
+    }
+    
+    .feature-item { grid-template-columns: 1fr 40px; }
+
+    /* ===== STATUS BAR ===== */
+    .status-bar {
+        position: fixed; bottom: 20px; right: 20px; left: 20px; /* Full width on mobile padding */
+        background: var(--card-black); padding: 15px;
+        border-radius: 12px; border: 1px solid var(--champagne);
+        display: none; align-items: center; gap: 10px; z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+    .status-bar.show { display: flex; animation: slideUp 0.3s ease; }
+    @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .status-success { color: var(--success); }
+    .status-error { color: var(--danger); }
+    .status-warning { color: var(--warning); }
+
+    /* ===== MODAL & LOADING ===== */
+    .loading-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.85); display: none;
+        align-items: center; justify-content: center; z-index: 9999;
+    }
+    .loading-overlay.show { display: flex; }
+    .loading-spinner {
+        width: 40px; height: 40px; border: 3px solid var(--text-tertiary);
+        border-top-color: var(--champagne); border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Modal Styling Fixes */
+    #githubModal > div, #tokenModal > div {
+        width: 95% !important; /* Force width on mobile */
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto; /* Scroll nếu nội dung dài */
+        padding: 20px !important;
+    }
+
+    /* ========================================= */
+    /* MOBILE RESPONSIVE RULES         */
+    /* ========================================= */
+    @media (max-width: 768px) {
+        /* Header Stack */
+        .admin-header {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+        }
+
+        .admin-logo { justify-content: center; margin-bottom: 10px; }
+        
+        .admin-actions {
+            justify-content: center;
+        }
+
+        .admin-actions .btn {
+            flex: 1 1 auto; /* Nút tự giãn đều */
+            font-size: 13px;
+            padding: 10px;
+        }
+
+        /* Form Stacking */
+        .form-row { grid-template-columns: 1fr; }
+        
+        /* Pricing Item Stacking */
+        .pricing-item {
+            grid-template-columns: 1fr 40px; /* Stack label & price, icon bên cạnh */
+            grid-template-areas: 
+                "label btn"
+                "price btn";
+            gap: 8px;
+        }
+        
+        .pricing-item input:nth-child(1) { grid-area: label; }
+        .pricing-item input:nth-child(2) { grid-area: price; }
+        .pricing-item button { grid-area: btn; height: 100%; }
+
+        /* Nút hành động trong danh sách dịch vụ to hơn */
+        .service-item-actions .action-btn {
+            width: 44px;
+            height: 44px;
+        }
+
+        /* Editor Header Buttons Stack */
+        #serviceEditor .editor-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        #serviceEditor .editor-header > div {
+            display: flex;
+            gap: 10px;
+        }
+        
+        #serviceEditor .editor-header > div .btn {
+            flex: 1;
+        }
+    }

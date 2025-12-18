@@ -1189,6 +1189,302 @@ a {
     opacity: 0.7;
 }
 
+/* ===== BOTTOM TAB BAR ===== */
+.bottom-tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 75px;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+    z-index: 999;
+    padding: 10px 0;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+    display: none;
+}
+
+.tab-items {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 10px;
+}
+
+.tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    flex: 1;
+    height: 100%;
+}
+
+.tab-item.active {
+    background: rgba(212, 175, 55, 0.15);
+}
+
+.tab-item:active {
+    transform: scale(0.95);
+}
+
+.tab-icon {
+    font-size: 20px;
+    color: var(--text-tertiary);
+    transition: all 0.3s ease;
+}
+
+.tab-item.active .tab-icon {
+    color: var(--champagne);
+}
+
+.tab-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    transition: all 0.3s ease;
+}
+
+.tab-item.active .tab-label {
+    color: var(--champagne);
+}
+
+
+
+.service-details-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+
+
+.service-details-overlay.active .service-details-container {
+    transform: translateY(0);
+}
+
+.details-header {
+    padding: 25px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    background: rgba(20, 20, 20, 0.95);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.details-header h3 {
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: var(--champagne);
+    font-weight: 700;
+    padding-right: 50px;
+}
+
+.details-subtitle {
+    color: var(--text-tertiary);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.close-details {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    width: 40px;
+    height: 40px;
+    background: rgba(212, 175, 55, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.close-details:hover {
+    background: var(--champagne);
+    color: var(--primary-black);
+    transform: rotate(90deg);
+}
+
+.details-content {
+    padding: 25px;
+    overflow-y: auto;
+    flex-grow: 1;
+    background: var(--primary-black);
+}
+
+.details-image {
+    position: relative;
+    height: 200px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 25px;
+}
+
+.details-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.3),
+        rgba(0, 0, 0, 0.7)
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--champagne);
+    font-size: 48px;
+}
+
+.details-description {
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: rgba(212, 175, 55, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.details-features {
+    margin-bottom: 25px;
+}
+
+.features-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--champagne);
+}
+
+.features-list {
+    list-style: none;
+}
+
+.features-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.features-list li:last-child {
+    border-bottom: none;
+}
+
+.feature-icon {
+    color: var(--champagne);
+    font-size: 14px;
+    width: 20px;
+}
+
+.pricing-info {
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.pricing-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--champagne);
+}
+
+.price-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.price-item:last-child {
+    border-bottom: none;
+}
+
+.price-label {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.price-value {
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--champagne);
+}
+
+.details-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.details-actions .btn {
+    flex: 1;
+    padding: 16px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.details-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.details-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.details-content::-webkit-scrollbar-thumb {
+    background: var(--champagne);
+    border-radius: 4px;
+}
+
+/* ===== WHATSAPP FLOAT ===== */
+.whatsapp-float {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: #25D366;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
+    z-index: 999;
+    transition: all 0.3s ease;
+    animation: float 3s ease-in-out infinite;
+}
 
 .whatsapp-float:hover {
     transform: scale(1.1);
@@ -1422,82 +1718,7 @@ a {
         display: block;
     }
     
-    /* Mobile Modal */
-    .service-details-container {
-        width: 100%;
-        height: 100vh;
-        max-width: 100%;
-        border-radius: 0;
-        border: none;
-    }
-    
-    .details-header {
-        padding: 20px;
-    }
-    
-    .details-header h3 {
-        font-size: 22px;
-        padding-right: 40px;
-    }
-    
-    .close-details {
-        top: 20px;
-        right: 20px;
-        width: 36px;
-        height: 36px;
-    }
-    
-    .details-content {
-        padding: 20px;
-    }
-    
-    .details-image {
-        height: 160px;
-    }
-    
-    .image-overlay {
-        font-size: 36px;
-    }
-    
-    .details-description {
-        font-size: 14px;
-        padding: 15px;
-    }
-    
-    .features-list li {
-        font-size: 13px;
-        padding: 10px 0;
-    }
-    
-    .pricing-info {
-        padding: 15px;
-    }
-    
-    .price-label {
-        font-size: 13px;
-    }
-    
-    .price-value {
-        font-size: 15px;
-    }
-    
-    .details-actions {
-        position: sticky;
-        bottom: 0;
-        background: var(--card-black);
-        padding: 20px 20px 25px;
-        margin: 20px -20px -20px;
-        border-top: 1px solid rgba(212, 175, 55, 0.2);
-    }
-    
-    .whatsapp-float {
-        bottom: 90px;
-        width: 50px;
-        height: 50px;
-        font-size: 24px;
-    }
-}
-
+   
 /* Small Mobile */
 @media (max-width: 480px) {
     .hero-title {
@@ -1579,7 +1800,7 @@ a {
         font-size: 22px;
     }
 }
-
+}
 /* Safe Area Support for iOS */
 @supports (padding: max(0px)) {
     .bottom-tab-bar {
@@ -2135,17 +2356,7 @@ a {
     to { opacity: 1; }
 }
 
-.service-details-container {
-    background: #222222;
-    border-radius: 16px;
-    border: 2px solid #D4AF37;
-    max-width: 800px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-    animation: slideUp 0.3s ease;
-}
+
 
 @keyframes slideUp {
     from { transform: translateY(30px); opacity: 0; }
@@ -2392,70 +2603,68 @@ a {
     transform: translateY(-3px);
 }
 
-/* Thông báo khi không có hình ảnh */
-.no-images {
-    text-align: center;
-    padding: 40px 20px;
-    color: #888888;
+.service-details-container {
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background: var(--card-black);
 }
 
-.no-images i {
-    font-size: 48px;
-    margin-bottom: 15px;
-    opacity: 0.5;
+/* phần nội dung cuộn */
+.service-details-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+
+/* Desktop / tablet */
+@media (min-width: 768px) {
     .service-details-container {
-        max-height: 95vh;
-        border-radius: 12px;
-        margin: 10px;
-        padding: 0;
-    }
-    
-    .detail-image-main {
-        height: 200px;
-    }
-    
-    .detail-thumb {
-        min-width: 60px;
-        height: 45px;
-    }
-    
-    .details-header h3 {
-        font-size: 20px;
-    }
-    
-    .detail-actions {
-        flex-direction: column;
-    }
-    
-    .btn-book-now, .btn-call-now {
-        padding: 14px;
-        font-size: 15px;
+        max-width: 500px;
+        height: 85vh;
+        margin: auto;
+        border-radius: 20px;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        transform: translateY(50px);
+        overflow: hidden;
     }
 }
-
-@media (max-width: 480px) {
-    .service-details-overlay {
-        padding: 10px;
-    }
-    
-    .detail-image-main {
-        height: 180px;
-    }
-    
-    .details-header {
-        padding: 15px;
-    }
-    
-    .details-content {
-        padding: 15px;
-    }
-    
-    .price-value {
-        font-size: 16px;
-    }
+.service-details-container {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* chỉ cho content cuộn */
 }
-
+.details-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.details-actions-bar {
+    position: sticky;
+    bottom: 0;
+    padding: 12px;
+    background: #222222;
+    border-top: 1px solid rgba(212,175,55,.25);
+    z-index: 10;
+}
+.details-actions {
+    display: flex;
+    gap: 10px;
+}
+.details-actions button {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+}
+.details-actions-bar {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+}
+.details-header h3 {
+    padding-right: 40px;
+}
+.details-content {
+    animation: slideUp .4s ease;
+}
