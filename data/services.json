@@ -5,7 +5,8 @@
       "subtitle": "Khám phá vẻ đẹp miền Trung",
       "images": [
         "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600",
-        "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600"
+        "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600",
+        "https://raw.githubusercontent.com/Datkep92/hoangtung/main/images/image_1766052296833_tz7xbpgub.png"
       ],
       "description": "Dịch vụ xe du lịch chuyên nghiệp cho các tour biển đảo. Tài xế am hiểu địa phương, sẵn sàng tư vấn điểm đến hấp dẫn.",
       "features": [
@@ -155,5 +156,5 @@
       ]
     }
   },
-  "last_updated": "2025-12-18T09:21:48.767Z"
+  "last_updated": "2025-12-18T10:05:28.119Z"
 }
