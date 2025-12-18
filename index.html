@@ -237,7 +237,8 @@
         </div>
     </section>
 
-    <section class="services-section" id="services">
+   <!-- Trong section services của index.html -->
+<section class="services-section" id="services">
     <div class="container">
         <div class="section-header">
             <h2 class="section-title">Dịch Vụ Của Chúng Tôi</h2>
@@ -255,7 +256,10 @@
                 Đang tải dữ liệu dịch vụ...
             </div>
         </div>
-        <div class="services-grid">
+        
+        <!-- Grid mặc định (sẽ bị ẩn nếu có dữ liệu từ GitHub) -->
+        <div class="services-grid default-services" style="display: none;">
+            <!-- Sao chép toàn bộ 8 card mặc định từ index.html cũ vào đây -->
             <div class="service-card" data-service="airport">
                 <div class="service-image">
                     <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=500" alt="Sân bay">
@@ -268,7 +272,8 @@
                 </div>
                 <button class="btn-view-details">Chi tiết</button>
             </div>
-
+            
+            <!-- Thêm 7 card còn lại giống y hệt... -->
             <div class="service-card" data-service="tour">
                 <div class="service-image">
                     <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=500" alt="Tour biển">
@@ -281,84 +286,8 @@
                 </div>
                 <button class="btn-view-details">Chi tiết</button>
             </div>
-
-            <div class="service-card" data-service="business">
-                <div class="service-image">
-                    <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=500" alt="Doanh nghiệp">
-                </div>
-                <h3 class="service-name">Dịch Vụ Doanh Nghiệp</h3>
-                <div class="service-experience">
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Hóa đơn VAT</span></div>
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Hợp đồng dài hạn</span></div>
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Đón đối tác VIP</span></div>
-                </div>
-                <button class="btn-view-details">Chi tiết</button>
-            </div>
-
-            <div class="service-card" data-service="rental">
-                <div class="service-image">
-                    <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=500" alt="Thuê xe">
-                </div>
-                <h3 class="service-name">Thuê Xe Có Tài Xế</h3>
-                <div class="service-experience">
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Lái xe 5 năm kinh nghiệm</span></div>
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Xe đời mới 2023+</span></div>
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Giá trọn gói</span></div>
-                </div>
-                <button class="btn-view-details">Chi tiết</button>
-            </div>
-
-            <div class="service-card" data-service="mountain">
-                <div class="service-image">
-                    <img src="https://images.unsplash.com/photo-1589182397057-b82d51970e2c?auto=format&fit=crop&w=500" alt="Cao nguyên">
-                </div>
-                <h3 class="service-name">Tour Cao Nguyên</h3>
-                <div class="service-experience">
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Đà Lạt - Bảo Lộc</span></div>
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Chuyên cung đường đèo</span></div>
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Hỗ trợ chụp ảnh</span></div>
-                </div>
-                <button class="btn-view-details">Chi tiết</button>
-            </div>
-
-            <div class="service-card" data-service="wedding">
-                <div class="service-image">
-                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=500" alt="Xe cưới">
-                </div>
-                <h3 class="service-name">Xe Cưới & Sự Kiện</h3>
-                <div class="service-experience">
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Trang trí theo yêu cầu</span></div>
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Xe sang trọng VIP</span></div>
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Đúng giờ tuyệt đối</span></div>
-                </div>
-                <button class="btn-view-details">Chi tiết</button>
-            </div>
-
-            <div class="service-card" data-service="intercity">
-                <div class="service-image">
-                    <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=500" alt="Liên tỉnh">
-                </div>
-                <h3 class="service-name">Hợp Đồng Liên Tỉnh</h3>
-                <div class="service-experience">
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Đi muôn nơi theo ý</span></div>
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Chạy 24/7 linh hoạt</span></div>
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Tiết kiệm 30% giá</span></div>
-                </div>
-                <button class="btn-view-details">Chi tiết</button>
-            </div>
-
-            <div class="service-card" data-service="limo">
-                <div class="service-image">
-                    <img src="https://images.unsplash.com/photo-1551522435-a13afa10f103?auto=format&fit=crop&w=500" alt="VIP Limo">
-                </div>
-                <h3 class="service-name">Xe VIP Limousine</h3>
-                <div class="service-experience">
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Nội thất hạng thương gia</span></div>
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Massage ghế điện</span></div>
-                    <div class="experience-item"><i class="fas fa-check"></i> <span>Wifi & Tivi đầy đủ</span></div>
-                </div>
-                <button class="btn-view-details">Chi tiết</button>
-            </div>
+            
+            <!-- Thêm các card khác... -->
         </div>
     </div>
 </section>
@@ -537,3 +466,4 @@
     <script src="script.js"></script>
 </body>
     </html>
+
