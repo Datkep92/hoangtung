@@ -266,7 +266,6 @@
             font-size: 14px;
             line-height: 1.5;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -607,12 +606,22 @@
                         </div>
                     </div>
 
-                    <div class="image-upload-area" onclick="document.getElementById('imageUpload').click()">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <h4>Hoặc kéo thả ảnh vào đây</h4>
-                        <p style="color: var(--text-tertiary);">Hỗ trợ JPG, PNG (Tối đa 2MB)</p>
-                        <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-                    </div>
+                    <!-- Trong admin.html, phần upload -->
+<div class="image-upload-area" onclick="document.getElementById('imageUpload').click()">
+    <i class="fas fa-cloud-upload-alt"></i>
+    <h4>Upload ảnh lên GitHub</h4>
+    <p class="text-tertiary">JPG, PNG (tối đa 5MB)</p>
+    <input type="file" id="imageUpload" accept="image/*" class="hidden" 
+           onchange="handleImageUpload(event)">
+</div>
+
+<!-- Thêm progress indicator -->
+<div id="uploadProgress" class="hidden" style="margin: 10px 0; text-align: center;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="loading-spinner" style="width: 20px; height: 20px;"></div>
+        <span>Đang upload ảnh lên GitHub...</span>
+    </div>
+</div>
 
                     <div class="images-grid" id="imagesList">
                         <!-- Danh sách ảnh sẽ được thêm ở đây -->

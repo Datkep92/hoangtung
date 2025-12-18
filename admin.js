@@ -1,5 +1,5 @@
 // admin.js - LuxuryMove Admin Panel
-const DEFAULT_ADMIN_TOKEN = 'luxurymove2024';
+const DEFAULT_ADMIN_TOKEN = '123123';
 let adminToken = DEFAULT_ADMIN_TOKEN;
 let servicesData = {};
 
@@ -98,45 +98,7 @@ function showStatusInModal(message, type = 'info') {
     </div>`;
 }
 
-// ===== CẬP NHẬT HÀM loadServicesData =====
-async function loadServicesData() {
-    showLoading(true);
-    
-    try {
-        // Load GitHub config first
-        loadGitHubConfig();
-        
-        // Try loading from GitHub first
-        let data = null;
-        
-        if (githubConfig.token && githubConfig.token !== '••••••••••') {
-            data = await loadFromGitHub();
-        }
-        
-        // If GitHub fails or no token, try local storage
-        if (!data) {
-            data = loadFromLocalStorage();
-            if (data) {
-                showStatus('Đã tải dữ liệu từ localStorage', data.services ? 'success' : 'warning');
-            }
-        }
-        
-        // If still no data, use default
-        if (!data) {
-            data = { services: getDefaultServices() };
-            showStatus('Dùng dữ liệu mặc định', 'warning');
-        }
-        
-        servicesData = data;
-        renderServicesList();
-        
-    } catch (error) {
-        console.error('Error loading data:', error);
-        showStatus('Lỗi tải dữ liệu: ' + error.message, 'error');
-    } finally {
-        showLoading(false);
-    }
-}
+
 
 async function loadFromGitHub() {
     const path = 'data/services.json';
@@ -437,6 +399,7 @@ function updateToken() {
 
 // ===== GITHUB DATA SYNC (FIXED CORS) =====
 async function loadServicesData() {
+    await ensureImagesFolder();
     showLoading(true);
     try {
         loadGitHubConfig();
@@ -795,6 +758,45 @@ async function deleteFromGitHub(data) {
     
     return true;
 }
+async function ensureImagesFolder() {
+    if (!githubConfig.token) return;
+    
+    try {
+        // Kiểm tra thư mục images có tồn tại không
+        const response = await fetch(
+            `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/images`,
+            {
+                headers: {
+                    'Authorization': `token ${githubConfig.token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            }
+        );
+        
+        if (response.status === 404) {
+            // Tạo thư mục images với README
+            await fetch(
+                `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/images/README.md`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubConfig.token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Create images folder',
+                        content: btoa('# Images Folder\n\nThis folder contains uploaded images for LuxuryMove services.'),
+                        branch: githubConfig.branch
+                    })
+                }
+            );
+            console.log('✅ Created images folder');
+        }
+    } catch (error) {
+        console.log('Images folder check:', error.message);
+    }
+}
+
 
 // Thêm nút "Xóa khỏi GitHub" riêng
 function addGitHubDeleteButton() {
@@ -889,48 +891,183 @@ function addImageItem(url, index = null) {
     }
 }
 
+
+// ===== GITHUB IMAGE UPLOAD =====
+async function uploadImageToGitHub(file) {
+    if (!githubConfig.token || githubConfig.token === '••••••••••') {
+        showStatus('⚠️ Chưa có GitHub Token', 'error');
+        return null;
+    }
+    
+    showLoading(true);
+    
+    try {
+        // Tạo tên file unique
+        const timestamp = Date.now();
+        const fileName = `image_${timestamp}_${Math.random().toString(36).substr(2, 9)}.${file.name.split('.').pop()}`;
+        const path = `images/${fileName}`;
+        
+        // Convert file to base64
+        const base64 = await fileToBase64(file);
+        
+        // Upload to GitHub
+        const response = await fetch(
+            `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/${path}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${githubConfig.token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/vnd.github.v3+json'
+                },
+                body: JSON.stringify({
+                    message: `Upload image: ${fileName}`,
+                    content: base64.split(',')[1], // Remove data:image/... prefix
+                    branch: githubConfig.branch
+                })
+            }
+        );
+        
+        if (response.ok) {
+            const data = await response.json();
+            // Lấy raw URL
+            const rawUrl = data.content.download_url;
+            showStatus(`✅ Đã upload ảnh lên GitHub`, 'success');
+            return rawUrl;
+        } else {
+            const error = await response.json();
+            throw new Error(error.message);
+        }
+        
+    } catch (error) {
+        console.error('Upload error:', error);
+        showStatus(`❌ Lỗi upload: ${error.message}`, 'error');
+        return null;
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Helper: Convert file to base64
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+async function deleteImageFromGitHub(imageUrl) {
+    if (!githubConfig.token || !imageUrl.includes('github.com')) {
+        return; // Không phải GitHub URL
+    }
+    
+    try {
+        // Extract path từ URL
+        // https://raw.githubusercontent.com/username/repo/branch/images/filename.jpg
+        const urlParts = imageUrl.split('/');
+        const branchIndex = urlParts.indexOf(githubConfig.branch);
+        const path = urlParts.slice(branchIndex + 1).join('/');
+        
+        // Lấy SHA của file
+        const getResponse = await fetch(
+            `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/${path}`,
+            {
+                headers: {
+                    'Authorization': `token ${githubConfig.token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            }
+        );
+        
+        if (getResponse.ok) {
+            const fileInfo = await getResponse.json();
+            const sha = fileInfo.sha;
+            
+            // Xóa file
+            await fetch(
+                `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/${path}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `token ${githubConfig.token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Delete image: ${path.split('/').pop()}`,
+                        sha: sha,
+                        branch: githubConfig.branch
+                    })
+                }
+            );
+            
+            console.log(`✅ Deleted image: ${path}`);
+        }
+    } catch (error) {
+        console.error('Delete image error:', error);
+    }
+}
+
+// Sửa hàm removeImage
 function removeImage(index) {
     const imagesList = document.getElementById('imagesList');
     if (imagesList.children[index]) {
+        const img = imagesList.children[index].querySelector('img');
+        if (img && img.src.includes('github.com')) {
+            // Xóa trên GitHub
+            deleteImageFromGitHub(img.src);
+        }
+        
         imagesList.removeChild(imagesList.children[index]);
         
-        // Re-index remaining items
+        // Re-index
         Array.from(imagesList.children).forEach((item, i) => {
             const btn = item.querySelector('.image-item-remove');
             btn.onclick = () => removeImage(i);
         });
     }
 }
-
-function handleImageUpload(event) {
+async function handleImageUpload(event) {
     const file = event.target.files[0];
+    const uploadArea = document.querySelector('.image-upload-area');
+    const progressDiv = document.getElementById('uploadProgress');
     
     if (!file) return;
     
-    // Validate file
+    // Validate
     if (!file.type.match('image.*')) {
         showStatus('Vui lòng chọn file ảnh', 'error');
         return;
     }
     
-    if (file.size > 2 * 1024 * 1024) { // 2MB limit
-        showStatus('File quá lớn (tối đa 2MB)', 'error');
+    if (file.size > 5 * 1024 * 1024) {
+        showStatus('File quá lớn (tối đa 5MB)', 'error');
         return;
     }
     
-    // Convert to Data URL for preview
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        // For production, you would upload to GitHub or other service
-        // For now, we use Data URL (base64)
-        addImageItem(e.target.result);
-        showStatus('Đã thêm ảnh từ file', 'success');
-    };
-    reader.readAsDataURL(file);
+    // Hiển thị progress
+    uploadArea.classList.add('uploading');
+    progressDiv.classList.remove('hidden');
     
-    // Reset file input
-    event.target.value = '';
+    try {
+        // Upload to GitHub
+        const imageUrl = await uploadImageToGitHub(file);
+        
+        if (imageUrl) {
+            addImageItem(imageUrl);
+            showStatus(`✅ Đã upload: ${file.name}`, 'success');
+        }
+        
+    } catch (error) {
+        showStatus(`❌ Upload thất bại: ${error.message}`, 'error');
+    } finally {
+        // Ẩn progress
+        uploadArea.classList.remove('uploading');
+        progressDiv.classList.add('hidden');
+        event.target.value = '';
+    }
 }
+
 
 // ===== FEATURES MANAGEMENT =====
 function addFeature() {
