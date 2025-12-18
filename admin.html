@@ -675,7 +675,236 @@
                 </div>
             </div>
         </div>
+<!-- Thêm đoạn này vào admin.html, sau phần Services List -->
+<!-- User Experience Section -->
+<div class="editor-header" style="margin-top: 40px; border-top: 1px solid rgba(212, 175, 55, 0.3); padding-top: 30px;">
+    <h2 class="section-title">Quản lý Trải nghiệm</h2>
+    <button class="btn btn-primary" onclick="addNewExperience()">
+        <i class="fas fa-plus"></i> Thêm trải nghiệm mới
+    </button>
+</div>
 
+<div class="services-list" id="experienceList">
+    <!-- Danh sách trải nghiệm sẽ được thêm bằng JS -->
+</div>
+
+<!-- Editor Form cho Experience (Ẩn ban đầu) -->
+<div id="experienceEditor" class="editor-form" style="display: none;">
+    <div class="editor-header">
+        <h2 class="section-title" id="experienceEditorTitle">Thêm trải nghiệm mới</h2>
+        <div>
+            <button class="btn btn-secondary" onclick="closeExperienceEditor()">
+                <i class="fas fa-times"></i> Hủy
+            </button>
+            <button class="btn btn-primary" onclick="saveExperience()">
+                <i class="fas fa-save"></i> Lưu trải nghiệm
+            </button>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label class="form-label">ID Trải nghiệm *</label>
+            <input type="text" id="experienceId" class="form-input" placeholder="vd: family, friends, business, tourist">
+            <small style="color: var(--text-tertiary);">Dùng để nhận diện, không dấu, không khoảng trắng</small>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Tiêu đề *</label>
+            <input type="text" id="experienceTitle" class="form-input" placeholder="Cho Gia Đình">
+        </div>
+    </div>
+
+    <div class="form-group form-full">
+        <label class="form-label">URL Ảnh *</label>
+        <input type="text" id="experienceImage" class="form-input" placeholder="https://images.unsplash.com/photo-...">
+        <button class="btn btn-secondary" onclick="previewExperienceImage()" style="margin-top: 10px;">
+            <i class="fas fa-eye"></i> Xem trước ảnh
+        </button>
+    </div>
+
+    <div class="form-group form-full">
+        <label class="form-label">Mô tả ngắn</label>
+        <textarea id="experienceDescription" class="form-input" placeholder="Hành trình ấm cúng, an tâm cho gia đình bạn" rows="3"></textarea>
+    </div>
+
+    <!-- Lợi ích -->
+    <div class="features-manager">
+        <h3 style="margin-bottom: 15px; color: var(--champagne);">
+            <i class="fas fa-check-circle"></i> Lợi ích nổi bật
+        </h3>
+        <div class="features-list" id="benefitsList">
+            <!-- Danh sách lợi ích -->
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="benefitInput" class="form-input" placeholder="Lợi ích mới...">
+            <button class="btn btn-secondary" onclick="addBenefit()">
+                <i class="fas fa-plus"></i> Thêm
+            </button>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 15px; margin-top: 30px;">
+        <button class="btn btn-primary" onclick="saveExperience()" style="flex: 1;">
+            <i class="fas fa-save"></i> Lưu trải nghiệm
+        </button>
+        <button class="btn btn-danger" onclick="deleteExperience()" id="deleteExperienceBtn" style="display: none;">
+            <i class="fas fa-trash"></i> Xóa trải nghiệm
+        </button>
+    </div>
+</div>
+<!-- Blog Management Section -->
+<div class="editor-header" style="margin-top: 40px; border-top: 1px solid rgba(212, 175, 55, 0.3); padding-top: 30px;">
+    <h2 class="section-title">Quản lý Bài viết (Blog)</h2>
+    <button class="btn btn-primary" onclick="addNewPost()">
+        <i class="fas fa-plus"></i> Thêm bài viết mới
+    </button>
+</div>
+
+<div class="services-list" id="blogList">
+    <!-- Blog posts list will be loaded here -->
+</div>
+
+<!-- Blog Editor Modal -->
+<div id="blogEditorModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: var(--card-black); border-radius: 16px; border: 1px solid var(--champagne); max-width: 800px; width: 100%; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="padding: 25px; border-bottom: 1px solid rgba(212,175,55,0.3);">
+            <h2 style="color: var(--champagne); margin-bottom: 20px;" id="blogEditorTitle">Thêm bài viết mới</h2>
+            <button onclick="closeBlogEditor()" style="position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; background: rgba(0,0,0,0.5); border: 1px solid var(--champagne); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div style="padding: 25px; overflow-y: auto; flex: 1;">
+            <div class="form-row" style="margin-bottom: 20px;">
+                <div class="form-group">
+                    <label class="form-label">ID Bài viết *</label>
+                    <input type="text" id="postId" class="form-input" placeholder="post1, post2, ...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tiêu đề *</label>
+                    <input type="text" id="postTitle" class="form-input" placeholder="Tiêu đề bài viết">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Tác giả</label>
+                    <input type="text" id="postAuthor" class="form-input" placeholder="LuxuryMove Team" value="LuxuryMove Team">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ngày đăng</label>
+<input type="date" id="postDate" class="form-input">                
+</div>
+                <div class="form-group">
+                    <label class="form-label">Danh mục</label>
+                    <select id="postCategory" class="form-input">
+                        <option value="travel">Du lịch</option>
+                        <option value="tips">Mẹo hay</option>
+                        <option value="news">Tin tức</option>
+                        <option value="review">Đánh giá</option>
+                        <option value="service">Dịch vụ</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Thêm vào phần tabs trong admin.html -->
+<div class="tabs">
+    <button class="tab-btn active" onclick="showTab('services')">
+        <i class="fas fa-car"></i> Dịch vụ
+    </button>
+    <button class="tab-btn" onclick="showTab('experiences')">
+        <i class="fas fa-users"></i> Trải nghiệm
+    </button>
+    <button class="tab-btn" onclick="showTab('blog')">
+        <i class="fas fa-newspaper"></i> Bài viết Blog
+    </button>
+    <button class="tab-btn" onclick="showTab('settings')">
+        <i class="fas fa-cog"></i> Cài đặt
+    </button>
+</div>
+
+<!-- Thêm phần nội dung tab Blog -->
+<div id="blogTab" class="tab-content">
+    <div class="section-header">
+        <h2><i class="fas fa-newspaper"></i> Quản lý Blog</h2>
+        <p>Thêm, chỉnh sửa các bài viết blog</p>
+    </div>
+    
+    <div class="action-bar">
+        <button class="btn btn-primary" onclick="addNewPost()">
+            <i class="fas fa-plus"></i> Thêm bài viết mới
+        </button>
+        <button class="btn btn-outline" onclick="refreshBlog()">
+            <i class="fas fa-sync-alt"></i> Làm mới
+        </button>
+    </div>
+    
+    <div id="blogList" class="services-grid" style="margin-top: 20px;">
+        <!-- Blog posts sẽ được hiển thị ở đây -->
+    </div>
+</div>
+            <div class="form-group">
+                <label class="form-label">URL Ảnh đại diện *</label>
+                <input type="text" id="postImage" class="form-input" placeholder="https://images.unsplash.com/photo-...">
+                <button type="button" class="btn btn-secondary" onclick="previewPostImage()" style="margin-top: 10px;">
+                    <i class="fas fa-eye"></i> Xem trước ảnh
+                </button>
+                <div id="postImagePreview" style="margin-top: 15px; display: none;">
+                    <img src="" alt="Preview" style="max-width: 200px; border-radius: 10px; border: 2px solid var(--champagne);">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Mô tả ngắn *</label>
+                <textarea id="postExcerpt" class="form-input" placeholder="Mô tả ngắn sẽ hiển thị trên card bài viết..." rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Nội dung chi tiết (HTML) *</label>
+                <div style="margin-bottom: 10px;">
+                    <button type="button" class="btn btn-secondary" onclick="insertContentTag('h2', 'Tiêu đề')" style="margin-right: 5px; margin-bottom: 5px;">
+                        <i class="fas fa-heading"></i> Tiêu đề
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="insertContentTag('p', 'Đoạn văn')" style="margin-right: 5px; margin-bottom: 5px;">
+                        <i class="fas fa-paragraph"></i> Đoạn văn
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="insertContentTag('img', 'Ảnh')" style="margin-right: 5px; margin-bottom: 5px;">
+                        <i class="fas fa-image"></i> Ảnh
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="insertContentTag('ul', 'Danh sách')" style="margin-right: 5px; margin-bottom: 5px;">
+                        <i class="fas fa-list"></i> Danh sách
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="insertFeaturesSection()" style="margin-right: 5px; margin-bottom: 5px; background: rgba(0,200,81,0.2);">
+                        <i class="fas fa-star"></i> Tính năng
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="insertPricingSection()" style="margin-right: 5px; margin-bottom: 5px; background: rgba(212,175,55,0.2);">
+                        <i class="fas fa-tag"></i> Bảng giá
+                    </button>
+                </div>
+                <textarea id="postContent" class="form-input" placeholder="Nội dung bài viết (có thể sử dụng HTML)..." rows="10"></textarea>
+                <small style="color: var(--text-tertiary); display: block; margin-top: 5px;">
+                    <i class="fas fa-info-circle"></i> Có thể sử dụng HTML để chèn ảnh, link, và định dạng
+                </small>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Tags (phân cách bằng dấu phẩy)</label>
+                <input type="text" id="postTags" class="form-input" placeholder="du lịch, nha trang, kinh nghiệm">
+            </div>
+        </div>
+        
+        <div style="padding: 20px; border-top: 1px solid rgba(212,175,55,0.3); display: flex; gap: 15px; background: rgba(0,0,0,0.5);">
+            <button class="btn btn-primary" onclick="saveBlogPost()" style="flex: 1;">
+                <i class="fas fa-save"></i> Lưu bài viết
+            </button>
+            <button class="btn btn-secondary" onclick="previewBlogPost()">
+                <i class="fas fa-eye"></i> Xem trước
+            </button>
+            <button class="btn btn-danger" onclick="deleteBlogPost()" id="deleteBlogPostBtn" style="display: none;">
+                <i class="fas fa-trash"></i> Xóa
+            </button>
+        </div>
+    </div>
+</div>
         <!-- Token Manager Modal -->
         <div id="tokenModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
             <div style="background: var(--card-black); padding: 30px; border-radius: 16px; border: 1px solid var(--champagne); max-width: 500px; width: 90%;">

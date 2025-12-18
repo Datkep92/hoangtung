@@ -326,3 +326,115 @@
             flex: 1;
         }
     }
+
+    /* ===== EXPERIENCE STYLING ===== */
+.experience-card {
+    background: var(--card-black);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.experience-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--champagne);
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.1);
+}
+
+.experience-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.experience-image {
+    width: 80px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 1px solid var(--champagne);
+}
+
+.experience-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.experience-content {
+    flex: 1;
+}
+
+.experience-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--champagne);
+    margin-bottom: 5px;
+}
+
+.experience-desc {
+    color: var(--text-tertiary);
+    font-size: 14px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.experience-benefits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.benefit-tag {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--light-champagne);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+/* Image Preview */
+.image-preview-container {
+    margin: 15px 0;
+    text-align: center;
+}
+
+.image-preview {
+    width: 200px;
+    height: 150px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0 auto 10px;
+    border: 2px solid var(--champagne);
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .experience-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .experience-image {
+        width: 100%;
+        height: 120px;
+    }
+    
+    .experience-benefits {
+        justify-content: center;
+    }
+}

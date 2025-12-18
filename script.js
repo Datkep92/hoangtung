@@ -37,28 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initApp();
 });
 
-// ===== CORE LOGIC =====
-async function initApp() {
-    try {
-        // Thử tải dữ liệu từ GitHub
-        const data = await fetchServicesFromGitHub();
-        
-        if (data) {
-            servicesData = data;
-            // Lưu dự phòng vào LocalStorage
-            localStorage.setItem('luxurymove_services', JSON.stringify(data));
-        } else {
-            // Nếu GitHub lỗi/không có token, dùng dữ liệu đã lưu lần trước
-            const localData = localStorage.getItem('luxurymove_services');
-            if (localData) servicesData = JSON.parse(localData);
-        }
-        
-        // Cập nhật giao diện
-        renderUI();
-    } catch (error) {
-        console.error("Lỗi khởi tạo:", error);
-    }
-}
+
 
 // Thay thế toàn bộ hàm renderUI() hiện tại bằng:
 function renderUI() {
@@ -120,34 +99,584 @@ function renderUI() {
     });
 }
 
-// Thêm hàm loadServices() mới để tải dữ liệu
-async function loadServices() {
-    console.log("🔄 Đang tải dữ liệu dịch vụ từ GitHub...");
+// Biến global cho experiences
+let experiencesData = { experiences: {} };
+
+// Cập nhật hàm initApp()
+async function initApp() {
+    try {
+        // Tải cả dịch vụ và trải nghiệm
+        const [servicesDataResult, experiencesDataResult] = await Promise.allSettled([
+            fetchServicesFromGitHub(),
+            fetchExperiencesFromGitHub()
+        ]);
+        
+        if (servicesDataResult.status === 'fulfilled' && servicesDataResult.value) {
+            servicesData = servicesDataResult.value;
+            localStorage.setItem('luxurymove_services', JSON.stringify(servicesData));
+        } else {
+            const localData = localStorage.getItem('luxurymove_services');
+            if (localData) servicesData = JSON.parse(localData);
+        }
+        
+        if (experiencesDataResult.status === 'fulfilled' && experiencesDataResult.value) {
+            experiencesData = experiencesDataResult.value;
+            localStorage.setItem('luxurymove_experiences', JSON.stringify(experiencesData));
+        } else {
+            const localData = localStorage.getItem('luxurymove_experiences');
+            if (localData) experiencesData = JSON.parse(localData);
+        }
+        
+        // Cập nhật giao diện
+        renderUI();
+        renderExperiencesUI();
+        
+    } catch (error) {
+        console.error("Lỗi khởi tạo:", error);
+    }
+}
+
+async function fetchExperiencesFromGitHub() {
+    const GITHUB_EXPERIENCES_URL = "https://raw.githubusercontent.com/Datkep92/hoangtung/main/data/experiences.json";
     
     try {
-        // Tải dữ liệu từ GitHub
-        const data = await fetchServicesFromGitHub();
+        const response = await fetch(`${GITHUB_EXPERIENCES_URL}?t=${Date.now()}`);
         
-        if (data && data.services) {
-            servicesData = data;
-            console.log("✅ Đã tải được dữ liệu từ GitHub:", Object.keys(data.services).length, "dịch vụ");
+        if (!response.ok) {
+            if (response.status === 404) {
+                console.log("ℹ️ File experiences.json chưa tồn tại trên GitHub, sẽ tạo mặc định");
+                return null;
+            }
+            console.log("❌ Cannot fetch experiences from GitHub:", response.status);
+            return null;
+        }
+        
+        const data = await response.json();
+        console.log("✅ GitHub experiences loaded:", Object.keys(data.experiences || {}).length, "experiences");
+        return data;
+        
+    } catch (error) {
+        console.log("❌ Fetch experiences error:", error.message);
+        return null;
+    }
+}
+
+// Hàm render experiences UI
+function renderExperiencesUI() {
+    const experienceRow = document.querySelector('.user-experience-row');
+    if (!experienceRow || !experiencesData.experiences) return;
+    
+    // Clear existing content
+    experienceRow.innerHTML = '';
+    
+    // Render từng experience
+    Object.entries(experiencesData.experiences).forEach(([id, experience]) => {
+        const card = document.createElement('div');
+        card.className = 'experience-card';
+        
+        card.innerHTML = `
+            <div class="exp-header-top">
+                <div class="exp-img-box">
+                    <img src="${experience.image}" alt="${experience.title}" loading="lazy">
+                </div>
+                <h3 class="exp-title">${experience.title}</h3>
+            </div>
+            <div class="exp-benefits">
+                ${(experience.benefits || []).map(benefit => `
+                    <div class="benefit-item">
+                        <i class="fas fa-check"></i>
+                        <span>${benefit}</span>
+                    </div>
+                `).join('')}
+            </div>
+            <p class="exp-desc">${experience.description || ''}</p>
+        `;
+        
+        experienceRow.appendChild(card);
+    });
+}
+function getDefaultExperiences() {
+    return {
+        'family': {
+            title: 'Cho Gia Đình',
+            image: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=500',
+            description: 'Hành trình ấm cúng, an tâm cho gia đình bạn',
+            benefits: [
+                'An toàn tuyệt đối cho người thân',
+                'Tiện nghi cho trẻ em & người lớn tuổi',
+                'Không gian riêng tư, thoải mái'
+            ]
+        },
+        'friends': {
+            title: 'Cho Bạn Bè',
+            image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=500',
+            description: 'Chuyến đi vui vẻ cùng những người bạn thân',
+            benefits: [
+                'Thoải mái trò chuyện, tạo kỷ niệm',
+                'Điểm dừng linh hoạt theo nhóm',
+                'Chi phí chia sẻ hợp lý'
+            ]
+        },
+        'business': {
+            title: 'Cho Công Việc',
+            image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=500',
+            description: 'Chuyên nghiệp cho mọi chuyến công tác',
+            benefits: [
+                'Đúng giờ tuyệt đối',
+                'WiFi miễn phí làm việc trên đường',
+                'Hóa đơn VAT đầy đủ'
+            ]
+        },
+        'tourist': {
+            title: 'Cho Du Khách',
+            image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8df0?auto=format&fit=crop&w=500',
+            description: 'Khám phá vùng đất mới cùng người dẫn đường',
+            benefits: [
+                'Tài xế am hiểu địa phương',
+                'Gợi ý điểm đến & ẩm thực',
+                'Hỗ trợ đa ngôn ngữ'
+            ]
+        }
+    };
+}
+function getSampleBlogPosts() {
+    return {
+        'post1': {
+            title: 'Kinh Nghiệm Du Lịch Nha Trang 2024',
+            author: 'LuxuryMove Team',
+            date: '2024-12-15',
+            category: 'travel',
+            image: 'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800',
+            excerpt: 'Khám phá những điểm đến hấp dẫn, ẩm thực đặc sắc và dịch vụ di chuyển cao cấp tại Nha Trang.',
+            content: `<h2>Giới Thiệu Về Nha Trang</h2>
+<p>Nha Trang - thành phố biển xinh đẹp với những bãi cát trắng trải dài, làn nước trong xanh và nền ẩm thực phong phú.</p>
+
+<div class="features-section">
+    <h3>Điểm Đến Nổi Bật</h3>
+    <div class="feature-item">
+        <i class="fas fa-umbrella-beach"></i>
+        <span>Bãi Dài - Thiên đường nghỉ dưỡng</span>
+    </div>
+    <div class="feature-item">
+        <i class="fas fa-water"></i>
+        <span>Vinpearl Land - Vui chơi giải trí</span>
+    </div>
+    <div class="feature-item">
+        <i class="fas fa-mountain"></i>
+        <span>Hòn Tằm - Khám phá thiên nhiên</span>
+    </div>
+</div>
+
+<h3>Dịch Vụ Di Chuyển Cao Cấp</h3>
+<p>LuxuryMove cung cấp dịch vụ đưa đón tận nơi với đội xe sang trọng, tài xế chuyên nghiệp.</p>
+
+<div class="pricing-section">
+    <h3>Bảng Giá Tham Khảo</h3>
+    <div class="price-item">
+        <i class="fas fa-car"></i>
+        <span>Đưa đón sân bay: <strong>450,000 VND</strong></span>
+    </div>
+    <div class="price-item">
+        <i class="fas fa-road"></i>
+        <span>Tour Nha Trang 1 ngày: <strong>1,200,000 VND</strong></span>
+    </div>
+</div>`,
+            tags: ['nha trang', 'du lịch', 'biển', 'kinh nghiệm']
+        },
+        'post2': {
+            title: 'Top 5 Dịch Vụ Xe Cao Cấp Tại Miền Trung',
+            author: 'Admin',
+            date: '2024-12-10',
+            category: 'service',
+            image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800',
+            excerpt: 'Khám phá những dịch vụ di chuyển cao cấp nhất tại khu vực miền Trung - Tây Nguyên.',
+            content: `<h2>Dịch Vụ Xe Cao Cấp LuxuryMove</h2>
+<p>Chúng tôi tự hào cung cấp những dịch vụ di chuyển cao cấp nhất với tiêu chuẩn 5 sao.</p>
+
+<div class="features-section">
+    <h3>Tính Năng Đặc Biệt</h3>
+    <div class="feature-item">
+        <i class="fas fa-shield-alt"></i>
+        <span>An toàn tuyệt đối - Bảo hiểm đầy đủ</span>
+    </div>
+    <div class="feature-item">
+        <i class="fas fa-user-tie"></i>
+        <span>Tài xế chuyên nghiệp - Mặc vest lịch sự</span>
+    </div>
+    <div class="feature-item">
+        <i class="fas fa-wifi"></i>
+        <span>WiFi miễn phí - Nước uống cao cấp</span>
+    </div>
+</div>
+
+<h3>Lợi Ích Cho Khách Hàng</h3>
+<ul>
+    <li>Đón tận nơi - không phải chờ đợi</li>
+    <li>Hóa đơn VAT đầy đủ cho doanh nghiệp</li>
+    <li>Hỗ trợ 24/7 - luôn có mặt khi cần</li>
+</ul>`,
+            tags: ['dịch vụ', 'xe cao cấp', 'luxury', 'miền trung']
+        },
+        'post3': {
+            title: 'Mẹo Đặt Xe Du Lịch Tiết Kiệm',
+            author: 'LuxuryMove Expert',
+            date: '2024-12-05',
+            category: 'tips',
+            image: 'https://images.unsplash.com/photo-1580692475446-c2fabbbbf7b5?auto=format&fit=crop&w=800',
+            excerpt: 'Những mẹo nhỏ giúp bạn tiết kiệm chi phí khi đặt xe du lịch mà vẫn đảm bảo chất lượng.',
+            content: `<h2>Tiết Kiệm Chi Phí Không Khó</h2>
+<p>Với những mẹo sau, bạn có thể tiết kiệm đến 30% chi phí di chuyển.</p>
+
+<div class="features-section">
+    <h3>Mẹo Hay Cần Biết</h3>
+    <div class="feature-item">
+        <i class="fas fa-calendar-check"></i>
+        <span>Đặt trước ít nhất 3 ngày để có giá tốt</span>
+    </div>
+    <div class="feature-item">
+        <i class="fas fa-users"></i>
+        <span>Đi theo nhóm để chia sẻ chi phí</span>
+    </div>
+    <div class="feature-item">
+        <i class="fas fa-clock"></i>
+        <span>Tránh giờ cao điểm - giá thấp hơn</span>
+    </div>
+</div>
+
+<h3>Khuyến Mãi Đặc Biệt</h3>
+<p>Hiện tại LuxuryMove đang có chương trình:</p>
+<ul>
+    <li>Giảm 10% cho đặt xe lần đầu</li>
+    <li>Tặng nước uống cao cấp cho chuyến > 4 giờ</li>
+    <li>Ưu đãi đặc biệt cho khách quay lại</li>
+</ul>`,
+            tags: ['mẹo hay', 'tiết kiệm', 'đặt xe', 'du lịch']
+        }
+    };
+}
+async function fetchBlogFromGitHub() {
+    const GITHUB_BLOG_URL = "https://raw.githubusercontent.com/Datkep92/hoangtung/main/data/blog.json";
+    
+    try {
+        const response = await fetch(`${GITHUB_BLOG_URL}?t=${Date.now()}`);
+        
+        if (!response.ok) {
+            if (response.status === 404) {
+                console.log("ℹ️ blog.json chưa tồn tại, sẽ dùng dữ liệu mẫu");
+                return { posts: getSampleBlogPosts() }; // Return sample data instead of null
+            }
+            console.log("❌ Cannot fetch blog:", response.status);
+            return null;
+        }
+        
+        const data = await response.json();
+        console.log("✅ GitHub blog loaded:", Object.keys(data.posts || {}).length, "posts");
+        return data;
+        
+    } catch (error) {
+        console.log("❌ Fetch blog error:", error.message);
+        return { posts: getSampleBlogPosts() }; // Return sample on error
+    }
+}
+async function loadBlogForHomepage() {
+    try {
+        console.log("📰 Đang tải blog cho trang chủ...");
+        
+        const data = await fetchBlogFromGitHub();
+        
+        if (data && data.posts) {
+            blogData = data;
+            localStorage.setItem('luxurymove_blog', JSON.stringify(data));
+            console.log("✅ Đã tải blog từ GitHub:", Object.keys(data.posts).length, "bài viết");
+        } else {
+            const localData = localStorage.getItem('luxurymove_blog');
+            if (localData) {
+                blogData = JSON.parse(localData);
+                console.log("📂 Dùng blog từ localStorage cache");
+            } else {
+                // Use sample data
+                blogData = { posts: getSampleBlogPosts() };
+                console.log("📝 Dùng blog mẫu");
+                localStorage.setItem('luxurymove_blog', JSON.stringify(blogData));
+            }
+        }
+        
+        renderBlogRow();
+        
+    } catch (error) {
+        console.error("❌ Error loading blog for homepage:", error);
+        // Try to render with existing data
+        try {
+            renderBlogRow();
+        } catch (renderError) {
+            console.error("❌ Failed to render blog slider:", renderError);
+        }
+    }
+}
+async function loadExperiencesFromGitHub() {
+    if (!githubConfig.token || githubConfig.token === '••••••••••') {
+        return null;
+    }
+    
+    try {
+        const response = await fetch(
+            `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/data/experiences.json`,
+            {
+                headers: {
+                    'Authorization': `token ${githubConfig.token}`,
+                    'Accept': 'application/vnd.github.v3.raw'
+                }
+            }
+        );
+        
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else if (response.status === 404) {
+            console.log('File experiences.json chưa tồn tại trên GitHub');
+            return null;
+        } else {
+            console.error('GitHub API error:', response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error loading experiences from GitHub:', error);
+        return null;
+    }
+}
+async function loadExperiencesData() {
+    console.log("🔄 Đang tải dữ liệu trải nghiệm...");
+    
+    try {
+        // Tải từ GitHub
+        const experiences = await fetchExperiencesFromGitHub();
+        
+        if (experiences && experiences.experiences) {
+            experiencesData = experiences;
+            localStorage.setItem('luxurymove_experiences', JSON.stringify(experiences));
+            console.log("✅ Đã tải được trải nghiệm từ GitHub:", Object.keys(experiences.experiences).length, "trải nghiệm");
+        } else {
+            // Thử từ localStorage
+            const localExperiences = localStorage.getItem('luxurymove_experiences');
+            if (localExperiences) {
+                experiencesData = JSON.parse(localExperiences);
+                console.log("📂 Dùng trải nghiệm từ localStorage cache");
+            } else {
+                // Dùng mặc định
+                experiencesData = { experiences: getDefaultExperiences() };
+                console.log("📝 Dùng trải nghiệm mặc định");
+                localStorage.setItem('luxurymove_experiences', JSON.stringify(experiencesData));
+            }
+        }
+        
+        renderExperiencesUI();
+        
+    } catch (error) {
+        console.error("❌ Lỗi tải trải nghiệm:", error);
+        // Don't call showStatus() here as it might not exist
+    }
+}
+// Mobile touch optimization for experience cards
+function setupMobileTouch() {
+    if (window.innerWidth <= 767) {
+        document.querySelectorAll('.experience-card').forEach(card => {
+            let touchTimer;
             
-            // Lưu vào localStorage làm cache
-            localStorage.setItem('luxurymove_services', JSON.stringify(data));
+            card.addEventListener('touchstart', function(e) {
+                touchTimer = setTimeout(() => {
+                    // Hiển thị mô tả khi giữ lâu
+                    const desc = this.querySelector('.exp-desc');
+                    if (desc) {
+                        desc.style.display = 'block';
+                    }
+                }, 500); // Giữ 0.5 giây
+            });
             
-            // Render giao diện
+            card.addEventListener('touchend', function(e) {
+                clearTimeout(touchTimer);
+                
+                // Ẩn mô tả sau 2 giây
+                const desc = this.querySelector('.exp-desc');
+                if (desc && desc.style.display === 'block') {
+                    setTimeout(() => {
+                        desc.style.display = 'none';
+                    }, 2000);
+                }
+            });
+            
+            card.addEventListener('touchmove', function(e) {
+                clearTimeout(touchTimer);
+            });
+        });
+    }
+}
+
+function renderBlogRow() {
+    const blogRow = document.getElementById('blogRow');
+    const posts = blogData.posts || {};
+    
+    if (!blogRow) {
+        console.log("ℹ️ Blog row not found on this page");
+        return;
+    }
+    
+    if (Object.keys(posts).length === 0) {
+        blogRow.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: var(--text-tertiary); min-width: 300px;">
+                <i class="fas fa-newspaper" style="font-size: 32px; margin-bottom: 15px;"></i>
+                <p>Chưa có bài viết nào</p>
+                <a href="blog.html" class="btn btn-outline" style="margin-top: 15px; font-size: 14px; padding: 8px 16px;">
+                    Xem blog
+                </a>
+            </div>
+        `;
+        return;
+    }
+    
+    // Get latest 8 posts for horizontal scroll
+    const latestPosts = Object.entries(posts)
+        .sort((a, b) => {
+            const dateA = new Date(a[1].date || '2000-01-01');
+            const dateB = new Date(b[1].date || '2000-01-01');
+            return dateB - dateA;
+        })
+        .slice(0, 8);
+    
+    let html = '';
+    latestPosts.forEach(([id, post], index) => {
+        const date = new Date(post.date || new Date()).toLocaleDateString('vi-VN');
+        const categoryName = getCategoryName(post.category);
+        
+        html += `
+            <div class="blog-horizontal-card" onclick="openBlogPostFromHomepage('${id}')">
+                <div class="blog-card-image">
+                    <img src="${post.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800'}" 
+                         alt="${post.title}" 
+                         loading="lazy"
+                         onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800'">
+                    <span class="blog-card-category">${categoryName}</span>
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-card-meta">
+                        <span class="blog-card-author">
+                            <i class="fas fa-user"></i> ${post.author || 'Admin'}
+                        </span>
+                        <span class="blog-card-date">
+                            <i class="far fa-calendar"></i> ${date}
+                        </span>
+                    </div>
+                    <h3 class="blog-card-title">${post.title || 'Bài viết mới'}</h3>
+                    <p class="blog-card-excerpt">${post.excerpt || 'Đang cập nhật nội dung...'}</p>
+                    
+                    ${post.tags && post.tags.length > 0 ? `
+                        <div class="blog-card-tags">
+                            ${post.tags.slice(0, 2).map(tag => `
+                                <span class="blog-card-tag">#${tag}</span>
+                            `).join('')}
+                            ${post.tags.length > 2 ? `<span class="blog-card-tag">+${post.tags.length - 2}</span>` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    <a href="#" class="blog-read-more" onclick="openBlogPostFromHomepage('${id}'); return false;">
+                        Đọc tiếp <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        `;
+    });
+    
+    blogRow.innerHTML = html;
+}
+
+
+function openBlogPostFromHomepage(postId) {
+    // Check if blog modal functions exist
+    if (typeof openBlogPost === 'function') {
+        openBlogPost(postId);
+    } else {
+        // Fallback: redirect to blog page
+        window.location.href = `blog.html#post-${postId}`;
+    }
+}
+
+async function init() {
+    console.log("🚀 LuxuryMove Website Initializing...");
+    
+    try {
+        // Add modal styles
+        addModalStyles();
+        
+        // Load services
+        await loadServices();
+        
+        // Load experiences (don't await - run in background)
+        loadExperiencesData().catch(error => {
+            console.error("Failed to load experiences:", error);
+        });
+        
+        // Load blog for homepage (don't await - run in background)
+        loadBlogForHomepage().catch(error => {
+            console.error("Failed to load blog:", error);
+        });
+        
+        // Setup event listeners
+        setupEventListeners();
+        
+        // Setup mobile touch
+        setupMobileTouch();
+        
+    } catch (error) {
+        console.error("❌ Lỗi khởi tạo:", error);
+    }
+}
+// Get category name for blog
+function getCategoryName(category) {
+    const categories = {
+        'travel': 'Du lịch',
+        'tips': 'Mẹo hay',
+        'news': 'Tin tức',
+        'review': 'Đánh giá',
+        'service': 'Dịch vụ'
+    };
+    return categories[category] || 'Khác';
+}
+async function loadServices() {
+    console.log("🔄 Đang tải dữ liệu từ GitHub...");
+    
+    try {
+        // Tải services
+        const services = await fetchServicesFromGitHub();
+        
+        if (services && services.services) {
+            servicesData = services;
+            localStorage.setItem('luxurymove_services', JSON.stringify(services));
+            console.log("✅ Đã tải được dịch vụ từ GitHub:", Object.keys(services.services).length, "dịch vụ");
             renderUI();
         } else {
             // Thử từ localStorage nếu GitHub không có
-            const localData = localStorage.getItem('luxurymove_services');
-            if (localData) {
-                servicesData = JSON.parse(localData);
-                console.log("📂 Dùng dữ liệu từ localStorage cache");
+            const localServices = localStorage.getItem('luxurymove_services');
+            if (localServices) {
+                servicesData = JSON.parse(localServices);
+                console.log("📂 Dùng dịch vụ từ localStorage cache");
                 renderUI();
-            } else {
-                console.log("⚠️ Không có dữ liệu, giữ nguyên giao diện mặc định");
             }
         }
+        
+        // Tải experiences - nếu không có trên GitHub thì dùng mặc định
+        const experiences = await fetchExperiencesFromGitHub();
+        if (experiences && experiences.experiences) {
+            experiencesData = experiences;
+            localStorage.setItem('luxurymove_experiences', JSON.stringify(experiences));
+            console.log("✅ Đã tải được trải nghiệm từ GitHub:", Object.keys(experiences.experiences).length, "trải nghiệm");
+        } else {
+            // Dùng dữ liệu mặc định
+            experiencesData = { experiences: getDefaultExperiences() };
+            console.log("📂 Dùng trải nghiệm mặc định");
+            localStorage.setItem('luxurymove_experiences', JSON.stringify(experiencesData));
+        }
+        
+        renderExperiencesUI();
+        
     } catch (error) {
         console.error("❌ Lỗi tải dữ liệu:", error);
     }
@@ -593,19 +1122,7 @@ function addModalStyles() {
     }
 }
 
-// Cập nhật hàm init() để gọi addModalStyles
-function init() {
-    console.log("🚀 LuxuryMove Website Initializing...");
-    
-    // Thêm CSS cho modal
-    addModalStyles();
-    
-    // Tải dữ liệu dịch vụ
-    loadServices();
-    
-    // Khởi tạo các event listeners khác
-    setupEventListeners();
-}
+
 // Thay thế toàn bộ hàm setupEventListeners() bằng:
 function setupEventListeners() {
     console.log("🔧 Thiết lập event listeners...");
@@ -1720,11 +2237,17 @@ function removePrice(index) {
     }
 }
 
-// ===== UTILITY FUNCTIONS =====
 function showStatus(message, type = 'success') {
+    // Check if status bar exists (only in admin panel)
     const statusBar = document.getElementById('statusBar');
     const statusIcon = document.getElementById('statusIcon');
     const statusMessage = document.getElementById('statusMessage');
+    
+    if (!statusBar) {
+        // If not in admin panel, just log to console
+        console.log(`📢 ${type}: ${message}`);
+        return;
+    }
     
     // Set icon based on type
     statusIcon.className = 'fas ' + (
@@ -1741,7 +2264,6 @@ function showStatus(message, type = 'success') {
         statusBar.classList.remove('show');
     }, 5000);
 }
-
 function showLoading(show) {
     const overlay = document.getElementById('loadingOverlay');
     if (show) {

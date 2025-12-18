@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Điều Khoản Dịch Vụ - LuxuryMove</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(212, 175, 55, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .logo-icon {
+            font-size: 32px;
+            color: #D4AF37;
+        }
+        
+        .logo h1 {
+            font-size: 28px;
+            background: linear-gradient(90deg, #D4AF37, #FFD700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        /* Content */
+        .content {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1, h2, h3 {
+            color: #D4AF37;
+            margin: 25px 0 15px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            border-left: 4px solid #D4AF37;
+            padding-left: 15px;
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            color: #FFD700;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+            padding-left: 10px;
+        }
+        
+        .warning-box {
+            background: rgba(255, 68, 68, 0.1);
+            border: 2px solid rgba(255, 68, 68, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+        
+        .info-box {
+            background: rgba(0, 200, 81, 0.1);
+            border: 2px solid rgba(0, 200, 81, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 25px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        th {
+            background: rgba(212, 175, 55, 0.3);
+            color: #D4AF37;
+            padding: 15px;
+            text-align: left;
+            border: 1px solid rgba(212, 175, 55, 0.5);
+        }
+        
+        td {
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 10px;
+        }
+        
+        .step-number {
+            background: #D4AF37;
+            color: #000;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 50px;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: #D4AF37;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: #FFD700;
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(212, 175, 55, 0.2);
+            color: #D4AF37;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: rgba(212, 175, 55, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .step {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <h1>LuxuryMove</h1>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="content">
+            <h1><i class="fas fa-file-contract"></i> ĐIỀU KHOẢN DỊCH VỤ</h1>
+            <p><strong>Cập nhật lần cuối:</strong> 20/12/2024</p>
+            <p><strong>Hiệu lực:</strong> Khi bạn sử dụng dịch vụ của LuxuryMove, bạn đồng ý với các điều khoản dưới đây.</p>
+            
+            <div class="warning-box">
+                <p><i class="fas fa-exclamation-triangle"></i> <strong>LƯU Ý QUAN TRỌNG:</strong> Vui lòng đọc kỹ điều khoản trước khi sử dụng dịch vụ. Nếu không đồng ý, vui lòng không đặt dịch vụ.</p>
+            </div>
+            
+            <h2>1. Định Nghĩa</h2>
+            <ul>
+                <li><strong>"Dịch vụ":</strong> Dịch vụ đặt xe cao cấp do LuxuryMove cung cấp</li>
+                <li><strong>"Khách hàng":</strong> Người đặt và sử dụng dịch vụ</li>
+                <li><strong>"Tài xế":</strong> Đối tác vận chuyển của LuxuryMove</li>
+                <li><strong>"Chuyến đi":</strong> Hành trình từ điểm đón đến điểm trả</li>
+                <li><strong>"Phí dịch vụ":</strong> Tổng chi phí khách hàng phải thanh toán</li>
+            </ul>
+            
+            <h2>2. Điều Kiện Sử Dụng</h2>
+            <h3>2.1 Độ tuổi</h3>
+            <p>Bạn phải từ 18 tuổi trở lên để sử dụng dịch vụ. Người dưới 18 tuổi cần có sự đồng ý của người giám hộ.</p>
+            
+            <h3>2.2 Tài khoản</h3>
+            <p>Khi tạo tài khoản, bạn cam kết:</p>
+            <ul>
+                <li>Cung cấp thông tin chính xác, đầy đủ</li>
+                <li>Bảo mật thông tin đăng nhập</li>
+                <li>Chịu trách nhiệm cho mọi hoạt động trên tài khoản</li>
+                <li>Thông báo ngay nếu phát hiện truy cập trái phép</li>
+            </ul>
+            
+            <h2>3. Quy Trình Đặt Dịch Vụ</h2>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Đặt chỗ</h3>
+                    <p>Chọn loại xe, điểm đón/trả, thời gian trên website/app. Hệ thống sẽ hiển thị giá ước tính.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Xác nhận</h3>
+                    <p>Nhận thông báo xác nhận qua SMS/email. Chuyến đi chỉ chính thức được đặt khi có xác nhận.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Thanh toán</h3>
+                    <p>Thanh toán trước qua thẻ/ ví điện tử hoặc thanh toán sau cho tài xế. Xem chi tiết tại mục 4.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Thực hiện chuyến đi</h3>
+                    <p>Có mặt đúng điểm hẹn, xuất trình mã đặt chỗ cho tài xế. Tài xế sẽ đưa bạn đến điểm đến.</p>
+                </div>
+            </div>
+            
+            <h2>4. Thanh Toán & Giá Cả</h2>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Loại phí</th>
+                            <th>Mô tả</th>
+                            <th>Áp dụng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Cước cơ bản</strong></td>
+                            <td>Phí theo km và thời gian</td>
+                            <td>Áp dụng cho mọi chuyến</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phí đặt xe</strong></td>
+                            <td>Phí dịch vụ đặt chỗ</td>
+                            <td>5.000 - 20.000 VNĐ</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phí cao điểm</strong></td>
+                            <td>Giờ cao điểm, ngày lễ</td>
+                            <td>Tăng 10-30%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phí đường cao tốc</strong></td>
+                            <td>Phí BOT, cầu đường</td>
+                            <td>Khách hàng chịu</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phí chờ</strong></td>
+                            <td>Chờ quá 5 phút tại điểm đón</td>
+                            <td>10.000 VNĐ/5 phút</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phí hủy</strong></td>
+                            <td>Hủy sau khi tài xế đã nhận chuyến</td>
+                            <td>10-50% cước phí</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="info-box">
+                <p><i class="fas fa-info-circle"></i> <strong>Lưu ý:</strong> Giá có thể thay đổi do điều kiện giao thông, thời tiết. Giá cuối cùng hiển thị trên app/email xác nhận là giá chính thức.</p>
+            </div>
+            
+            <h2>5. Chính Sách Hủy & Hoàn Tiền</h2>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Thời điểm hủy</th>
+                            <th>Phí hủy</th>
+                            <th>Hoàn tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Trước 30 phút giờ đón</td>
+                            <td>Miễn phí</td>
+                            <td>100%</td>
+                        </tr>
+                        <tr>
+                            <td>Trong vòng 30 phút trước giờ đón</td>
+                            <td>10% cước phí</td>
+                            <td>90%</td>
+                        </tr>
+                        <tr>
+                            <td>Sau khi tài xế đến điểm đón</td>
+                            <td>30% cước phí</td>
+                            <td>70%</td>
+                        </tr>
+                        <tr>
+                            <td>Tài xế đã chờ quá 15 phút</td>
+                            <td>50% cước phí</td>
+                            <td>50%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p><strong>Thời gian hoàn tiền:</strong> 3-7 ngày làm việc, tùy ngân hàng.</p>
+            
+            <h2>6. Quyền & Trách Nhiệm Khách Hàng</h2>
+            <h3>Quyền của bạn:</h3>
+            <ul>
+                <li>Được cung cấp dịch vụ đúng như đã đặt</li>
+                <li>Được tài xế lịch sự, chuyên nghiệp</li>
+                <li>Được xe sạch sẽ, an toàn</li>
+                <li>Khiếu nại nếu dịch vụ không đạt chuẩn</li>
+                <li>Được bảo mật thông tin cá nhân</li>
+            </ul>
+            
+            <h3>Trách nhiệm của bạn:</h3>
+            <ul>
+                <li>Cung cấp thông tin chính xác</li>
+                <li>Có mặt đúng giờ tại điểm đón</li>
+                <li>Tôn trọng tài xế và phương tiện</li>
+                <li>Không yêu cầu vi phạm luật giao thông</li>
+                <li>Thanh toán đầy đủ theo thỏa thuận</li>
+                <li>Bồi thường nếu gây hư hại xe</li>
+            </ul>
+            
+            <h2>7. Trách Nhiệm Của LuxuryMove</h2>
+            <ol>
+                <li>Cung cấp dịch vụ an toàn, chất lượng</li>
+                <li>Đảm bảo tài xế có đủ giấy phép, bảo hiểm</li>
+                <li>Xử lý khiếu nại trong 24-48 giờ</li>
+                <li>Bảo mật thông tin khách hàng</li>
+                <li>Cung cấp hỗ trợ 24/7 qua hotline</li>
+            </ol>
+            
+            <h2>8. Giới Hạn Trách Nhiệm</h2>
+            <p>LuxuryMove không chịu trách nhiệm cho:</p>
+            <ul>
+                <li>Thiệt hại do lỗi của khách hàng</li>
+                <li>Thất lạc tài sản quên trên xe</li>
+                <li>Chậm trễ do nguyên nhân bất khả kháng (thiên tai, biểu tình, ùn tắc nghiêm trọng)</li>
+                <li>Hành vi vi phạm pháp luật của khách hàng</li>
+            </ul>
+            
+            <h2>9. Khiếu Nại & Giải Quyết Tranh Chấp</h2>
+            <p><strong>Bước 1:</strong> Liên hệ hotline 1900 1234 hoặc email support@luxurymove.vn</p>
+            <p><strong>Bước 2:</strong> LuxuryMove sẽ phản hồi trong 24 giờ</p>
+            <p><strong>Bước 3:</strong> Nếu không thỏa thuận được, vụ việc sẽ được đưa ra Tòa án có thẩm quyền tại TP.HCM</p>
+            
+            <h2>10. Thay Đổi Điều Khoản</h2>
+            <p>LuxuryMove có quyền sửa đổi điều khoản. Phiên bản mới sẽ có hiệu lực sau 7 ngày kể từ khi đăng tải. Tiếp tục sử dụng dịch vụ nghĩa là bạn chấp nhận điều khoản mới.</p>
+            
+            <div class="info-box">
+                <h3><i class="fas fa-phone-volume"></i> Hỗ Trợ Khách Hàng</h3>
+                <p><strong>Hotline:</strong> 1900 1234 (24/7)</p>
+                <p><strong>Email:</strong> support@luxurymove.vn</p>
+                <p><strong>Giờ làm việc:</strong> 8:00 - 22:00 hàng ngày</p>
+            </div>
+            
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Quay lại Trang chủ
+            </a>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-links">
+                <a href="index.html">Trang chủ</a>
+                <a href="terms-of-service.html">Điều khoản dịch vụ</a>
+                <a href="privacy-policy.html">Chính sách bảo mật</a>
+                <a href="contact.html">Liên hệ</a>
+            </div>
+            <div class="copyright">
+                <p>© 2024 LuxuryMove. Tất cả các quyền được bảo lưu.</p>
+                <p>Giấy phép kinh doanh vận tải số: 0504040302 do Sở GTVT TP.HCM cấp</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

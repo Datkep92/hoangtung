@@ -211,10 +211,7 @@ init() {
                         </button>
                     </div>
 
-                    <div class="chatbot-pro-disclaimer">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Hỗ trợ 24/7 • Phản hồi trong 3 phút</span>
-                    </div>
+                   
                 </div>
             </div>
         </div>

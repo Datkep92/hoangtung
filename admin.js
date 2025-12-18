@@ -282,7 +282,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ===== AUTHENTICATION =====
 function handleLogin(isAuto = false) {
     const inputPass = document.getElementById('adminToken').value;
     const inputGit = document.getElementById('githubToken').value;
@@ -302,8 +301,14 @@ function handleLogin(isAuto = false) {
 
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('editorSection').style.display = 'block';
+        // Load all data
+        loadAllData(); // Replace loadServicesData() with this
         
+        showStatus('Đã kết nối hệ thống', 'success');
+        // GỌI CẢ HAI HÀM ĐỂ LOAD DỮ LIỆU
         loadServicesData();
+        loadExperiencesData(); // THÊM DÒNG NÀY
+        
         showStatus('Đã kết nối hệ thống', 'success');
     } else {
         showStatus('Mã truy cập không đúng', 'error');
@@ -397,7 +402,6 @@ function updateToken() {
 
 
 
-// ===== GITHUB DATA SYNC (FIXED CORS) =====
 async function loadServicesData() {
     await ensureImagesFolder();
     showLoading(true);
@@ -425,6 +429,10 @@ async function loadServicesData() {
         } else {
             showStatus('Vui lòng cấu hình GitHub để tải dữ liệu', 'info');
         }
+        
+        // THÊM: Load experiences data
+        await loadExperiencesData(); // DÒNG NÀY RẤT QUAN TRỌNG
+        
     } catch (error) {
         console.error('Error loading data:', error);
         showStatus('Lỗi tải dữ liệu: ' + error.message, 'error');
@@ -432,63 +440,7 @@ async function loadServicesData() {
         showLoading(false);
     }
 }
-async function saveAllServices() {
-    showLoading(true);
-    
-    // Sao lưu local trước
-    localStorage.setItem('luxurymove_services', JSON.stringify(servicesData));
 
-    if (!githubConfig.token) {
-        showStatus('Chưa có GitHub Token để lưu', 'error');
-        showLoading(false);
-        return;
-    }
-
-    try {
-        const path = 'data/services.json';
-        const url = `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/${path}`;
-        
-        // 1. Lấy SHA của file hiện tại
-        let sha = "";
-        const getRes = await fetch(url, {
-            headers: { 'Authorization': `token ${githubConfig.token}` }
-        });
-        
-        if (getRes.ok) {
-            const fileData = await getRes.json();
-            sha = fileData.sha;
-        }
-
-        // 2. Push dữ liệu mới
-        servicesData.last_updated = new Date().toISOString();
-        const content = btoa(unescape(encodeURIComponent(JSON.stringify(servicesData, null, 2))));
-        
-        const putRes = await fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `token ${githubConfig.token}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                message: `Update services: ${new Date().toLocaleString('vi-VN')}`,
-                content: content,
-                sha: sha || undefined,
-                branch: githubConfig.branch
-            })
-        });
-
-        if (putRes.ok) {
-            showStatus('✅ Đã lưu lên GitHub thành công!', 'success');
-        } else {
-            const err = await putRes.json();
-            throw new Error(err.message);
-        }
-    } catch (error) {
-        showStatus('❌ Lỗi GitHub: ' + error.message, 'error');
-    } finally {
-        showLoading(false);
-    }
-}
 function updateWebsiteData() {
     // This function would be called from the main website to load the updated data
     // For now, we just log it
@@ -629,7 +581,6 @@ function closeEditor() {
     document.getElementById('serviceEditor').style.display = 'none';
     currentEditingId = null;
 }
-
 // Hàm lưu dịch vụ - GỌI LẠI saveAllServices()
 function saveService() {
     const serviceId = document.getElementById('serviceId').value.trim();
@@ -680,7 +631,6 @@ function saveService() {
     closeEditor();
 }
 
-// Hàm xóa dịch vụ - GỌI LẠI saveAllServices()
 function deleteService(serviceId) {
     if (!serviceId && currentEditingId) {
         serviceId = currentEditingId;
@@ -1229,4 +1179,1171 @@ function importData(event) {
     event.target.value = '';
 }
 
-// Thêm các nút Export/Import vào admin-actions nếu cần
+// ===== EXPERIENCE MANAGEMENT =====
+let experiencesData = { experiences: {} };
+let currentEditingExperienceId = null;
+
+
+
+// Load experiences data
+async function loadExperiencesData() {
+    try {
+        // Thử tải từ GitHub trước
+        if (githubConfig.token && githubConfig.token !== '••••••••••') {
+            const data = await loadExperiencesFromGitHub();
+            if (data) {
+                experiencesData = data;
+                showStatus('Đã tải trải nghiệm từ GitHub', 'success');
+                renderExperiencesList();
+                return;
+            }
+        }
+        
+        // Thử từ localStorage
+        const localData = localStorage.getItem('luxurymove_experiences');
+        if (localData) {
+            experiencesData = JSON.parse(localData);
+            showStatus('Đã tải trải nghiệm từ localStorage', 'warning');
+            renderExperiencesList();
+            return;
+        }
+        
+        // Dùng dữ liệu mặc định
+        experiencesData = { experiences: getDefaultExperiences() };
+        renderExperiencesList();
+        showStatus('Dùng dữ liệu trải nghiệm mặc định', 'warning');
+        
+    } catch (error) {
+        console.error('Error loading experiences:', error);
+        showStatus('Lỗi tải trải nghiệm: ' + error.message, 'error');
+    }
+}
+
+// Get default experiences (giống với dữ liệu trong index.html)
+function getDefaultExperiences() {
+    return {
+        'family': {
+            title: 'Cho Gia Đình',
+            image: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=500',
+            description: 'Hành trình ấm cúng, an tâm cho gia đình bạn',
+            benefits: [
+                'An toàn tuyệt đối cho người thân',
+                'Tiện nghi cho trẻ em & người lớn tuổi',
+                'Không gian riêng tư, thoải mái'
+            ]
+        },
+        'friends': {
+            title: 'Cho Bạn Bè',
+            image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=500',
+            description: 'Chuyến đi vui vẻ cùng những người bạn thân',
+            benefits: [
+                'Thoải mái trò chuyện, tạo kỷ niệm',
+                'Điểm dừng linh hoạt theo nhóm',
+                'Chi phí chia sẻ hợp lý'
+            ]
+        },
+        'business': {
+            title: 'Cho Công Việc',
+            image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=500',
+            description: 'Chuyên nghiệp cho mọi chuyến công tác',
+            benefits: [
+                'Đúng giờ tuyệt đối',
+                'WiFi miễn phí làm việc trên đường',
+                'Hóa đơn VAT đầy đủ'
+            ]
+        },
+        'tourist': {
+            title: 'Cho Du Khách',
+            image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8df0?auto=format&fit=crop&w=500',
+            description: 'Khám phá vùng đất mới cùng người dẫn đường',
+            benefits: [
+                'Tài xế am hiểu địa phương',
+                'Gợi ý điểm đến & ẩm thực',
+                'Hỗ trợ đa ngôn ngữ'
+            ]
+        }
+    };
+}
+
+// Render experiences list
+function renderExperiencesList() {
+    const container = document.getElementById('experienceList');
+    const experiences = experiencesData.experiences || {};
+    
+    if (Object.keys(experiences).length === 0) {
+        container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-tertiary);">
+                <i class="fas fa-users" style="font-size: 48px; margin-bottom: 20px;"></i>
+                <h3>Chưa có trải nghiệm nào</h3>
+                <p>Nhấn "Thêm trải nghiệm mới" để bắt đầu</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    
+    Object.entries(experiences).forEach(([id, experience]) => {
+        html += `
+            <div class="experience-card" onclick="editExperience('${id}')">
+                <div class="experience-header">
+                    <div class="experience-image">
+                        <img src="${experience.image}" alt="${experience.title}">
+                    </div>
+                    <div class="experience-content">
+                        <h3 class="experience-name">${experience.title}</h3>
+                        <p class="experience-desc">${experience.description || 'Chưa có mô tả'}</p>
+                    </div>
+                    <div class="service-item-actions">
+                        <button class="action-btn" onclick="editExperience('${id}'); event.stopPropagation();">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn" onclick="deleteExperienceConfirm('${id}'); event.stopPropagation();" style="background: rgba(255, 68, 68, 0.2);">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="experience-benefits">
+                    ${(experience.benefits || []).slice(0, 3).map(benefit => `
+                        <span class="benefit-tag">${benefit}</span>
+                    `).join('')}
+                    ${(experience.benefits || []).length > 3 ? `<span class="benefit-tag">+${(experience.benefits || []).length - 3} khác</span>` : ''}
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// Add new experience
+function addNewExperience() {
+    currentEditingExperienceId = null;
+    
+    // Reset form
+    document.getElementById('experienceId').value = '';
+    document.getElementById('experienceTitle').value = '';
+    document.getElementById('experienceImage').value = '';
+    document.getElementById('experienceDescription').value = '';
+    document.getElementById('benefitsList').innerHTML = '';
+    
+    // Add default benefits
+    addBenefitItem('Lợi ích 1');
+    addBenefitItem('Lợi ích 2');
+    addBenefitItem('Lợi ích 3');
+    
+    // Show editor
+    document.getElementById('experienceEditorTitle').textContent = 'Thêm trải nghiệm mới';
+    document.getElementById('experienceEditor').style.display = 'block';
+    document.getElementById('deleteExperienceBtn').style.display = 'none';
+    
+    // Scroll to editor
+    document.getElementById('experienceEditor').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Edit experience
+function editExperience(experienceId) {
+    currentEditingExperienceId = experienceId;
+    const experience = experiencesData.experiences[experienceId];
+    
+    if (!experience) {
+        showStatus('Không tìm thấy trải nghiệm', 'error');
+        return;
+    }
+    
+    // Fill form
+    document.getElementById('experienceId').value = experienceId;
+    document.getElementById('experienceTitle').value = experience.title || '';
+    document.getElementById('experienceImage').value = experience.image || '';
+    document.getElementById('experienceDescription').value = experience.description || '';
+    
+    // Render benefits
+    const benefitsList = document.getElementById('benefitsList');
+    benefitsList.innerHTML = '';
+    if (experience.benefits && Array.isArray(experience.benefits)) {
+        experience.benefits.forEach((benefit, index) => {
+            addBenefitItem(benefit, index);
+        });
+    }
+    
+    // Show editor
+    document.getElementById('experienceEditorTitle').textContent = `Chỉnh sửa: ${experience.title}`;
+    document.getElementById('experienceEditor').style.display = 'block';
+    document.getElementById('deleteExperienceBtn').style.display = 'block';
+    
+    // Scroll to editor
+    document.getElementById('experienceEditor').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Close experience editor
+function closeExperienceEditor() {
+    document.getElementById('experienceEditor').style.display = 'none';
+    currentEditingExperienceId = null;
+}
+// Hàm sync từng loại data riêng biệt
+async function syncSingleToGitHub(type, data) {
+    if (!githubConfig.token || githubConfig.token === '••••••••••') {
+        console.log('ℹ️ Không có token, bỏ qua sync');
+        return false;
+    }
+    
+    const filenames = {
+        'services': 'data/services.json',
+        'experiences': 'data/experiences.json',
+        'blog': 'data/blog.json'
+    };
+    
+    const filename = filenames[type];
+    if (!filename) {
+        console.error('❌ Loại data không hợp lệ:', type);
+        return false;
+    }
+    
+    console.log(`🔄 Bắt đầu sync ${type} lên GitHub...`);
+    
+    try {
+        // 1. Lấy SHA hiện tại từ GitHub
+        let sha = '';
+        try {
+            const getRes = await fetch(
+                `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/${filename}`,
+                {
+                    headers: { 'Authorization': `token ${githubConfig.token}` },
+                    signal: AbortSignal.timeout(5000) // Timeout 5s
+                }
+            );
+            
+            if (getRes.ok) {
+                const fileInfo = await getRes.json();
+                sha = fileInfo.sha;
+                console.log(`📄 Lấy được SHA: ${sha.substring(0, 8)}...`);
+            } else if (getRes.status === 404) {
+                console.log(`📝 File ${filename} chưa tồn tại, sẽ tạo mới`);
+            } else {
+                console.warn(`⚠️ Lỗi khi lấy file: ${getRes.status}`);
+                return false;
+            }
+        } catch (error) {
+            console.warn(`⚠️ Không thể kết nối đến GitHub:`, error.message);
+            return false;
+        }
+        
+        // 2. Chuẩn bị nội dung
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+        
+        // 3. Upload lên GitHub
+        const putRes = await fetch(
+            `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/${filename}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${githubConfig.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Update ${type} - ${new Date().toLocaleString('vi-VN')}`,
+                    content: content,
+                    sha: sha || undefined,
+                    branch: githubConfig.branch
+                }),
+                signal: AbortSignal.timeout(10000) // Timeout 10s
+            }
+        );
+        
+        if (putRes.ok) {
+            console.log(`✅ Đã sync ${type} thành công`);
+            showBackgroundStatus(`✅ ${type} đã đồng bộ`, 'success');
+            return true;
+        } else {
+            const errorData = await putRes.json();
+            console.error(`❌ Lỗi sync ${type}:`, errorData.message);
+            
+            // Xử lý lỗi 409 (Conflict)
+            if (putRes.status === 409) {
+                console.log('🔄 Phát hiện conflict, thử lại với SHA mới...');
+                // Có thể thêm retry logic ở đây
+            }
+            
+            showBackgroundStatus(`❌ Lỗi sync ${type}`, 'error');
+            return false;
+        }
+        
+    } catch (error) {
+        console.error(`💥 Lỗi nghiêm trọng khi sync ${type}:`, error);
+        return false;
+    }
+}
+function saveExperience() {
+    showLoading(true, 'Đang lưu trải nghiệm...');
+    
+    // 1. Lấy dữ liệu từ form
+    const expId = document.getElementById('experienceId').value.trim();
+    const title = document.getElementById('experienceTitle').value.trim();
+    
+    if (!expId || !title) {
+        showStatus('Vui lòng nhập ID và tiêu đề', 'error');
+        showLoading(false);
+        return;
+    }
+    
+    // 2. Thu thập benefits
+    const benefits = [];
+    document.querySelectorAll('#benefitsList .benefit-item input').forEach(input => {
+        if (input.value.trim()) benefits.push(input.value.trim());
+    });
+    
+    // 3. Tạo object data
+    const expData = {
+        title: title,
+        image: document.getElementById('experienceImage').value.trim(),
+        description: document.getElementById('experienceDescription').value.trim() || title,
+        benefits: benefits.length > 0 ? benefits : ['Lợi ích 1', 'Lợi ích 2']
+    };
+    
+    // 4. LƯU VÀO LOCALSTORAGE NGAY
+    if (!experiencesData.experiences) experiencesData.experiences = {};
+    experiencesData.experiences[expId] = expData;
+    experiencesData.last_updated = new Date().toISOString();
+    
+    localStorage.setItem('luxurymove_experiences', JSON.stringify(experiencesData));
+    
+    // 5. CẬP NHẬT UI NGAY
+    renderExperiencesList();
+    showStatus(`✅ Đã lưu "${title}"`, 'success');
+    
+    // 6. SYNC LÊN GITHUB RIÊNG LẺ (KHÔNG gọi saveAllData)
+    syncSingleToGitHub('experiences', experiencesData);
+    
+    showLoading(false);
+    closeExperienceEditor();
+}
+// Delete experience confirmation
+function deleteExperienceConfirm(experienceId) {
+    if (confirm(`Bạn có chắc muốn xóa trải nghiệm "${experienceId}"?`)) {
+        deleteExperience(experienceId);
+    }
+}
+
+// Delete experience
+function deleteExperience(experienceId = null) {
+    if (!experienceId && currentEditingExperienceId) {
+        experienceId = currentEditingExperienceId;
+    }
+    
+    if (!experienceId) return;
+    
+    if (experiencesData.experiences && experiencesData.experiences[experienceId]) {
+        delete experiencesData.experiences[experienceId];
+        
+        // Update storage
+        localStorage.setItem('luxurymove_experiences', JSON.stringify(experiencesData, null, 2));
+        
+        // Update UI
+        renderExperiencesList();
+        closeExperienceEditor();
+        
+        showStatus(`Đã xóa trải nghiệm: ${experienceId}`, 'success');
+    }
+}
+
+// Preview experience image
+function previewExperienceImage() {
+    const imageUrl = document.getElementById('experienceImage').value.trim();
+    if (!imageUrl) {
+        showStatus('Vui lòng nhập URL ảnh', 'error');
+        return;
+    }
+    
+    // Tạo preview nếu chưa có
+    let previewContainer = document.getElementById('imagePreviewContainer');
+    if (!previewContainer) {
+        previewContainer = document.createElement('div');
+        previewContainer.id = 'imagePreviewContainer';
+        previewContainer.className = 'image-preview-container';
+        previewContainer.innerHTML = `
+            <div class="image-preview">
+                <img src="" alt="Preview" id="imagePreview">
+            </div>
+            <small style="color: var(--text-tertiary);">Preview - Ảnh này sẽ hiển thị trên website</small>
+        `;
+        
+        const imageInput = document.getElementById('experienceImage');
+        imageInput.parentNode.insertBefore(previewContainer, imageInput.nextSibling);
+    }
+    
+    // Cập nhật ảnh preview
+    document.getElementById('imagePreview').src = imageUrl;
+    showStatus('Đã cập nhật preview ảnh', 'success');
+}
+
+// Benefit management functions
+function addBenefit() {
+    const input = document.getElementById('benefitInput');
+    const value = input.value.trim();
+    
+    if (!value) {
+        showStatus('Vui lòng nhập lợi ích', 'error');
+        return;
+    }
+    
+    addBenefitItem(value);
+    input.value = '';
+    showStatus('Đã thêm lợi ích', 'success');
+}
+
+function addBenefitItem(benefit, index = null) {
+    const benefitsList = document.getElementById('benefitsList');
+    const itemIndex = index !== null ? index : benefitsList.children.length;
+    
+    const div = document.createElement('div');
+    div.className = 'feature-item benefit-item';
+    div.innerHTML = `
+        <input type="text" class="form-input" value="${benefit.replace(/"/g, '&quot;')}" placeholder="Lợi ích...">
+        <button class="action-btn" onclick="removeBenefit(${itemIndex})">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    if (index !== null) {
+        if (benefitsList.children[index]) {
+            benefitsList.replaceChild(div, benefitsList.children[index]);
+        } else {
+            benefitsList.appendChild(div);
+        }
+    } else {
+        benefitsList.appendChild(div);
+    }
+}
+
+function removeBenefit(index) {
+    const benefitsList = document.getElementById('benefitsList');
+    if (benefitsList.children[index]) {
+        benefitsList.removeChild(benefitsList.children[index]);
+        
+        // Re-index
+        Array.from(benefitsList.children).forEach((item, i) => {
+            const btn = item.querySelector('button');
+            btn.onclick = () => removeBenefit(i);
+        });
+    }
+}
+
+// Load experiences from GitHub
+async function loadExperiencesFromGitHub() {
+    if (!githubConfig.token || githubConfig.token === '••••••••••') {
+        return null;
+    }
+    
+    try {
+        const response = await fetch(
+            `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/data/experiences.json`,
+            {
+                headers: {
+                    'Authorization': `token ${githubConfig.token}`,
+                    'Accept': 'application/vnd.github.v3.raw'
+                }
+            }
+        );
+        
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else if (response.status === 404) {
+            console.log('File experiences.json chưa tồn tại trên GitHub');
+            return null;
+        } else {
+            console.error('GitHub API error:', response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error loading experiences from GitHub:', error);
+        return null;
+    }
+}
+
+function showTab(tabName) {
+    // Ẩn tất cả các tab
+    const tabs = ['services', 'experiences', 'blog', 'settings'];
+    tabs.forEach(tab => {
+        document.getElementById(`${tab}Tab`).style.display = 'none';
+        document.querySelector(`button[onclick="showTab('${tab}')"]`).classList.remove('active');
+    });
+    
+    // Hiển thị tab được chọn
+    document.getElementById(`${tabName}Tab`).style.display = 'block';
+    document.querySelector(`button[onclick="showTab('${tabName}')"]`).classList.add('active');
+    
+    // Load dữ liệu cho tab
+    switch(tabName) {
+        case 'services':
+            renderServicesList();
+            break;
+        case 'experiences':
+            renderExperiencesList();
+            break;
+        case 'blog':
+            renderBlogList();
+            break;
+    }
+}
+// Save experiences to GitHub
+async function saveExperiencesToGitHub() {
+    if (!githubConfig.token || githubConfig.token === '••••••••••') {
+        showStatus('Chưa cấu hình GitHub Token', 'warning');
+        return;
+    }
+    
+    showLoading(true);
+    
+    try {
+        // Cập nhật timestamp
+        experiencesData.last_updated = new Date().toISOString();
+        
+        // Thử lấy SHA nếu file đã tồn tại
+        let sha = '';
+        try {
+            const getResponse = await fetch(
+                `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/data/experiences.json`,
+                {
+                    headers: {
+                        'Authorization': `token ${githubConfig.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                }
+            );
+            
+            if (getResponse.ok) {
+                const fileInfo = await getResponse.json();
+                sha = fileInfo.sha;
+            }
+        } catch (e) {
+            console.log('File experiences.json chưa tồn tại, sẽ tạo mới');
+        }
+        
+        // Tạo hoặc update file
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(experiencesData, null, 2))));
+        
+        const response = await fetch(
+            `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/data/experiences.json`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${githubConfig.token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/vnd.github.v3+json'
+                },
+                body: JSON.stringify({
+                    message: `Update experiences data - ${new Date().toLocaleString('vi-VN')}`,
+                    content: content,
+                    branch: githubConfig.branch,
+                    sha: sha || undefined
+                })
+            }
+        );
+        
+        if (response.ok) {
+            showStatus('✅ Đã lưu trải nghiệm lên GitHub thành công!', 'success');
+            
+            // Cũng lưu vào localStorage làm backup
+            localStorage.setItem('luxurymove_experiences', JSON.stringify(experiencesData, null, 2));
+            
+        } else {
+            const error = await response.json();
+            throw new Error(error.message || `GitHub API error: ${response.status}`);
+        }
+        
+    } catch (error) {
+        console.error('Error saving experiences to GitHub:', error);
+        showStatus('❌ Lỗi lưu lên GitHub: ' + error.message, 'error');
+        
+        // Fallback to localStorage
+        localStorage.setItem('luxurymove_experiences', JSON.stringify(experiencesData, null, 2));
+        showStatus('Đã lưu vào localStorage làm backup', 'warning');
+    } finally {
+        showLoading(false);
+    }
+}
+
+
+
+
+// ===== AUTO SYNC MANAGER =====
+const SyncManager = {
+    queue: [],
+    isProcessing: false,
+    pendingSyncs: new Set(), // Tránh sync trùng lặp
+    
+    // Thêm task vào queue
+    addToQueue(type, data, action = 'update') {
+        const taskId = `${type}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        
+        // Nếu đang có pending cùng type, bỏ qua để tránh conflict
+        if (this.pendingSyncs.has(type)) {
+            console.log(`⏭️ Bỏ qua sync ${type} vì đang có pending`);
+            return;
+        }
+        
+        this.queue.push({
+            id: taskId,
+            type: type,
+            data: JSON.parse(JSON.stringify(data)), // Deep clone
+            action: action,
+            timestamp: Date.now(),
+            retries: 0
+        });
+        
+        this.pendingSyncs.add(type);
+        this.processQueue();
+    },
+    
+    // Xử lý queue
+    async processQueue() {
+        if (this.isProcessing || this.queue.length === 0) return;
+        
+        this.isProcessing = true;
+        
+        while (this.queue.length > 0) {
+            const task = this.queue[0];
+            
+            try {
+                console.log(`🔄 Đang sync ${task.type}...`);
+                const success = await this.syncToGitHub(task.type, task.data);
+                
+                if (success) {
+                    // Thành công - xóa task
+                    this.queue.shift();
+                    this.pendingSyncs.delete(task.type);
+                    console.log(`✅ Đã sync ${task.type}`);
+                } else {
+                    // Thất bại - thử lại hoặc bỏ
+                    task.retries++;
+                    
+                    if (task.retries >= 3) {
+                        console.warn(`❌ Bỏ qua ${task.type} sau 3 lần thử`);
+                        this.queue.shift();
+                        this.pendingSyncs.delete(task.type);
+                    } else {
+                        // Delay trước khi thử lại
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                    }
+                }
+            } catch (error) {
+                console.error(`Sync error ${task.type}:`, error);
+                this.queue.shift();
+                this.pendingSyncs.delete(task.type);
+            }
+        }
+        
+        this.isProcessing = false;
+    },
+    
+    // Sync lên GitHub
+    async syncToGitHub(type, data) {
+        if (!githubConfig.token || githubConfig.token === '••••••••••') {
+            return false;
+        }
+        
+        const filenames = {
+            'services': 'data/services.json',
+            'experiences': 'data/experiences.json',
+            'blog': 'data/blog.json'
+        };
+        
+        const filename = filenames[type];
+        if (!filename) return false;
+        
+        try {
+            // 1. Luôn lấy SHA mới nhất
+            let sha = '';
+            try {
+                const getRes = await fetch(
+                    `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/${filename}`,
+                    {
+                        headers: { 'Authorization': `token ${githubConfig.token}` },
+                        signal: AbortSignal.timeout(5000) // Timeout 5s
+                    }
+                );
+                
+                if (getRes.ok) {
+                    const fileInfo = await getRes.json();
+                    sha = fileInfo.sha;
+                }
+            } catch (e) {
+                // File chưa tồn tại hoặc lỗi mạng
+                console.log(`ℹ️ ${filename} chưa tồn tại trên GitHub`);
+            }
+            
+            // 2. Cập nhật timestamp
+            data.last_updated = new Date().toISOString();
+            
+            // 3. Upload
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+            
+            const putRes = await fetch(
+                `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/${filename}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubConfig.token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Auto-sync ${type} - ${new Date().toLocaleString('vi-VN')}`,
+                        content: content,
+                        sha: sha || undefined,
+                        branch: githubConfig.branch
+                    }),
+                    signal: AbortSignal.timeout(10000) // Timeout 10s
+                }
+            );
+            
+            return putRes.ok;
+        } catch (error) {
+            console.error(`GitHub sync error (${type}):`, error);
+            return false;
+        }
+    }
+};
+////
+// ===== BLOG MANAGEMENT =====
+let blogData = { posts: {} };
+let currentEditingPostId = null;
+
+// Load blog data
+async function loadBlogData() {
+    try {
+        // Try from GitHub
+        if (githubConfig.token && githubConfig.token !== '••••••••••') {
+            const data = await loadBlogFromGitHub();
+            if (data) {
+                blogData = data;
+                showStatus('Đã tải blog từ GitHub', 'success');
+                renderBlogList();
+                return;
+            }
+        }
+        
+        // Try from localStorage
+        const localData = localStorage.getItem('luxurymove_blog');
+        if (localData) {
+            blogData = JSON.parse(localData);
+            showStatus('Đã tải blog từ localStorage', 'warning');
+            renderBlogList();
+            return;
+        }
+        
+        // Create default
+        blogData = { posts: {} };
+        renderBlogList();
+        
+    } catch (error) {
+        console.error('Error loading blog:', error);
+        showStatus('Lỗi tải blog: ' + error.message, 'error');
+    }
+}
+
+// Load blog from GitHub
+async function loadBlogFromGitHub() {
+    if (!githubConfig.token || githubConfig.token === '••••••••••') {
+        return null;
+    }
+    
+    try {
+        const response = await fetch(
+            `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/data/blog.json`,
+            {
+                headers: {
+                    'Authorization': `token ${githubConfig.token}`,
+                    'Accept': 'application/vnd.github.v3.raw'
+                }
+            }
+        );
+        
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else if (response.status === 404) {
+            console.log('File blog.json chưa tồn tại trên GitHub');
+            return null;
+        } else {
+            console.error('GitHub API error:', response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error loading blog from GitHub:', error);
+        return null;
+    }
+}
+
+// Render blog list
+function renderBlogList() {
+    const container = document.getElementById('blogList');
+    const posts = blogData.posts || {};
+    
+    if (Object.keys(posts).length === 0) {
+        container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-tertiary);">
+                <i class="fas fa-newspaper" style="font-size: 48px; margin-bottom: 20px;"></i>
+                <h3>Chưa có bài viết nào</h3>
+                <p>Nhấn "Thêm bài viết mới" để bắt đầu</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    Object.entries(posts).forEach(([id, post]) => {
+        const date = new Date(post.date).toLocaleDateString('vi-VN');
+        
+        html += `
+            <div class="service-item" onclick="editBlogPost('${id}')">
+                <div class="service-item-header">
+                    <h3 class="service-item-title">${post.title}</h3>
+                    <div class="service-item-actions">
+                        <button class="action-btn" onclick="editBlogPost('${id}'); event.stopPropagation();">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn" onclick="deleteBlogPostConfirm('${id}'); event.stopPropagation();" style="background: rgba(255, 68, 68, 0.2);">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="service-item-image">
+                    <img src="${post.image}" alt="${post.title}">
+                </div>
+                <p class="service-item-desc">${post.excerpt || 'Chưa có mô tả'}</p>
+                <div style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 12px; color: var(--text-tertiary);">
+                    <span><i class="fas fa-user"></i> ${post.author}</span>
+                    <span><i class="far fa-calendar"></i> ${date}</span>
+                    <span><i class="fas fa-tag"></i> ${post.category || 'Khác'}</span>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// Add new post
+function addNewPost() {
+    currentEditingPostId = null;
+    
+    // Reset form
+    document.getElementById('postId').value = '';
+    document.getElementById('postTitle').value = '';
+    document.getElementById('postAuthor').value = 'LuxuryMove Team';
+    document.getElementById('postDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('postCategory').value = 'travel';
+    document.getElementById('postImage').value = '';
+    document.getElementById('postExcerpt').value = '';
+    document.getElementById('postContent').value = '';
+    document.getElementById('postTags').value = '';
+    
+    // Hide preview
+    document.getElementById('postImagePreview').style.display = 'none';
+    
+    // Show editor
+    document.getElementById('blogEditorTitle').textContent = 'Thêm bài viết mới';
+    document.getElementById('blogEditorModal').style.display = 'flex';
+    document.getElementById('deleteBlogPostBtn').style.display = 'none';
+}
+
+// Edit post
+function editBlogPost(postId) {
+    currentEditingPostId = postId;
+    const post = blogData.posts[postId];
+    
+    if (!post) {
+        showStatus('Không tìm thấy bài viết', 'error');
+        return;
+    }
+    
+    // Fill form
+    document.getElementById('postId').value = postId;
+    document.getElementById('postTitle').value = post.title || '';
+    document.getElementById('postAuthor').value = post.author || 'LuxuryMove Team';
+    document.getElementById('postDate').value = post.date || new Date().toISOString().split('T')[0];
+    document.getElementById('postCategory').value = post.category || 'travel';
+    document.getElementById('postImage').value = post.image || '';
+    document.getElementById('postExcerpt').value = post.excerpt || '';
+    document.getElementById('postContent').value = post.content || '';
+    document.getElementById('postTags').value = post.tags ? post.tags.join(', ') : '';
+    
+    // Show preview if image exists
+    if (post.image) {
+        const preview = document.getElementById('postImagePreview');
+        preview.querySelector('img').src = post.image;
+        preview.style.display = 'block';
+    }
+    
+    // Show editor
+    document.getElementById('blogEditorTitle').textContent = `Chỉnh sửa: ${post.title}`;
+    document.getElementById('blogEditorModal').style.display = 'flex';
+    document.getElementById('deleteBlogPostBtn').style.display = 'block';
+}
+
+// Close blog editor
+function closeBlogEditor() {
+    document.getElementById('blogEditorModal').style.display = 'none';
+    currentEditingPostId = null;
+}
+
+// Save blog post
+async function saveBlogPost() {
+    const postId = document.getElementById('postId').value.trim();
+    const title = document.getElementById('postTitle').value.trim();
+    const image = document.getElementById('postImage').value.trim();
+    const excerpt = document.getElementById('postExcerpt').value.trim();
+    const content = document.getElementById('postContent').value.trim();
+    
+    if (!postId || !title || !image || !excerpt || !content) {
+        showStatus('Vui lòng nhập đầy đủ thông tin', 'error');
+        return;
+    }
+    
+    // Collect tags
+    const tagsInput = document.getElementById('postTags').value.trim();
+    const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+    
+    // Create post object
+    const postData = {
+        title: title,
+        author: document.getElementById('postAuthor').value.trim() || 'LuxuryMove Team',
+        date: document.getElementById('postDate').value || new Date().toISOString().split('T')[0],
+        category: document.getElementById('postCategory').value,
+        image: image,
+        excerpt: excerpt,
+        content: content,
+        tags: tags
+    };
+    
+    // Save to data
+    if (!blogData.posts) {
+        blogData.posts = {};
+    }
+    
+    blogData.posts[postId] = postData;
+    blogData.last_updated = new Date().toISOString();
+    
+    // Update list
+    renderBlogList();
+    
+    // Save to storage
+    localStorage.setItem('luxurymove_blog', JSON.stringify(blogData, null, 2));
+    // Try to save to GitHub
+    await saveBlogToGitHub();
+    
+    showStatus(`Đã lưu bài viết: ${title}`, 'success');
+    closeBlogEditor();
+}
+
+// Save blog to GitHub
+async function saveBlogToGitHub() {
+    if (!githubConfig.token || githubConfig.token === '••••••••••') {
+        return;
+    }
+    
+    showLoading(true);
+    
+    try {
+        // Update timestamp
+        blogData.last_updated = new Date().toISOString();
+        
+        // Get SHA if exists
+        let sha = '';
+        try {
+            const getResponse = await fetch(
+                `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/data/blog.json`,
+                {
+                    headers: {
+                        'Authorization': `token ${githubConfig.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                }
+            );
+            
+            if (getResponse.ok) {
+                const fileInfo = await getResponse.json();
+                sha = fileInfo.sha;
+            }
+        } catch (e) {
+            console.log('File blog.json chưa tồn tại, sẽ tạo mới');
+        }
+        
+        // Create or update file
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(blogData, null, 2))));
+        
+        const response = await fetch(
+            `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/data/blog.json`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${githubConfig.token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/vnd.github.v3+json'
+                },
+                body: JSON.stringify({
+                    message: `Update blog data - ${new Date().toLocaleString('vi-VN')}`,
+                    content: content,
+                    branch: githubConfig.branch,
+                    sha: sha || undefined
+                })
+            }
+        );
+        
+        if (response.ok) {
+            showStatus('✅ Đã lưu blog lên GitHub!', 'success');
+        } else {
+            const error = await response.json();
+            throw new Error(error.message || `GitHub API error: ${response.status}`);
+        }
+        
+    } catch (error) {
+        console.error('Error saving blog to GitHub:', error);
+        // Continue anyway - it's saved locally
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Delete post confirmation
+function deleteBlogPostConfirm(postId) {
+    if (confirm(`Bạn có chắc muốn xóa bài viết "${postId}"?`)) {
+        deleteBlogPost(postId);
+    }
+}
+
+async function deleteBlogPost(postId = null) {
+    if (!postId && currentEditingPostId) postId = currentEditingPostId;
+    if (!postId || !confirm(`Xóa bài "${postId}"?`)) return;
+    
+    showLoading(true, 'Đang xóa...');
+    
+    // 1. XÓA LOCAL NGAY
+    if (blogData.posts[postId]) {
+        delete blogData.posts[postId];
+        blogData.last_updated = new Date().toISOString();
+        localStorage.setItem('luxurymove_blog', JSON.stringify(blogData));
+        
+        // 2. CẬP NHẬT UI NGAY
+        renderBlogList();
+        showStatus(`✅ Đã xóa bài viết`, 'success');
+        
+        // 3. AUTO-SYNC LÊN GITHUB
+        SyncManager.addToQueue('blog', blogData, 'delete');
+    }
+    
+    showLoading(false);
+    closeBlogEditor();
+}
+
+// Preview image
+function previewPostImage() {
+    const imageUrl = document.getElementById('postImage').value.trim();
+    if (!imageUrl) {
+        showStatus('Vui lòng nhập URL ảnh', 'error');
+        return;
+    }
+    
+    const preview = document.getElementById('postImagePreview');
+    preview.querySelector('img').src = imageUrl;
+    preview.style.display = 'block';
+    showStatus('Đã cập nhật preview ảnh', 'success');
+}
+
+// Preview blog post
+function previewBlogPost() {
+    // This would open a preview window
+    // For now, just show a message
+    showStatus('Chức năng xem trước đang phát triển', 'info');
+}
+
+// Insert HTML tags
+function insertContentTag(tag, placeholder) {
+    const textarea = document.getElementById('postContent');
+    let insertText = '';
+    
+    switch(tag) {
+        case 'h2':
+            insertText = '<h2>Tiêu đề phụ</h2>\n';
+            break;
+        case 'p':
+            insertText = '<p>Đoạn văn nội dung...</p>\n';
+            break;
+        case 'img':
+            insertText = '<img src="https://images.unsplash.com/photo-..." alt="Mô tả ảnh" style="max-width: 100%; border-radius: 10px; margin: 20px 0;">\n';
+            break;
+        case 'ul':
+            insertText = '<ul>\n<li>Mục 1</li>\n<li>Mục 2</li>\n<li>Mục 3</li>\n</ul>\n';
+            break;
+    }
+    
+    textarea.value += insertText;
+    textarea.focus();
+}
+
+// Insert features section
+function insertFeaturesSection() {
+    const textarea = document.getElementById('postContent');
+    const features = `<div class="features-section">
+    <h3>Tính năng nổi bật</h3>
+    <div class="feature-item">
+        <i class="fas fa-check-circle"></i>
+        <span>Tính năng 1 - Mô tả ngắn</span>
+    </div>
+    <div class="feature-item">
+        <i class="fas fa-check-circle"></i>
+        <span>Tính năng 2 - Mô tả ngắn</span>
+    </div>
+    <div class="feature-item">
+        <i class="fas fa-check-circle"></i>
+        <span>Tính năng 3 - Mô tả ngắn</span>
+    </div>
+</div>\n`;
+    
+    textarea.value += features;
+    textarea.focus();
+}
+
+// Insert pricing section
+function insertPricingSection() {
+    const textarea = document.getElementById('postContent');
+    const pricing = `<div class="pricing-section">
+    <h3>Bảng giá tham khảo</h3>
+    <div class="price-item">
+        <i class="fas fa-car"></i>
+        <span>Dịch vụ A: <strong>500,000 VND</strong></span>
+    </div>
+    <div class="price-item">
+        <i class="fas fa-road"></i>
+        <span>Dịch vụ B: <strong>1,000,000 VND</strong></span>
+    </div>
+    <div class="price-item">
+        <i class="fas fa-clock"></i>
+        <span>Theo giờ: <strong>350,000 VND/giờ</strong></span>
+    </div>
+</div>\n`;
+    
+    textarea.value += pricing;
+    textarea.focus();
+}
+
+// Update loadAllData to include blog
+async function loadAllData() {
+    showLoading(true);
+    try {
+        await Promise.allSettled([
+            loadServicesData(),
+            loadExperiencesData(),
+            loadBlogData() // Add this line
+        ]);
+        
+        showStatus('Đã tải tất cả dữ liệu', 'success');
+    } catch (error) {
+        console.error('Error loading all data:', error);
+        showStatus('Lỗi tải dữ liệu: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+

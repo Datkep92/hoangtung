@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxuryMove Blog - Tin tức & Kinh nghiệm du lịch</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content container">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-crown"></i></div>
+                <div class="logo-text">Luxury<span>Move</span></div>
+            </div>
+            
+            <div class="header-actions">
+                <a href="tel:0931243679" class="phone-btn">
+                    <i class="fas fa-phone-alt"></i>
+                    <span>0931.243.679</span>
+                </a>
+                <a href="index.html" class="btn btn-secondary" style="padding: 8px 16px; font-size: 14px;">
+                    <i class="fas fa-home"></i> Trang chủ
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Blog Hero -->
+    <section class="blog-hero">
+        <div class="container">
+            <h1 class="blog-hero-title">LuxuryMove Blog</h1>
+            <p class="blog-hero-subtitle">Chia sẻ kinh nghiệm du lịch & dịch vụ vận chuyển cao cấp</p>
+        </div>
+    </section>
+
+    <!-- Blog Categories -->
+    <section class="blog-categories">
+        <div class="container">
+            <div class="categories-scroll">
+                <button class="category-btn active" data-category="all">Tất cả</button>
+                <button class="category-btn" data-category="travel">Du lịch</button>
+                <button class="category-btn" data-category="tips">Mẹo hay</button>
+                <button class="category-btn" data-category="news">Tin tức</button>
+                <button class="category-btn" data-category="review">Đánh giá</button>
+                <button class="category-btn" data-category="service">Dịch vụ</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Posts Grid -->
+    <section class="blog-posts">
+        <div class="container">
+            <div class="posts-grid" id="postsGrid">
+                <!-- Posts will be loaded by JavaScript -->
+                <div class="loading-posts">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Đang tải bài viết...
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Post Modal -->
+    <div class="blog-modal-overlay" id="blogModal">
+        <div class="blog-modal-container">
+            <div class="blog-modal-header">
+                <button class="blog-modal-close" id="closeBlogModal">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="blog-modal-meta">
+                    <span class="blog-modal-category" id="modalCategory">Du lịch</span>
+                    <span class="blog-modal-date" id="modalDate">18/12/2024</span>
+                </div>
+                <h2 class="blog-modal-title" id="modalTitle">Tiêu đề bài viết</h2>
+                <div class="blog-modal-author" id="modalAuthor">
+                    <i class="fas fa-user"></i> Admin
+                </div>
+            </div>
+            <div class="blog-modal-content" id="modalContent">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="blog-modal-actions">
+                <button class="btn btn-primary" onclick="bookFromBlog()">
+                    <i class="fas fa-calendar-alt"></i> Đặt dịch vụ
+                </button>
+                <button class="btn btn-outline" onclick="callFromBlog()">
+                    <i class="fas fa-phone-alt"></i> Gọi 0931.243.679
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <!-- Same footer as index.html -->
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="bottom-tab-bar">
+        <div class="tab-items">
+            <a href="index.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-home"></i></div>
+                <div class="tab-label">Trang chủ</div>
+            </a>
+            <a href="blog.html" class="tab-item active">
+                <div class="tab-icon"><i class="fas fa-newspaper"></i></div>
+                <div class="tab-label">Blog</div>
+            </a>
+            <a href="index.html#booking" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-calendar-alt"></i></div>
+                <div class="tab-label">Đặt xe</div>
+            </a>
+            <a href="index.html#contact" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-phone"></i></div>
+                <div class="tab-label">Liên hệ</div>
+            </a>
+        </div>
+    </nav>
+
+    <script src="blog.js"></script>
+</body>
+</html>
