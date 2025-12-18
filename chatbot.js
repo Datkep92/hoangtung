@@ -9,19 +9,126 @@ class LuxuryMoveProChatbot {
         this.servicesData = null;
     }
 
-    init() {
-        this.loadServicesData();
-    this.createProfessionalUI();
-    this.createSparkles(); // ← THÊM DÒNG NÀY
-    this.setupEventListeners();
+    // Sửa hàm showNotification
+showNotification(text) {
+    const noti = document.getElementById('chatProNotification');
+    if (noti) {
+        noti.textContent = text;
+        noti.style.display = text ? 'block' : 'none';
         
-        // Auto welcome after 3 seconds
-        setTimeout(() => {
-            if (!localStorage.getItem('luxurymove_chat_welcomed')) {
-                this.showProfessionalWelcome();
-            }
-        }, 3000);
+        if (text) {
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                if (noti.textContent === text) {
+                    noti.style.display = 'none';
+                }
+            }, 5000);
+        }
     }
+}
+
+// Sửa hàm toggleChat
+toggleChat() {
+    this.chatOpen = !this.chatOpen;
+    const window = document.getElementById('chatbotProWindow');
+    const button = document.getElementById('chatbotProButton');
+    
+    if (!window || !button) {
+        console.error('Chatbot elements not found');
+        return;
+    }
+    
+    if (this.chatOpen) {
+        window.classList.add('active');
+        button.classList.add('active');
+        
+        // Focus input if exists
+        const input = document.getElementById('chatProInput');
+        if (input) input.focus();
+        
+        // Clear notification
+        this.showNotification('');
+        
+        // Load conversation history
+        this.loadConversationHistory();
+        
+    } else {
+        window.classList.remove('active');
+        button.classList.remove('active');
+    }
+}
+
+// Sửa hàm setupEventListeners để check element tồn tại
+setupEventListeners() {
+    const button = document.getElementById('chatbotProButton');
+    if (!button) {
+        console.error('Chatbot button not found');
+        return;
+    }
+    
+    button.addEventListener('click', () => this.toggleChat());
+    
+    // Click outside to close
+    document.addEventListener('click', (e) => {
+        const window = document.getElementById('chatbotProWindow');
+        const button = document.getElementById('chatbotProButton');
+        
+        if (!window || !button) return;
+        
+        if (this.chatOpen && 
+            !window.contains(e.target) && 
+            !button.contains(e.target)) {
+            this.toggleChat();
+        }
+    });
+}
+
+// Thêm hàm check DOM element trước khi thao tác
+checkElements() {
+    const requiredElements = [
+        'chatbotProContainer',
+        'chatbotProButton', 
+        'chatbotProWindow',
+        'chatProMessages',
+        'chatProInput'
+    ];
+    
+    const missing = requiredElements.filter(id => !document.getElementById(id));
+    
+    if (missing.length > 0) {
+        console.warn('Missing chatbot elements:', missing);
+        return false;
+    }
+    
+    return true;
+}
+
+// Sửa hàm init để check elements
+init() {
+    // Load services data
+    this.loadServicesData();
+    
+    // Create UI
+    this.createProfessionalUI();
+    
+    // Check if elements were created successfully
+    setTimeout(() => {
+        if (this.checkElements()) {
+            this.setupEventListeners();
+            
+            // Auto welcome after 3 seconds
+            setTimeout(() => {
+                if (!localStorage.getItem('luxurymove_chat_welcomed')) {
+                    this.showProfessionalWelcome();
+                }
+            }, 3000);
+            
+            console.log('✅ Chatbot initialized successfully');
+        } else {
+            console.error('❌ Chatbot failed to initialize - missing elements');
+        }
+    }, 100); // Small delay to ensure DOM is ready
+}
 
     async loadServicesData() {
         try {
@@ -62,7 +169,7 @@ class LuxuryMoveProChatbot {
                         <h4>Trợ lý</h4>
                         <p class="chatbot-pro-status">
                             <span class="status-dot"></span>
-                            Phục vụ chuyên nghiệp
+                            online
                         </p>
                     </div>
                     <div class="chatbot-pro-actions">
@@ -163,35 +270,7 @@ class LuxuryMoveProChatbot {
         this.showNotification('Có tin nhắn mới');
     }
 
-    showNotification(text) {
-        const noti = document.getElementById('chatProNotification');
-        noti.textContent = text;
-        noti.style.display = 'block';
-        
-        setTimeout(() => {
-            noti.style.display = 'none';
-        }, 5000);
-    }
 
-    toggleChat() {
-        this.chatOpen = !this.chatOpen;
-        const window = document.getElementById('chatbotProWindow');
-        const button = document.getElementById('chatbotProButton');
-        
-        if (this.chatOpen) {
-            window.classList.add('active');
-            button.classList.add('active');
-            document.getElementById('chatProInput').focus();
-            this.showNotification('');
-            
-            // Load conversation history
-            this.loadConversationHistory();
-            
-        } else {
-            window.classList.remove('active');
-            button.classList.remove('active');
-        }
-    }
 
     addMessage(sender, htmlContent) {
         const messagesDiv = document.getElementById('chatProMessages');
