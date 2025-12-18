@@ -1,5 +1,15 @@
 {
   "posts": {
+    "123123": {
+      "title": "123123",
+      "author": "LuxuryMove Team",
+      "date": "2025-12-18",
+      "category": "travel",
+      "image": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800",
+      "excerpt": "123123",
+      "content": "123123123",
+      "tags": []
+    },
     "post1": {
       "title": "Kinh Nghiệm Du Lịch Nha Trang 2024",
       "author": "LuxuryMove Team",
@@ -16,5 +26,5 @@
       ]
     }
   },
-  "last_updated": "2025-12-18T16:25:38.561Z"
+  "last_updated": "2025-12-18T16:27:06.546Z"
 }
