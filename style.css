@@ -1,3 +1,5 @@
+
+
 /* ===== RESET & BASE STYLES ===== */
 :root {
     --primary-black: #000000;
@@ -12,6 +14,7 @@
     --text-tertiary: #888888;
     --divider: #333333;
     --success: #4CAF50;
+    --gradient-gold: linear-gradient(135deg, var(--champagne), var(--dark-champagne));
 }
 
 * {
@@ -32,7 +35,9 @@ body {
     color: var(--text-primary);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    padding-bottom: 80px !important;
 }
 
 h1, h2, h3, h4 {
@@ -52,34 +57,48 @@ a {
 .container {
     width: 100%;
     padding: 0 16px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .btn {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     padding: 14px 28px;
-    border-radius: 8px;
+    border-radius: 10px;
     font-weight: 600;
     font-size: 16px;
     text-align: center;
     border: none;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--champagne), var(--dark-champagne));
+    background: var(--gradient-gold);
     color: var(--primary-black);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
 }
 
 .btn-primary:active {
-    transform: scale(0.98);
-    opacity: 0.9;
+    transform: translateY(0);
 }
 
 .btn-outline {
     background: transparent;
     color: var(--champagne);
-    border: 1.5px solid var(--champagne);
+    border: 2px solid var(--champagne);
+}
+
+.btn-outline:hover {
+    background: rgba(212, 175, 55, 0.1);
 }
 
 /* ===== HEADER ===== */
@@ -91,8 +110,9 @@ a {
     z-index: 1000;
     background: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(20px);
-    padding: 12px 16px;
+    padding: 12px 0;
     border-bottom: 1px solid var(--divider);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
 }
 
 .header-content {
@@ -104,22 +124,30 @@ a {
 .logo {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.02);
 }
 
 .logo-icon {
     color: var(--champagne);
-    font-size: 20px;
+    font-size: 24px;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
 }
 
 .logo-text {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
     color: var(--text-primary);
+    letter-spacing: 0.5px;
 }
 
 .logo-text span {
     color: var(--champagne);
+    font-weight: 800;
 }
 
 .header-actions {
@@ -131,12 +159,23 @@ a {
 .phone-btn {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    background: rgba(212, 175, 55, 0.1);
-    border-radius: 20px;
+    gap: 8px;
+    padding: 10px 18px;
+    background: rgba(212, 175, 55, 0.15);
+    border-radius: 25px;
     color: var(--champagne);
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 15px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    transition: all 0.3s ease;
+}
+
+.phone-btn:hover {
+    background: rgba(212, 175, 55, 0.25);
+    transform: translateY(-1px);
+}
+
+.phone-btn i {
     font-size: 14px;
 }
 
@@ -145,15 +184,15 @@ a {
     position: relative;
     min-height: 100vh;
     padding: 140px 16px 80px;
-    background: linear-gradient(135deg, 
-        rgba(10, 10, 10, 0.98) 0%, 
-        rgba(20, 20, 20, 0.95) 100%);
+    background: 
+        linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.9)),
+        url('images/bg-hero.jpg') center/cover no-repeat;
     overflow: hidden;
     display: flex;
     align-items: center;
 }
 
-.hero-gradient {
+.hero-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -170,44 +209,56 @@ a {
 .hero-content {
     position: relative;
     z-index: 3;
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
     text-align: center;
 }
 
 .hero-badge-container {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
+    animation: fadeInDown 0.8s ease-out;
 }
 
 .hero-badge {
-    display: inline-block;
-    padding: 12px 32px;
-    background: rgba(212, 175, 55, 0.1);
-    border: 1px solid rgba(212, 175, 55, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: rgba(212, 175, 55, 0.15);
+    border: 1px solid rgba(212, 175, 55, 0.3);
     border-radius: 30px;
     color: var(--light-champagne);
     font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 2px;
+    font-weight: 600;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    animation: pulse 2s ease-in-out infinite;
+    backdrop-filter: blur(10px);
 }
 
-@keyframes pulse {
-    0%, 100% { opacity: 0.8; }
-    50% { opacity: 1; }
+.hero-badge i {
+    font-size: 12px;
 }
 
 .hero-title-container {
-    margin-bottom: 50px;
+    margin-bottom: 40px;
     opacity: 0;
-    animation: fadeInUp 1s ease forwards 0.3s;
+    animation: fadeInUp 0.8s ease forwards 0.3s;
 }
 
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
     }
     to {
         opacity: 1;
@@ -218,19 +269,31 @@ a {
 .hero-title {
     font-family: 'Inter', sans-serif;
     font-size: clamp(36px, 5vw, 56px);
-    line-height: 1.3;
-    font-weight: 600;
-    margin-bottom: 30px;
+    line-height: 1.2;
+    font-weight: 700;
+    margin-bottom: 20px;
 }
 
 .title-line {
     display: block;
     margin-bottom: 10px;
-    color: var(--text-primary);
 }
 
-.title-line.highlight {
+.text-champagne {
     color: var(--champagne);
+    position: relative;
+    display: inline-block;
+}
+
+.text-champagne::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--gradient-gold);
+    border-radius: 1px;
 }
 
 .title-divider {
@@ -261,630 +324,936 @@ a {
     font-size: 18px;
 }
 
-/* Value Propositions - Mobile 3 items per row */
-.hero-value-props {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin-bottom: 50px;
-    opacity: 0;
-    animation: fadeInUp 1s ease forwards 1s;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
+/* ===== USER EXPERIENCE SECTION ===== */
+.user-experience-section {
+    margin: 40px 0;
 }
 
-.value-prop {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    padding: 15px 10px;
-    background: rgba(212, 175, 55, 0.05);
-    border-radius: 12px;
-    border: 1px solid rgba(212, 175, 55, 0.1);
-    transition: all 0.3s ease;
-    text-align: center;
-    min-height: 120px;
-}
-
-.value-prop:hover {
-    background: rgba(212, 175, 55, 0.1);
-    border-color: rgba(212, 175, 55, 0.2);
-    transform: translateY(-5px);
-}
-
-.value-icon {
-    width: 50px;
-    height: 50px;
-    background: rgba(212, 175, 55, 0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    color: var(--champagne);
-    border: 1px solid rgba(212, 175, 55, 0.2);
-    transition: all 0.3s ease;
-}
-
-.value-prop:hover .value-icon {
-    background: rgba(212, 175, 55, 0.2);
-    transform: scale(1.1);
-}
-
-.value-text {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-primary);
-    line-height: 1.4;
-}
-
-/* Authentic Description */
-.hero-elevated {
-    max-width: 800px;
-    margin: 0 auto 50px;
-    opacity: 0;
-    animation: fadeInUp 1s ease forwards 1.2s;
-}
-
-.hero-subtitle {
-    font-size: clamp(16px, 2vw, 18px);
-    line-height: 1.8;
+.user-experience-section .section-subtitle {
+    font-size: 18px;
     color: var(--text-secondary);
     margin-bottom: 30px;
-    font-weight: 400;
-}
-
-.text-highlight {
-    color: var(--light-champagne);
     font-weight: 500;
 }
 
-.premium-features {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-top: 40px;
-    flex-wrap: wrap;
+.user-experience-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 20px 0 40px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
 }
 
-.feature {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 15px;
-    color: var(--text-secondary);
-    padding: 10px 20px;
-    background: rgba(212, 175, 55, 0.05);
-    border-radius: 8px;
-    border: 1px solid rgba(212, 175, 55, 0.1);
+.user-experience-container::-webkit-scrollbar {
+    display: none;
 }
 
-.feature:hover {
-    background: rgba(212, 175, 55, 0.1);
-    border-color: rgba(212, 175, 55, 0.2);
-}
-
-.feature-icon {
-    color: var(--champagne);
-    font-size: 16px;
-}
-
-/* CTA Section */
-.hero-cta {
-    opacity: 0;
-    animation: fadeInUp 1s ease forwards 1.4s;
-}
-
-.cta-container {
-    margin-bottom: 50px;
-}
-
-.btn-primary {
+.user-experience-row {
     display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    padding: 18px 36px;
-    background: var(--champagne);
-    color: var(--primary-black);
-    border: none;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
+    gap: 20px;
+    padding: 0 16px 15px;
+    min-width: min-content;
 }
 
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
-}
-
-.cta-note {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 20px;
-    padding: 10px 20px;
-    background: rgba(212, 175, 55, 0.1);
-    border-radius: 20px;
-    font-size: 14px;
-    color: var(--light-champagne);
-}
-
-/* Real Commitments - Mobile 3 items per row */
-.commitments {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin-top: 50px;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.commitment-item {
-    text-align: center;
-    padding: 15px 10px;
-    background: rgba(212, 175, 55, 0.05);
-    border-radius: 12px;
-    border: 1px solid rgba(212, 175, 55, 0.1);
-    transition: all 0.3s ease;
-    min-height: 120px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.commitment-item:hover {
-    background: rgba(212, 175, 55, 0.1);
-    border-color: rgba(212, 175, 55, 0.2);
-    transform: translateY(-5px);
-}
-
-.commitment-icon {
-    width: 50px;
-    height: 50px;
-    background: rgba(212, 175, 55, 0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: var(--champagne);
-    margin: 0 auto 12px;
+.experience-card {
+    flex: 0 0 auto;
+    width: 300px;
+    background: rgba(20, 20, 20, 0.8);
     border: 1px solid rgba(212, 175, 55, 0.2);
-    transition: all 0.3s ease;
+    border-radius: 16px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.commitment-item:hover .commitment-icon {
-    background: rgba(212, 175, 55, 0.2);
-    transform: scale(1.1);
-}
-
-.commitment-text {
-    font-size: 14px;
-    color: var(--text-primary);
-    line-height: 1.4;
-    font-weight: 500;
-}
-
-/* Community Focus */
-.community-note {
-    margin-top: 50px;
-    padding: 20px;
-    background: rgba(212, 175, 55, 0.05);
-    border-radius: 12px;
-    border: 1px solid rgba(212, 175, 55, 0.1);
-    opacity: 0;
-    animation: fadeIn 1s ease forwards 1.6s;
-}
-
-.community-note p {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    color: var(--text-secondary);
-    font-size: 15px;
-    margin: 0;
-}
-
-.community-note i {
-    color: var(--champagne);
-    font-size: 18px;
-}
-
-/* Scroll Indicator */
-.scroll-indicator {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    opacity: 0;
-    animation: fadeIn 1s ease forwards 2s;
-    cursor: pointer;
-}
-
-.scroll-text {
-    font-size: 12px;
-    color: var(--text-tertiary);
-    letter-spacing: 1px;
-}
-
-.scroll-arrow {
-    width: 40px;
-    height: 40px;
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--champagne);
-    font-size: 14px;
-    animation: bounce 2s ease-in-out infinite;
-}
-
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-5px); }
-    60% { transform: translateY(-3px); }
-}
-
-/* Background Elements */
-.hero-bg-elements {
+.experience-card::before {
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.1;
+    z-index: 1;
+    transition: opacity 0.4s ease;
+}
+
+.experience-card:nth-child(1)::before {
+    background-image: url('images/bg-family.jpg');
+}
+
+.experience-card:nth-child(2)::before {
+    background-image: url('images/bg-friends.jpg');
+}
+
+.experience-card:nth-child(3)::before {
+    background-image: url('images/bg-work.jpg');
+}
+
+.experience-card:nth-child(4)::before {
+    background-image: url('images/bg-tourist.jpg');
+}
+
+.experience-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.8) 0%,
+        rgba(0, 0, 0, 0.6) 50%,
+        rgba(0, 0, 0, 0.8) 100%
+    );
+    z-index: 1;
+}
+
+.experience-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 15px 35px rgba(212, 175, 55, 0.15);
+}
+
+.experience-card:hover::before {
+    opacity: 0.15;
+}
+
+.experience-card > * {
+    position: relative;
     z-index: 2;
 }
 
-.bg-element {
-    position: absolute;
-    border: 1px solid rgba(212, 175, 55, 0.05);
-    border-radius: 50%;
+.exp-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
-.community-1 {
-    top: 20%;
-    right: 10%;
-    width: 200px;
-    height: 200px;
-    animation: float 25s ease-in-out infinite;
+.exp-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(212, 175, 55, 0.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--champagne);
+    font-size: 22px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
-.community-2 {
-    bottom: 30%;
-    left: 5%;
-    width: 150px;
-    height: 150px;
-    animation: float 30s ease-in-out infinite reverse;
+.exp-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
 }
 
-@keyframes float {
-    0%, 100% { transform: translate(0, 0) rotate(0deg); }
-    33% { transform: translate(10px, 10px) rotate(120deg); }
-    66% { transform: translate(-10px, 5px) rotate(240deg); }
+.exp-benefits {
+    margin: 20px 0;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.experience-card:hover .benefit-item {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: rgba(212, 175, 55, 0.2);
+}
+
+.benefit-item i {
+    color: var(--champagne);
+    font-size: 14px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.benefit-item span {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.exp-desc {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.scroll-hint {
+    text-align: center;
+    margin-top: 15px;
+    color: var(--text-tertiary);
+    font-size: 13px;
+    animation: pulse 2s infinite;
+    display: none;
+}
+
+.scroll-hint i {
+    margin-left: 8px;
+    color: var(--champagne);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+/* Hero CTA */
+.hero-cta {
+    margin-top: 40px;
+    opacity: 0;
+    animation: fadeInUp 0.8s ease forwards 1.2s;
+}
+
+.btn-hero {
+    padding: 18px 40px;
+    font-size: 18px;
+    border-radius: 12px;
+    background: var(--gradient-gold);
+    color: var(--primary-black);
+    font-weight: 700;
+    border: none;
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-hero:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4);
+}
+
+.btn-hero:active {
+    transform: translateY(-1px);
+}
+
+.cta-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 25px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    font-size: 14px;
+    color: var(--light-champagne);
+    backdrop-filter: blur(10px);
+}
+
+.cta-note i {
+    color: var(--champagne);
 }
 
 /* ===== BENEFITS SECTION ===== */
 .benefits-section {
-    padding: 60px 16px;
-    background: var(--dark-black);
+    padding: 80px 16px;
+    background: 
+        linear-gradient(rgba(10, 10, 10, 0.92), rgba(20, 20, 20, 0.95)),
+        url('images/bg-benefits.jpg') center/cover no-repeat;
+    position: relative;
+}
+
+.benefits-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 30% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 70% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 40%);
+    z-index: 1;
+}
+
+.benefits-section .container {
+    position: relative;
+    z-index: 2;
 }
 
 .section-header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
+}
+
+.section-title-wrapper {
+    margin-bottom: 20px;
 }
 
 .section-title {
-    font-size: 28px;
-    margin-bottom: 12px;
-    color: var(--text-primary);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--champagne);
+    margin-bottom: 15px;
+    position: relative;
+    display: inline-block;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: var(--gradient-gold);
+    border-radius: 2px;
 }
 
 .section-subtitle {
-    color: var(--text-tertiary);
-    font-size: 16px;
-    max-width: 500px;
+    font-size: 18px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
-/* Benefits Grid - Mobile 3 items per row */
-.benefits-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-}
-
 .benefit-card {
-    background: var(--card-black);
-    border-radius: 12px;
-    padding: 20px 15px;
+    background: rgba(30, 30, 30, 0.7);
+    border-radius: 16px;
+    padding: 30px 25px;
     text-align: center;
-    border: 1px solid var(--divider);
-    transition: all 0.2s ease;
-    min-height: 140px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
 }
 
-.benefit-card:active {
-    transform: scale(0.98);
-    background: var(--light-black);
+.benefit-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(212, 175, 55, 0.4);
+    background: rgba(40, 40, 40, 0.8);
+    box-shadow: 0 15px 35px rgba(212, 175, 55, 0.1);
 }
 
 .benefit-icon {
-    width: 48px;
-    height: 48px;
+    width: 70px;
+    height: 70px;
     background: rgba(212, 175, 55, 0.1);
-    border-radius: 12px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 16px;
+    margin: 0 auto 25px;
+    border: 2px solid rgba(212, 175, 55, 0.2);
+    transition: all 0.3s ease;
+}
+
+.benefit-card:hover .benefit-icon {
+    background: rgba(212, 175, 55, 0.2);
+    border-color: rgba(212, 175, 55, 0.4);
+    transform: scale(1.1);
 }
 
 .benefit-icon i {
-    font-size: 20px;
+    font-size: 28px;
     color: var(--champagne);
 }
 
 .benefit-title {
-    font-size: 14px;
+    font-size: 20px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 15px;
     color: var(--text-primary);
 }
 
 .benefit-desc {
-    font-size: 12px;
+    font-size: 15px;
     color: var(--text-tertiary);
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 /* ===== SERVICES SECTION ===== */
 .services-section {
     padding: 80px 0;
-    background: linear-gradient(180deg, var(--dark-black) 0%, var(--light-black) 100%);
+    background: 
+        linear-gradient(rgba(15, 15, 15, 0.92), rgba(25, 25, 25, 0.95)),
+        url('images/bg-services.jpg') center/cover no-repeat;
+    position: relative;
+}
+
+.services-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(45deg, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+        linear-gradient(-45deg, rgba(212, 175, 55, 0.02) 0%, transparent 50%);
+    z-index: 1;
+}
+
+.services-section .container {
+    position: relative;
+    z-index: 2;
 }
 
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    margin-bottom: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    max-width: 1200px;
+    margin: 0 auto 40px;
 }
 
 .service-card {
-    background: var(--card-black);
-    border-radius: 16px;
-    padding: 25px 20px;
-    border: 1px solid rgba(212, 175, 55, 0.1);
-    transition: all 0.3s ease;
+    background: rgba(30, 30, 30, 0.8);
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    transition: all 0.4s ease;
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    min-height: 280px;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    position: relative;
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(212, 175, 55, 0.1),
+        transparent
+    );
+    transition: left 0.7s ease;
+}
+
+.service-card:hover::before {
+    left: 100%;
 }
 
 .service-card:hover {
-    border-color: rgba(212, 175, 55, 0.3);
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.15);
+    transform: translateY(-10px);
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 20px 40px rgba(212, 175, 55, 0.15);
 }
 
-.service-icon {
-    width: 60px;
-    height: 60px;
-    background: rgba(212, 175, 55, 0.1);
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    color: var(--champagne);
-    font-size: 24px;
-    transition: all 0.3s ease;
+.service-image {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
 }
 
-.service-card:hover .service-icon {
-    background: rgba(212, 175, 55, 0.2);
+.service-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.service-card:hover .service-image img {
     transform: scale(1.1);
 }
 
+.service-icon-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.3),
+        rgba(0, 0, 0, 0.6)
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--champagne);
+    font-size: 40px;
+}
+
 .service-name {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 600;
     color: var(--text-primary);
     text-align: center;
     margin-bottom: 20px;
     line-height: 1.3;
-    min-height: 46px;
+    min-height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .service-experience {
-    margin-top: auto;
+    margin-bottom: 25px;
+    flex-grow: 1;
 }
 
 .experience-item {
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 12px;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.03);
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     transition: all 0.3s ease;
 }
 
 .service-card:hover .experience-item {
-    background: rgba(212, 175, 55, 0.05);
-    border-color: rgba(212, 175, 55, 0.1);
-}
-
-.experience-item:last-child {
-    margin-bottom: 0;
+    background: rgba(212, 175, 55, 0.08);
+    border-color: rgba(212, 175, 55, 0.2);
 }
 
 .experience-item i {
     color: var(--champagne);
     font-size: 14px;
-    min-width: 18px;
-    padding-top: 2px;
-    flex-shrink: 0;
+    min-width: 16px;
 }
 
 .experience-item span {
     color: var(--text-secondary);
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.4;
-    flex: 1;
-    word-break: break-word;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
-.additional-services {
-    animation: fadeInUp 0.5s ease-out;
-}
-
-.services-toggle-container {
-    text-align: center;
-    margin-top: 40px;
-}
-
-.btn-toggle-services {
-    display: inline-flex;
+.btn-view-details {
+    display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    padding: 14px 28px;
+    width: 100%;
+    padding: 14px;
     background: rgba(212, 175, 55, 0.1);
-    border: 1.5px solid rgba(212, 175, 55, 0.3);
+    border: 2px solid rgba(212, 175, 55, 0.25);
     border-radius: 10px;
     color: var(--champagne);
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    width: 100%;
-    max-width: 300px;
+    margin-top: auto;
 }
 
-.btn-toggle-services:hover {
-    background: rgba(212, 175, 55, 0.15);
+.btn-view-details:hover {
+    background: rgba(212, 175, 55, 0.2);
+    border-color: rgba(212, 175, 55, 0.4);
     transform: translateY(-2px);
 }
 
-.btn-toggle-services.active .toggle-icon {
-    transform: rotate(180deg);
-}
-
-.toggle-icon {
-    transition: transform 0.3s ease;
-}
-
-.experience-note {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-    padding: 12px 20px;
-    background: rgba(212, 175, 55, 0.08);
-    border-radius: 10px;
-    border: 1px solid rgba(212, 175, 55, 0.15);
-    color: var(--light-champagne);
-    font-size: 14px;
-    text-align: center;
-}
-
-.experience-note i {
-    color: var(--champagne);
-    font-size: 16px;
-    flex-shrink: 0;
+.btn-view-details:active {
+    transform: translateY(0);
 }
 
 /* ===== QUICK BOOKING ===== */
 .quick-booking {
-    padding: 60px 16px;
-    background: var(--dark-black);
+    padding: 80px 16px;
+    background: 
+        linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.92)),
+        url('images/bg-booking.jpg') center/cover no-repeat;
+    position: relative;
+}
+
+.quick-booking::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(45deg, rgba(212, 175, 55, 0.05) 0%, transparent 60%),
+        linear-gradient(-45deg, rgba(212, 175, 55, 0.03) 0%, transparent 60%);
+    z-index: 1;
+}
+
+.quick-booking .container {
+    position: relative;
+    z-index: 2;
 }
 
 .booking-card {
-    background: var(--card-black);
-    border-radius: 16px;
-    padding: 24px;
-    border: 1px solid var(--divider);
-    max-width: 500px;
+    background: rgba(30, 30, 30, 0.85);
+    border-radius: 24px;
+    padding: 40px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    max-width: 600px;
     margin: 0 auto;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.booking-header {
+    text-align: center;
+    margin-bottom: 35px;
 }
 
 .booking-title {
-    font-size: 20px;
-    margin-bottom: 8px;
-    color: var(--text-primary);
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: var(--champagne);
+    font-weight: 700;
 }
 
 .booking-subtitle {
     color: var(--text-tertiary);
-    margin-bottom: 24px;
-    font-size: 14px;
+    font-size: 16px;
+    line-height: 1.5;
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .form-label {
     display: block;
-    font-size: 14px;
+    font-size: 15px;
     color: var(--text-secondary);
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-weight: 500;
 }
 
 .form-select, .form-input {
     width: 100%;
-    padding: 14px;
-    background: var(--primary-black);
-    border: 1px solid var(--divider);
-    border-radius: 8px;
+    padding: 16px 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 10px;
     color: var(--text-primary);
     font-family: 'Inter', sans-serif;
     font-size: 16px;
+    transition: all 0.3s ease;
 }
 
 .form-select:focus, .form-input:focus {
     outline: none;
     border-color: var(--champagne);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.form-select option {
+    background: var(--dark-black);
+    color: var(--text-primary);
+    padding: 10px;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 18px;
+    font-size: 17px;
+    font-weight: 700;
+    border-radius: 12px;
+    background: var(--gradient-gold);
+    color: var(--primary-black);
+    border: none;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
 }
 
 .form-note {
-    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 14px;
     color: var(--text-tertiary);
     text-align: center;
-    margin-top: 16px;
+    margin-top: 20px;
+    padding: 12px;
+    background: rgba(212, 175, 55, 0.08);
+    border-radius: 8px;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.form-note i {
+    color: var(--champagne);
+}
+
+/* ===== FOOTER ===== */
+.main-footer {
+    padding: 80px 16px 40px;
+    background: 
+        linear-gradient(rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.98)),
+        url('images/bg-footer.jpg') center/cover no-repeat;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+    position: relative;
+}
+
+.main-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(212, 175, 55, 0.03) 100%
+    );
+    z-index: 1;
+}
+
+.main-footer .container {
+    position: relative;
+    z-index: 2;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-section h4 {
+    font-size: 18px;
+    margin-bottom: 25px;
+    color: var(--text-primary);
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.footer-section h4::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 2px;
+    background: var(--gradient-gold);
+    border-radius: 1px;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+}
+
+.footer-logo i {
+    color: var(--champagne);
+    font-size: 28px;
+}
+
+.footer-logo span {
+    color: var(--champagne);
+    font-weight: 800;
+}
+
+.footer-desc {
+    color: var(--text-tertiary);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-link {
+    width: 44px;
+    height: 44px;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--champagne);
+    font-size: 18px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.social-link:hover {
+    background: rgba(212, 175, 55, 0.2);
+    transform: translateY(-3px);
+    border-color: rgba(212, 175, 55, 0.4);
+}
+
+.zalo-icon {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.footer-links {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 15px;
+}
+
+.footer-links a {
+    color: var(--text-tertiary);
+    font-size: 15px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer-links a:hover {
+    color: var(--champagne);
+    transform: translateX(5px);
+}
+
+.footer-links a i {
+    font-size: 14px;
+    width: 20px;
+}
+
+.contact-info p {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-tertiary);
+    font-size: 15px;
+}
+
+.contact-info i {
+    color: var(--champagne);
+    font-size: 16px;
+    width: 20px;
+}
+
+.contact-info strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.copyright {
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: 14px;
+    margin-top: 60px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.copyright p {
+    margin-bottom: 8px;
+}
+
+.copyright-note {
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+/* ===== BOTTOM TAB BAR ===== */
+.bottom-tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 75px;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+    z-index: 999;
+    padding: 10px 0;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+    display: none;
+}
+
+.tab-items {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 10px;
+}
+
+.tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    flex: 1;
+    height: 100%;
+}
+
+.tab-item.active {
+    background: rgba(212, 175, 55, 0.15);
+}
+
+.tab-item:active {
+    transform: scale(0.95);
+}
+
+.tab-icon {
+    font-size: 20px;
+    color: var(--text-tertiary);
+    transition: all 0.3s ease;
+}
+
+.tab-item.active .tab-icon {
+    color: var(--champagne);
+}
+
+.tab-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    transition: all 0.3s ease;
+}
+
+.tab-item.active .tab-label {
+    color: var(--champagne);
 }
 
 /* ===== SERVICE DETAILS MODAL ===== */
@@ -894,9 +1263,9 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    backdrop-filter: blur(10px);
-    z-index: 2000;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 999999;
     display: none;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -905,21 +1274,22 @@ a {
 .service-details-overlay.active {
     display: flex;
     opacity: 1;
-    animation: fadeIn 0.3s ease forwards;
 }
 
 .service-details-container {
     width: 95%;
     max-width: 500px;
-    max-height: 85vh;
+    height: 85vh;
     background: var(--card-black);
     border-radius: 20px;
     margin: auto;
     position: relative;
     overflow: hidden;
-    border: 1px solid var(--divider);
+    border: 1px solid rgba(212, 175, 55, 0.3);
     transform: translateY(50px);
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
 }
 
 .service-details-overlay.active .service-details-container {
@@ -927,58 +1297,83 @@ a {
 }
 
 .details-header {
-    padding: 24px 24px 16px;
-    border-bottom: 1px solid var(--divider);
+    padding: 25px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    background: rgba(20, 20, 20, 0.95);
     position: relative;
+    flex-shrink: 0;
 }
 
 .details-header h3 {
     font-size: 24px;
     margin-bottom: 8px;
     color: var(--champagne);
+    font-weight: 700;
+    padding-right: 50px;
 }
 
 .details-subtitle {
     color: var(--text-tertiary);
     font-size: 14px;
+    line-height: 1.4;
 }
 
 .close-details {
     position: absolute;
-    top: 24px;
-    right: 24px;
-    width: 36px;
-    height: 36px;
-    background: rgba(255, 255, 255, 0.1);
+    top: 25px;
+    right: 25px;
+    width: 40px;
+    height: 40px;
+    background: rgba(212, 175, 55, 0.15);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--text-primary);
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
-.close-details:active {
-    transform: scale(0.9);
+.close-details:hover {
     background: var(--champagne);
     color: var(--primary-black);
+    transform: rotate(90deg);
 }
 
 .details-content {
-    padding: 24px;
+    padding: 25px;
     overflow-y: auto;
-    max-height: calc(85vh - 150px);
+    flex-grow: 1;
+    background: var(--primary-black);
 }
 
 .details-image {
-    width: 100%;
+    position: relative;
     height: 200px;
     border-radius: 12px;
     overflow: hidden;
-    margin-bottom: 20px;
-    background: linear-gradient(135deg, var(--light-black), var(--dark-black));
+    margin-bottom: 25px;
+}
+
+.details-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.3),
+        rgba(0, 0, 0, 0.7)
+    );
     display: flex;
     align-items: center;
     justify-content: center;
@@ -986,15 +1381,26 @@ a {
     font-size: 48px;
 }
 
+.details-description {
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: rgba(212, 175, 55, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+}
+
 .details-features {
-    margin-bottom: 24px;
+    margin-bottom: 25px;
 }
 
 .features-title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
-    margin-bottom: 12px;
-    color: var(--text-primary);
+    margin-bottom: 15px;
+    color: var(--champagne);
 }
 
 .features-list {
@@ -1002,7 +1408,7 @@ a {
 }
 
 .features-list li {
-    padding: 10px 0;
+    padding: 12px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     align-items: center;
@@ -1017,28 +1423,29 @@ a {
 
 .feature-icon {
     color: var(--champagne);
-    font-size: 16px;
+    font-size: 14px;
     width: 20px;
 }
 
 .pricing-info {
     background: rgba(212, 175, 55, 0.1);
     border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 24px;
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
 }
 
 .pricing-title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 15px;
     color: var(--champagne);
 }
 
 .price-item {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
+    padding: 10px 0;
     border-bottom: 1px solid rgba(212, 175, 55, 0.2);
 }
 
@@ -1053,27 +1460,24 @@ a {
 
 .price-value {
     color: var(--text-primary);
-    font-weight: 600;
-    font-size: 15px;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--champagne);
 }
 
 .details-actions {
     display: flex;
-    gap: 12px;
+    gap: 15px;
     margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
 }
 
 .details-actions .btn {
     flex: 1;
-    padding: 14px;
+    padding: 16px;
     font-size: 15px;
-}
-
-.details-description {
-    color: var(--text-secondary);
-    font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 24px;
+    font-weight: 600;
 }
 
 .details-content::-webkit-scrollbar {
@@ -1089,160 +1493,212 @@ a {
     border-radius: 4px;
 }
 
-/* ===== BOTTOM TAB BAR ===== */
-.bottom-tab-bar {
+/* ===== WHATSAPP FLOAT ===== */
+.whatsapp-float {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: var(--card-black);
-    border-top: 1px solid var(--divider);
-    padding: 12px 0;
-    z-index: 1000;
-    display: none;
-}
-
-.tab-items {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
-
-.tab-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.tab-item.active {
-    background: rgba(212, 175, 55, 0.1);
-}
-
-.tab-item:active {
-    transform: scale(0.95);
-}
-
-.tab-icon {
-    font-size: 20px;
-    color: var(--text-tertiary);
-}
-
-.tab-item.active .tab-icon {
-    color: var(--champagne);
-}
-
-.tab-label {
-    font-size: 10px;
-    font-weight: 500;
-    color: var(--text-tertiary);
-}
-
-.tab-item.active .tab-label {
-    color: var(--champagne);
-}
-
-/* ===== FOOTER ===== */
-.main-footer {
-    padding: 60px 16px 80px;
-    background: var(--primary-black);
-    border-top: 1px solid var(--divider);
-}
-
-.footer-content {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
-}
-
-.footer-section h4 {
-    font-size: 16px;
-    margin-bottom: 16px;
-    color: var(--text-primary);
-}
-
-.footer-links {
-    list-style: none;
-}
-
-.footer-links li {
-    margin-bottom: 12px;
-}
-
-.footer-links a {
-    color: var(--text-tertiary);
-    font-size: 14px;
-    transition: color 0.2s ease;
-}
-
-.footer-links a:active {
-    color: var(--champagne);
-}
-
-.contact-info {
-    color: var(--text-tertiary);
-    font-size: 14px;
-}
-
-.contact-info p {
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.social-links {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.social-link {
-    width: 36px;
-    height: 36px;
-    background: var(--card-black);
-    border-radius: 8px;
+    bottom: 100px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: #25D366;
+    color: white;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--champagne);
-    font-size: 16px;
-    transition: all 0.2s ease;
+    font-size: 28px;
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
+    z-index: 999;
+    transition: all 0.3s ease;
+    animation: float 3s ease-in-out infinite;
 }
 
-.social-link:active {
-    transform: scale(0.95);
-    background: var(--champagne);
-    color: var(--primary-black);
+.whatsapp-float:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 35px rgba(37, 211, 102, 0.4);
 }
 
-.copyright {
-    text-align: center;
-    color: var(--text-tertiary);
-    font-size: 12px;
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid var(--divider);
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
-@media (min-width: 768px) {
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    
-    .services-grid {
-        grid-template-columns: repeat(4, 1fr);
+
+/* Desktop */
+@media (min-width: 1024px) {
+    .user-experience-row {
+        justify-content: center;
+        flex-wrap: wrap;
+        padding: 0;
         gap: 25px;
     }
     
-    .service-card {
-        min-height: 320px;
-        padding: 30px 25px;
+    .experience-card {
+        width: 280px;
+    }
+    
+    .scroll-hint {
+        display: none;
+    }
+    
+    .hero-section,
+    .benefits-section,
+    .services-section,
+    .quick-booking,
+    .main-footer {
+        background-attachment: fixed;
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .container {
+        padding: 0 20px;
+    }
+    
+    .user-experience-container {
+        padding: 20px 0 30px;
+    }
+    
+    .user-experience-row {
+        gap: 15px;
+        padding: 0 20px;
+    }
+    
+    .experience-card {
+        width: 260px;
+    }
+    
+    .scroll-hint {
+        display: block;
+    }
+    
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .container {
+        padding: 0 12px;
+    }
+    
+    .app-header {
+        padding: 10px 0;
+    }
+    
+    .logo-icon {
+        font-size: 20px;
+    }
+    
+    .logo-text {
+        font-size: 18px;
+    }
+    
+    .phone-btn {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+    
+    .hero-section {
+        padding: 120px 12px 60px;
+        min-height: auto;
+    }
+    
+    .hero-title {
+        font-size: 32px;
+    }
+    
+    .hero-badge {
+        font-size: 13px;
+        padding: 10px 20px;
+    }
+    
+    .user-experience-section {
+        margin: 30px 0;
+    }
+    
+    .user-experience-container {
+        padding: 15px 0 25px;
+    }
+    
+    .user-experience-row {
+        gap: 12px;
+        padding: 0 12px;
+    }
+    
+    .experience-card {
+        width: 240px;
+        padding: 20px;
+    }
+    
+    .exp-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .exp-title {
+        font-size: 18px;
+    }
+    
+    .benefit-item {
+        padding: 10px;
+        margin-bottom: 10px;
+        gap: 10px;
+    }
+    
+    .benefit-item span {
+        font-size: 13px;
+    }
+    
+    .exp-desc {
+        font-size: 13px;
+    }
+    
+    .scroll-hint {
+        display: block;
+        font-size: 12px;
+    }
+    
+    .btn-hero {
+        padding: 16px 30px;
+        font-size: 16px;
+    }
+    
+    .cta-note {
+        font-size: 13px;
+        padding: 10px 20px;
+    }
+    
+    .section-title {
+        font-size: 28px;
+    }
+    
+    .section-subtitle {
+        font-size: 16px;
+    }
+    
+    .benefits-section,
+    .services-section,
+    .quick-booking {
+        padding: 60px 12px;
+    }
+    
+    .benefits-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .service-image {
+        height: 150px;
     }
     
     .service-name {
@@ -1251,217 +1707,268 @@ a {
     }
     
     .experience-item span {
+        font-size: 13px;
+    }
+    
+    .btn-view-details {
+        padding: 12px;
         font-size: 14px;
     }
     
-    .btn-toggle-services {
-        width: auto;
-        max-width: none;
-        padding: 16px 32px;
+    .booking-card {
+        padding: 30px 20px;
+    }
+    
+    .booking-title {
+        font-size: 26px;
+    }
+    
+    .form-select, .form-input {
+        padding: 14px 16px;
+    }
+    
+    .btn-submit {
+        padding: 16px;
         font-size: 16px;
-    }
-    
-    .hero-value-props,
-    .commitments,
-    .benefits-grid {
-        grid-template-columns: repeat(6, 1fr);
-        gap: 16px;
-        max-width: 100%;
-    }
-    
-    .hero-buttons {
-        flex-direction: row;
-        justify-content: center;
-        max-width: none;
     }
     
     .footer-content {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: 1fr;
+        gap: 30px;
     }
     
-    .bottom-tab-bar {
-        display: none;
-    }
-}
-
-@media (max-width: 767px) {
-    .hero-section {
-        padding: 120px 16px 60px;
-    }
-    
-    .hero-title {
-        font-size: 32px;
-    }
-    
-    .hero-subtitle {
-        font-size: 16px;
+    .main-footer {
+        padding: 60px 12px 120px;
     }
     
     .bottom-tab-bar {
         display: block;
     }
     
-    .main-footer {
-        padding-bottom: 120px;
-    }
-    
-    .footer-content {
-        grid-template-columns: 1fr;
-    }
-    
-    /* Mobile adjustments for grids */
-    .hero-value-props,
-    .commitments,
-    .benefits-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
+    /* Mobile Modal */
+    .service-details-container {
+        width: 100%;
+        height: 100vh;
         max-width: 100%;
+        border-radius: 0;
+        border: none;
     }
     
-    .value-prop,
-    .commitment-item,
-    .benefit-card {
-        min-height: 110px;
-        padding: 12px 8px;
+    .details-header {
+        padding: 20px;
     }
     
-    .value-icon,
-    .commitment-icon,
-    .benefit-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 18px;
-        margin-bottom: 8px;
+    .details-header h3 {
+        font-size: 22px;
+        padding-right: 40px;
     }
     
-    .value-text,
-    .commitment-text,
-    .benefit-title {
-        font-size: 12px;
+    .close-details {
+        top: 20px;
+        right: 20px;
+        width: 36px;
+        height: 36px;
     }
     
-    .benefit-desc {
-        font-size: 11px;
+    .details-content {
+        padding: 20px;
+    }
+    
+    .details-image {
+        height: 160px;
+    }
+    
+    .image-overlay {
+        font-size: 36px;
+    }
+    
+    .details-description {
+        font-size: 14px;
+        padding: 15px;
+    }
+    
+    .features-list li {
+        font-size: 13px;
+        padding: 10px 0;
+    }
+    
+    .pricing-info {
+        padding: 15px;
+    }
+    
+    .price-label {
+        font-size: 13px;
+    }
+    
+    .price-value {
+        font-size: 15px;
+    }
+    
+    .details-actions {
+        position: sticky;
+        bottom: 0;
+        background: var(--card-black);
+        padding: 20px 20px 25px;
+        margin: 20px -20px -20px;
+        border-top: 1px solid rgba(212, 175, 55, 0.2);
+    }
+    
+    .whatsapp-float {
+        bottom: 90px;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
     }
 }
 
+/* Small Mobile */
 @media (max-width: 480px) {
     .hero-title {
         font-size: 28px;
     }
     
-    .section-title {
+    .user-experience-row {
+        gap: 10px;
+    }
+    
+    .experience-card {
+        width: 220px;
+        padding: 18px;
+    }
+    
+    .exp-title {
+        font-size: 16px;
+    }
+    
+    .benefit-item {
+        padding: 8px;
+        margin-bottom: 8px;
+        gap: 8px;
+    }
+    
+    .benefit-item span {
+        font-size: 12px;
+    }
+    
+    .exp-desc {
+        font-size: 12px;
+        margin-top: 12px;
+        padding-top: 12px;
+    }
+    
+    .benefit-card {
+        padding: 25px 20px;
+    }
+    
+    .benefit-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .benefit-icon i {
         font-size: 24px;
     }
     
-    .services-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        padding: 0 5px;
-    }
-    
-    .service-card {
-        padding: 20px 15px;
-        min-height: 260px;
-    }
-    
-    .service-icon {
-        width: 50px;
-        height: 50px;
-        font-size: 20px;
-        margin-bottom: 15px;
-    }
-    
-    .service-name {
-        font-size: 16px;
-        min-height: 42px;
-        margin-bottom: 15px;
-    }
-    
-    .experience-item {
-        padding: 8px;
-        margin-bottom: 10px;
-        gap: 8px;
-    }
-    
-    .experience-item i {
-        font-size: 12px;
-        min-width: 16px;
-    }
-    
-    .experience-item span {
-        font-size: 12px;
-        line-height: 1.3;
-    }
-    
-    .btn-toggle-services {
-        padding: 12px 20px;
-        font-size: 14px;
-        max-width: 100%;
-    }
-    
-    .experience-note {
-        padding: 10px 15px;
-        font-size: 13px;
-        flex-direction: column;
-        text-align: center;
-        gap: 8px;
-    }
-    
-    .experience-note i {
-        font-size: 14px;
-    }
-}
-
-@media (max-width: 360px) {
-    .service-card {
-        padding: 18px 12px;
-        min-height: 240px;
-    }
-    
-    .service-icon {
-        width: 45px;
-        height: 45px;
+    .benefit-title {
         font-size: 18px;
     }
     
-    .service-name {
-        font-size: 15px;
-        min-height: 38px;
+    .benefit-desc {
+        font-size: 14px;
     }
     
-    .experience-item {
-        padding: 6px;
-        margin-bottom: 8px;
+    .service-card {
+        padding: 20px;
+    }
+    
+    .service-image {
+        height: 140px;
+    }
+    
+    .service-name {
+        font-size: 18px;
+        min-height: 52px;
     }
     
     .experience-item span {
-        font-size: 11px;
+        font-size: 12px;
     }
     
-    .btn-toggle-services {
-        font-size: 13px;
-        padding: 10px 16px;
+    .whatsapp-float {
+        bottom: 85px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+        font-size: 22px;
     }
 }
 
-/* Touch device optimization */
+/* Safe Area Support for iOS */
+@supports (padding: max(0px)) {
+    .bottom-tab-bar {
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+        height: calc(75px + env(safe-area-inset-bottom));
+    }
+    
+    .tab-items {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    .details-actions {
+        padding-bottom: max(25px, env(safe-area-inset-bottom) + 15px);
+    }
+}
+
+/* Touch Device Optimization */
 @media (hover: none) and (pointer: coarse) {
     .service-card:active {
-        transform: translateY(-3px);
-        border-color: rgba(212, 175, 55, 0.3);
+        transform: translateY(-5px);
+        border-color: rgba(212, 175, 55, 0.4);
     }
     
-    .btn-toggle-services:active {
+    .btn-view-details:active {
         transform: translateY(-2px);
-        background: rgba(212, 175, 55, 0.15);
+        background: rgba(212, 175, 55, 0.2);
+    }
+    
+    .experience-card:active {
+        transform: translateY(-5px) scale(1.02);
     }
 }
 
-/* Fix for iOS Safari */
-@supports (-webkit-touch-callout: none) {
-    .service-card {
-        -webkit-tap-highlight-color: transparent;
+/* Print Styles */
+@media print {
+    .app-header,
+    .bottom-tab-bar,
+    .whatsapp-float,
+    .btn-view-details {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+        padding: 0 !important;
+    }
+    
+    .hero-section,
+    .benefits-section,
+    .services-section,
+    .quick-booking,
+    .main-footer {
+        background: none !important;
+        padding: 20px !important;
+        color: black !important;
+    }
+    
+    .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+    
+    a {
+        color: black !important;
+        text-decoration: underline;
     }
 }
 
@@ -1476,217 +1983,457 @@ a {
 .text-champagne { color: var(--champagne); }
 .text-tertiary { color: var(--text-tertiary); }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
 .hide-scrollbar::-webkit-scrollbar {
     display: none;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
-.hide-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+/* ===== CẬP NHẬT LAYOUT THEO YÊU CẦU ===== */
+
+/* 1. Phần Tiện ích (Benefits) hiển thị 3 ô/hàng trên Mobile */
+@media (max-width: 767px) {
+    .benefits-grid {
+        grid-template-columns: repeat(3, 1fr); /* Chia 3 cột */
+        gap: 10px; /* Thu nhỏ khoảng cách để đủ chỗ */
+        padding: 0 5px;
+    }
+
+    .benefit-card {
+        padding: 15px 5px; /* Giảm padding bên trong card */
+    }
+
+    .benefit-icon {
+        width: 45px; /* Thu nhỏ icon */
+        height: 45px;
+        margin-bottom: 10px;
+    }
+
+    .benefit-icon i {
+        font-size: 18px;
+    }
+
+    .benefit-title {
+        font-size: 13px; /* Thu nhỏ chữ tiêu đề */
+        margin-bottom: 5px;
+        line-height: 1.2;
+    }
+
+    .benefit-desc {
+        display: none; /* Ẩn mô tả ngắn trên mobile để tránh bị quá dài */
+    }
+
+    /* 2. Phần Dịch vụ (Services) hiển thị 2 ô/hàng trên Mobile */
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr); /* Chia 2 cột */
+        gap: 12px;
+    }
+
+    .service-card {
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .service-image {
+        height: 120px; /* Giảm chiều cao ảnh */
+        margin-bottom: 10px;
+    }
+
+    .service-name {
+        font-size: 15px; /* Thu nhỏ tên dịch vụ */
+        min-height: 40px;
+        margin-bottom: 10px;
+    }
+
+    .service-experience {
+        display: none; /* Ẩn bớt chi tiết trải nghiệm để card gọn hơn */
+    }
+
+    .btn-view-details {
+        padding: 10px;
+        font-size: 13px;
+    }
 }
-/* ===== HỆ THỐNG BIẾN & RESET ===== */
-:root {
-    --primary-black: #000000;
-    --dark-black: #0a0a0a;
-    --card-black: #141414;
-    --champagne: #D4AF37;
-    --text-primary: #FFFFFF;
-    --text-secondary: #E0E0E0;
-    --text-tertiary: #909090;
-    --divider: rgba(212, 175, 55, 0.15);
+
+/* Điều chỉnh cho màn hình cực nhỏ (iPhone SE,...) */
+@media (max-width: 380px) {
+    .benefits-grid {
+        gap: 5px;
+    }
+    .benefit-title {
+        font-size: 11px;
+    }
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+/* ===== CẬP NHẬT LAYOUT GIỮ NGUYÊN CHI TIẾT ===== */
 
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--primary-black);
-    color: var(--text-primary);
-    overflow-x: hidden;
-    /* QUAN TRỌNG: Đẩy nội dung lên để không bị Footer che */
-    padding-bottom: 90px; 
+@media (max-width: 767px) {
+    /* --- 1. Tiện ích: 3 ô/hàng --- */
+    .benefits-grid {
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 8px; /* Khoảng cách nhỏ để tối ưu không gian */
+        padding: 0;
+    }
+
+    .benefit-card {
+        padding: 12px 5px; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .benefit-icon {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 8px;
+    }
+
+    .benefit-icon i {
+        font-size: 16px;
+    }
+
+    .benefit-title {
+        font-size: 12px; /* Chữ nhỏ để không bị nhảy dòng quá nhiều */
+        font-weight: 700;
+        margin-bottom: 5px;
+        line-height: 1.2;
+    }
+
+    .benefit-desc {
+        font-size: 10px; /* Chữ mô tả siêu nhỏ để hiển thị được chi tiết */
+        line-height: 1.3;
+        color: var(--text-tertiary);
+    }
+
+    /* --- 2. Dịch vụ: 2 ô/hàng --- */
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .service-card {
+        padding: 10px;
+        border-radius: 12px;
+    }
+
+    .service-image {
+        height: 100px; /* Giảm chiều cao ảnh để tiết kiệm chỗ */
+        margin-bottom: 10px;
+    }
+
+    .service-name {
+        font-size: 14px;
+        min-height: 35px;
+        margin-bottom: 8px;
+        padding: 0 5px;
+    }
+
+    /* Hiển thị lại phần trải nghiệm (chi tiết) */
+    .service-experience {
+        display: block; 
+        margin-bottom: 10px;
+    }
+
+    .experience-item {
+        padding: 6px; /* Thu nhỏ padding của từng dòng chi tiết */
+        gap: 6px;
+        margin-bottom: 5px;
+    }
+
+    .experience-item i {
+        font-size: 10px;
+        min-width: 12px;
+    }
+
+    .experience-item span {
+        font-size: 11px; /* Thu nhỏ chữ chi tiết */
+        line-height: 1.2;
+    }
+
+    .btn-view-details {
+        padding: 8px;
+        font-size: 12px;
+        border-width: 1px;
+    }
 }
 
-/* CONTAINER SÁT VIỀN 5PX */
-.container { width: 100%; padding: 0 5px; }
+/* ===== CẬP NHẬT HIỂN THỊ ĐẦY ĐỦ NỘI DUNG MÔ TẢ ===== */
 
-/* ===== HEADER ===== */
-.app-header {
-    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-    background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(15px);
-    padding: 12px 5px; border-bottom: 1px solid var(--divider);
+@media (max-width: 767px) {
+    /* --- PHẦN TIỆN ÍCH (Tại sao chọn chúng tôi): 3 ô/hàng --- */
+    .benefits-grid {
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 8px; /* Khoảng cách nhỏ để không bị tràn màn hình */
+        padding: 0 4px;
+    }
+
+    .benefit-card {
+        padding: 15px 8px; /* Giảm padding để dành chỗ cho chữ */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100%; /* Đảm bảo các ô cao bằng nhau */
+    }
+
+    .benefit-icon {
+        width: 42px;
+        height: 42px;
+        margin-bottom: 10px;
+        flex-shrink: 0;
+    }
+
+    .benefit-icon i {
+        font-size: 18px;
+    }
+
+    .benefit-title {
+        font-size: 13px; /* Cỡ chữ tiêu đề nhỏ lại để vừa 1-2 dòng */
+        font-weight: 700;
+        margin-bottom: 6px;
+        line-height: 1.2;
+    }
+
+    /* Hiển thị lại phần mô tả như CSS gốc */
+    .benefit-desc {
+        display: block !important; 
+        font-size: 11px; /* Cỡ chữ nhỏ để chứa được nhiều nội dung */
+        line-height: 1.4;
+        color: var(--text-tertiary);
+        text-align: center;
+    }
+
+    /* --- PHẦN DỊCH VỤ: 2 ô/hàng --- */
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .service-card {
+        padding: 10px;
+    }
+
+    .service-image {
+        height: 110px;
+        margin-bottom: 12px;
+    }
+
+    .service-name {
+        font-size: 15px;
+        min-height: 40px;
+        margin-bottom: 10px;
+    }
+
+    /* Hiển thị đầy đủ phần trải nghiệm chi tiết */
+    .service-experience {
+        display: block !important;
+        margin-bottom: 12px;
+    }
+
+    .experience-item {
+        padding: 6px 8px;
+        margin-bottom: 6px;
+        gap: 8px;
+    }
+
+    .experience-item i {
+        font-size: 10px;
+    }
+
+    .experience-item span {
+        font-size: 11px;
+        line-height: 1.3;
+    }
+
+    .btn-view-details {
+        padding: 10px;
+        font-size: 13px;
+        border-width: 1px;
+    }
 }
 
-/* ===== BOTTOM TAB BAR (CỐ ĐỊNH CHUẨN) ===== */
-.bottom-tab-bar {
-    position: fixed !important; /* Cố định tuyệt đối */
-    bottom: 0 !important;      /* Luôn nằm dưới cùng */
-    left: 0;
+/* Tối ưu thêm cho màn hình siêu nhỏ (như iPhone SE) */
+@media (max-width: 360px) {
+    .benefit-title { font-size: 11px; }
+    .benefit-desc { font-size: 10px; }
+    .service-name { font-size: 13px; }
+}
+
+/* ===== TỐI ƯU KHOẢNG CÁCH VIỀN (MARGIN/PADDING) TRÊN MOBILE ===== */
+
+@media (max-width: 767px) {
+    /* 1. Thu hẹp lề trái/phải của toàn trang để sát với viền ô lưới */
+    .container {
+        padding: 0 8px; /* Giảm từ 16px xuống 8px để đồng bộ với gap của grid */
+    }
+
+    /* 2. Giảm khoảng cách trên/dưới giữa các Section cho cân đối */
+    .benefits-section, 
+    .services-section, 
+    .quick-booking, 
+    .main-footer {
+        padding: 30px 0; /* Giảm khoảng cách trống quá rộng giữa các phần */
+    }
+
+    .section-header {
+        margin-bottom: 25px; /* Giảm khoảng cách từ tiêu đề đến nội dung */
+    }
+
+    /* 3. Cấu hình Lưới Tiện ích (Benefits) - 3 ô/hàng */
+    .benefits-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px; /* Khoảng cách giữa các ô là 8px, tương đương lề container */
+        margin: 0;
+    }
+
+    .benefit-card {
+        padding: 12px 6px;
+        min-height: auto;
+    }
+
+    .benefit-title {
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .benefit-desc {
+        font-size: 10px;
+        line-height: 1.3;
+        display: block !important;
+    }
+
+    /* 4. Cấu hình Lưới Dịch vụ (Services) - 2 ô/hàng */
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px; /* Đồng nhất khoảng cách 8px */
+    }
+
+    .service-card {
+        padding: 8px;
+    }
+
+    .service-image {
+        height: 100px;
+        margin-bottom: 8px;
+    }
+
+    .service-name {
+        font-size: 14px;
+        min-height: 32px;
+        margin-bottom: 8px;
+    }
+
+    .experience-item {
+        padding: 5px;
+        margin-bottom: 4px;
+    }
+
+    .experience-item span {
+        font-size: 10px;
+    }
+
+    /* 5. Điều chỉnh lại Hero Section để không quá cao trên mobile */
+    .hero-section {
+        padding: 100px 8px 40px;
+    }
+}
+
+/* Khống chế ảnh trong Card ngoài trang chủ */
+.service-image {
     width: 100%;
-    height: 75px;              /* Chiều cao cố định */
-    z-index: 9999 !important;  /* Nổi trên mọi thành phần */
-    background: #0a0a0a;       /* Không để trong suốt hoàn toàn để tránh đè chữ */
-    border-top: 1px solid var(--divider);
+    height: 140px;
+    overflow: hidden;
+}
+.service-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Cấu trúc Gallery ảnh trong Popup (Quan trọng nhất) */
+.details-gallery {
+    display: flex;            /* Sắp xếp ảnh nằm ngang */
+    overflow-x: auto;         /* Cho phép cuộn ngang */
+    gap: 10px;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    scroll-snap-type: x mandatory; /* Hiệu ứng hít ảnh khi cuộn */
+    -webkit-overflow-scrolling: touch; /* Cuộn mượt trên iPhone */
+}
+
+.gallery-item {
+    flex: 0 0 90%;           /* Mỗi ảnh chiếm 90% chiều rộng popup */
+    height: 200px;           /* Chiều cao cố định để không vỡ */
+    scroll-snap-align: start;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;       /* Ảnh luôn lấp đầy ô, không bị méo */
+}
+
+/* Ẩn thanh cuộn xấu xí trên một số trình duyệt */
+.details-gallery::-webkit-scrollbar {
+    height: 4px;
+}
+.details-gallery::-webkit-scrollbar-thumb {
+    background: #d4af37;
+    border-radius: 10px;
+}
+
+/* Thay thế CSS cho exp-icon cũ bằng exp-img-box */
+.exp-header {
+    display: flex;
+    align-items: center; /* Căn giữa ảnh và tiêu đề theo chiều ngang */
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.exp-img-box {
+    width: 70px;         /* Độ rộng ảnh chữ nhật */
+    height: 45px;        /* Chiều cao ảnh chữ nhật */
+    border-radius: 8px;  /* Bo góc nhẹ */
+    overflow: hidden;
+    border: 1px solid #d4af37; /* Viền vàng đặc trưng LuxuryMove */
+    flex-shrink: 0;      /* Không cho ảnh bị bóp méo */
+}
+
+.exp-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;   /* Ảnh luôn đẹp trong khung */
+}
+
+.exp-title {
+    font-size: 18px;
+    margin: 0;
+    color: #ffff;
+    font-weight: 700;
+}
+
+/* --- PHẦN TRẢI NGHIỆM NGƯỜI DÙNG (USER EXPERIENCE) --- */
+
+
+
+
+/* PHẦN ẢNH BANNER TRÊN CÙNG */
+.exp-img-box {
+    width: 100%;
+    height: 160px; /* Tăng chiều cao ảnh để rõ nét hơn */
+    overflow: hidden;
+    position: relative;
+}
+
+.exp-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Đảm bảo ảnh không bị méo */
     display: block;
-}
-
-.tab-items {
-    display: flex;
-    height: 100%;
-    align-items: center;
-    justify-content: space-around;
-    padding-bottom: env(safe-area-inset-bottom); /* Hỗ trợ iPhone tai thỏ */
-}
-
-.tab-item {
-    text-align: center;
-    color: var(--text-tertiary);
-    text-decoration: none;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-}
-
-.tab-item.active { color: var(--champagne); }
-.tab-icon { font-size: 20px; }
-.tab-label { font-size: 10px; font-weight: 500; }
-
-/* ===== CÁC SECTION KHÁC SÁT VIỀN 5PX ===== */
-.hero-section { padding: 110px 5px 50px; text-align: center; }
-.benefits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; padding: 20px 0; }
-.benefit-card { 
-    background: var(--card-black); padding: 15px 5px; 
-    border-radius: 8px; border: 1px solid var(--divider); text-align: center;
-}
-.services-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-.service-card { 
-    background: var(--card-black); border-radius: 12px; 
-    padding: 20px 10px; border: 1px solid var(--divider); 
-}
-
-/* Responsive cho Desktop */
-@media (min-width: 768px) {
-    .bottom-tab-bar { display: none; }
-    body { padding-bottom: 0; }
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-}
-
-/* ===== STICKY FOOTER FIX ===== */
-.main-footer {
-    position: relative;
-    z-index: 10000 !important; /* CAO HƠN Tab Bar */
-    margin-bottom: 80px; /* Tạo khoảng trống cho Tab Bar */
-}
-
-/* Khi có Tab Bar, Footer cần padding bottom */
-body.has-tab-bar {
-    padding-bottom: 140px !important; /* Footer + Tab Bar */
-}
-
-/* Trên desktop (không có Tab Bar) */
-@media (min-width: 768px) {
-    body.has-tab-bar {
-        padding-bottom: 0 !important;
-    }
-}
-
-/* Đảm bảo nội dung không bị che */
-.container {
-    position: relative;
-    z-index: 1;
-}
-
-/* Tab Bar vẫn ở vị trí cũ nhưng thấp hơn Footer */
-.bottom-tab-bar {
-    z-index: 9000 !important; /* THẤP HƠN Footer */
-}
-
-/* Footer luôn ở cuối trang */
-.main-footer.always-sticky {
-    position: fixed !important;
-    bottom: 80px !important; /* Ngay trên Tab Bar */
-    left: 0;
-    width: 100%;
-    background: var(--primary-black);
-    border-top: 1px solid var(--divider);
-    padding: 40px 16px 20px;
-    z-index: 10000 !important;
-}
-
-/* Trên desktop: Footer bình thường */
-@media (min-width: 768px) {
-    .main-footer.always-sticky {
-        position: relative !important;
-        bottom: auto !important;
-        margin-bottom: 0;
-    }
-}
-
-/* 1. ĐẢM BẢO BODY CÓ KHOẢNG ĐỆM ĐỂ KHÔNG BỊ FOOTER CHE NỘI DUNG CUỐI */
-body {
-    padding-bottom: 80px !important; /* Chiều cao tương ứng của Footer */
-}
-
-/* 2. CỐ ĐỊNH BOTTOM TAB BAR LUÔN DÍNH SÁT ĐÁY */
-.bottom-tab-bar {
-    position: fixed !important; /* Cố định tuyệt đối */
-    bottom: 0 !important;      /* Luôn ở sát đáy */
-    left: 0 !important;
-    width: 100% !important;
-    height: 70px;              /* Chiều cao chuẩn mobile */
-    z-index: 99999 !important; /* Ưu tiên nổi lên trên tất cả thành phần khác */
-    background: #0a0a0a;       /* Nền tối Luxury */
-    border-top: 1px solid rgba(212, 175, 55, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.5); /* Tạo chiều sâu */
-}
-
-.tab-items {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 5px; /* Sát viền 5px theo yêu cầu */
-}
-
-.tab-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    text-decoration: none;
-    color: #888888;
-    flex: 1;
-    transition: all 0.3s ease;
-}
-
-.tab-item.active {
-    color: #D4AF37; /* Màu Champagne khi đang ở trang đó */
-}
-
-.tab-icon {
-    font-size: 20px;
-}
-
-.tab-label {
-    font-size: 10px;
-    font-weight: 500;
-}
-
-/* ẨN TRÊN DESKTOP ĐỂ TRÁNH TRÙNG LẶP */
-@media (min-width: 768px) {
-    .bottom-tab-bar {
-        display: none !important;
-    }
-    body {
-        padding-bottom: 0 !important;
-    }
 }
 
