@@ -1,17 +1,5 @@
 {
   "services": {
-    "12312": {
-      "title": "3123123",
-      "subtitle": "3123123",
-      "images": [],
-      "description": "123123",
-      "features": [
-        "Đón tận cửa, hỗ trợ hành lý",
-        "Xe đời mới, nội thất cao cấp",
-        "Tài xế mặc vest, chuyên nghiệp"
-      ],
-      "pricing": []
-    },
     "tour": {
       "title": "Du Lịch Biển Đảo123",
       "subtitle": "Khám phá vẻ đẹp miền Trung",
@@ -181,5 +169,5 @@
       "pricing": []
     }
   },
-  "last_updated": "2025-12-18T07:55:50.001Z"
+  "last_updated": "2025-12-18T08:01:12.367Z"
 }
