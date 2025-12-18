@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HTMoveMove - Di Chuyển Cao Cấp</title>
+    <title>LuxuryMove - Di Chuyển Cao Cấp</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
         <div class="header-content container">
             <div class="logo">
                 <div class="logo-icon"><i class="fas fa-crown"></i></div>
-                <div class="logo-text">HT<span>Move</span></div>
+                <div class="logo-text">Luxury<span>Move</span></div>
             </div>
             
             <div class="header-actions">
@@ -176,7 +176,7 @@
         <div class="container">
             <div class="section-header">
                 <div class="section-title-wrapper">
-                    <h2 class="section-title">Tại Sao Chọn HTMove?</h2>
+                    <h2 class="section-title">Tại Sao Chọn LuxuryMove?</h2>
                     <div class="title-divider">
                         <div class="divider-line"></div>
                         <div class="divider-icon"><i class="fas fa-check-circle"></i></div>
@@ -237,8 +237,7 @@
         </div>
     </section>
 
-    <!-- Trong section services của index.html -->
-<section class="services-section" id="services">
+    <section class="services-section" id="services">
     <div class="container">
         <div class="section-header">
             <h2 class="section-title">Dịch Vụ Của Chúng Tôi</h2>
@@ -256,10 +255,7 @@
                 Đang tải dữ liệu dịch vụ...
             </div>
         </div>
-        
-        <!-- Grid mặc định (sẽ bị ẩn nếu có dữ liệu từ GitHub) -->
-        <div class="services-grid default-services" style="display: none;">
-            <!-- Sao chép toàn bộ 8 card mặc định từ index.html cũ vào đây -->
+        <div class="services-grid">
             <div class="service-card" data-service="airport">
                 <div class="service-image">
                     <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=500" alt="Sân bay">
@@ -272,8 +268,7 @@
                 </div>
                 <button class="btn-view-details">Chi tiết</button>
             </div>
-            
-            <!-- Thêm 7 card còn lại giống y hệt... -->
+
             <div class="service-card" data-service="tour">
                 <div class="service-image">
                     <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=500" alt="Tour biển">
@@ -286,8 +281,84 @@
                 </div>
                 <button class="btn-view-details">Chi tiết</button>
             </div>
-            
-            <!-- Thêm các card khác... -->
+
+            <div class="service-card" data-service="business">
+                <div class="service-image">
+                    <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=500" alt="Doanh nghiệp">
+                </div>
+                <h3 class="service-name">Dịch Vụ Doanh Nghiệp</h3>
+                <div class="service-experience">
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Hóa đơn VAT</span></div>
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Hợp đồng dài hạn</span></div>
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Đón đối tác VIP</span></div>
+                </div>
+                <button class="btn-view-details">Chi tiết</button>
+            </div>
+
+            <div class="service-card" data-service="rental">
+                <div class="service-image">
+                    <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=500" alt="Thuê xe">
+                </div>
+                <h3 class="service-name">Thuê Xe Có Tài Xế</h3>
+                <div class="service-experience">
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Lái xe 5 năm kinh nghiệm</span></div>
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Xe đời mới 2023+</span></div>
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Giá trọn gói</span></div>
+                </div>
+                <button class="btn-view-details">Chi tiết</button>
+            </div>
+
+            <div class="service-card" data-service="mountain">
+                <div class="service-image">
+                    <img src="https://images.unsplash.com/photo-1589182397057-b82d51970e2c?auto=format&fit=crop&w=500" alt="Cao nguyên">
+                </div>
+                <h3 class="service-name">Tour Cao Nguyên</h3>
+                <div class="service-experience">
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Đà Lạt - Bảo Lộc</span></div>
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Chuyên cung đường đèo</span></div>
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Hỗ trợ chụp ảnh</span></div>
+                </div>
+                <button class="btn-view-details">Chi tiết</button>
+            </div>
+
+            <div class="service-card" data-service="wedding">
+                <div class="service-image">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=500" alt="Xe cưới">
+                </div>
+                <h3 class="service-name">Xe Cưới & Sự Kiện</h3>
+                <div class="service-experience">
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Trang trí theo yêu cầu</span></div>
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Xe sang trọng VIP</span></div>
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Đúng giờ tuyệt đối</span></div>
+                </div>
+                <button class="btn-view-details">Chi tiết</button>
+            </div>
+
+            <div class="service-card" data-service="intercity">
+                <div class="service-image">
+                    <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=500" alt="Liên tỉnh">
+                </div>
+                <h3 class="service-name">Hợp Đồng Liên Tỉnh</h3>
+                <div class="service-experience">
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Đi muôn nơi theo ý</span></div>
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Chạy 24/7 linh hoạt</span></div>
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Tiết kiệm 30% giá</span></div>
+                </div>
+                <button class="btn-view-details">Chi tiết</button>
+            </div>
+
+            <div class="service-card" data-service="limo">
+                <div class="service-image">
+                    <img src="https://images.unsplash.com/photo-1551522435-a13afa10f103?auto=format&fit=crop&w=500" alt="VIP Limo">
+                </div>
+                <h3 class="service-name">Xe VIP Limousine</h3>
+                <div class="service-experience">
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Nội thất hạng thương gia</span></div>
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Massage ghế điện</span></div>
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Wifi & Tivi đầy đủ</span></div>
+                </div>
+                <button class="btn-view-details">Chi tiết</button>
+            </div>
         </div>
     </div>
 </section>
@@ -351,7 +422,7 @@
                 <div class="footer-section">
                     <div class="footer-logo">
                         <i class="fas fa-crown"></i>
-                        <span>HTMove<span>Move</span></span>
+                        <span>Luxury<span>Move</span></span>
                     </div>
                     <p class="footer-desc">Đơn vị vận tải cao cấp hàng đầu khu vực miền Trung - Tây Nguyên</p>
                     <div class="social-links">
@@ -361,7 +432,7 @@
                         <a href="https://zalo.me/0931243679" class="social-link" target="_blank">
                             <span class="zalo-icon">Z</span>
                         </a>
-                        <a href="mailto:contact@HTMovemove.vn" class="social-link">
+                        <a href="mailto:contact@luxurymove.vn" class="social-link">
                             <i class="fas fa-envelope"></i>
                         </a>
                         <a href="tel:0931243679" class="social-link">
@@ -398,7 +469,7 @@
                         <p><i class="fas fa-phone-alt"></i> <strong>0931.243.679</strong></p>
                         <p><i class="fas fa-map-marker-alt"></i> TP. Nha Trang, Khánh Hòa</p>
                         <p><i class="fas fa-clock"></i> Hoạt động 24/7</p>
-                        <p><i class="fas fa-envelope"></i> contact@HTMovemove.vn</p>
+                        <p><i class="fas fa-envelope"></i> contact@luxurymove.vn</p>
                     </div>
                 </div>
             </div>
@@ -411,8 +482,8 @@
     </ul>
 </div>
             <div class="copyright">
-                <p>&copy; 2024 HTMoveMove. All Rights Reserved.</p>
-                <p class="copyright-note">Website được thiết kế bởi HTMoveMove Team</p>
+                <p>&copy; 2024 LuxuryMove. All Rights Reserved.</p>
+                <p class="copyright-note">Website được thiết kế bởi LuxuryMove Team</p>
             </div>
         </div>
     </footer>
@@ -459,10 +530,10 @@
     </div>
 
     <!-- Floating WhatsApp Button -->
-    <a href="https://wa.me/84931243679?text=Tôi muốn đặt xe HTMoveMove" class="whatsapp-float" target="_blank">
+    <a href="https://wa.me/84931243679?text=Tôi muốn đặt xe LuxuryMove" class="whatsapp-float" target="_blank">
         <i class="fab fa-whatsapp"></i>
     </a>
 
     <script src="script.js"></script>
 </body>
-                </html>
+    </html>

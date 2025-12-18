@@ -58,148 +58,26 @@ async function initApp() {
     } catch (error) {
         console.error("Lỗi khởi tạo:", error);
     }
-}// Hàm cập nhật form đặt xe theo dịch vụ động
-function updateBookingForm() {
-    const serviceSelect = document.getElementById('serviceType');
-    if (!serviceSelect) return;
-    
-    // Xóa các option cũ (giữ lại option đầu tiên)
-    while (serviceSelect.options.length > 1) {
-        serviceSelect.remove(1);
-    }
-    
-    // Thêm option từ dữ liệu GitHub
-    if (servicesData.services) {
-        Object.keys(servicesData.services).forEach(serviceId => {
-            const service = servicesData.services[serviceId];
-            const option = new Option(service.title, serviceId);
-            serviceSelect.add(option);
-        });
-    }
-    
-    // Nếu không có dữ liệu từ GitHub, dùng mặc định
-    if (serviceSelect.options.length === 1) {
-        const defaultServices = [
-            { value: 'airport', text: 'Đưa đón sân bay' },
-            { value: 'intercity', text: 'Vận chuyển liên tỉnh' },
-            { value: 'driver', text: 'Thuê tài xế riêng' },
-            { value: 'tour', text: 'Tour du lịch' },
-            { value: 'wedding', text: 'Xe cưới hỏi' },
-            { value: 'business', text: 'Dịch vụ doanh nghiệp' },
-            { value: 'rental', text: 'Thuê xe có tài xế' },
-            { value: 'mountain', text: 'Tour cao nguyên' }
-        ];
-        
-        defaultServices.forEach(service => {
-            const option = new Option(service.text, service.value);
-            serviceSelect.add(option);
-        });
-    }
 }
 
-// Cập nhật hàm bookThisService
-function bookThisService(serviceId) {
-    const service = servicesData.services[serviceId];
-    
-    // Đóng modal
-    const modal = document.getElementById('serviceDetails');
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-    
-    // Cập nhật form đặt xe
-    const serviceSelect = document.getElementById('serviceType');
-    if (serviceSelect) {
-        // Tìm và chọn option tương ứng
-        for (let i = 0; i < serviceSelect.options.length; i++) {
-            if (serviceSelect.options[i].value === serviceId) {
-                serviceSelect.selectedIndex = i;
-                break;
-            }
-        }
-    }
-    
-    // Cuộn đến form đặt xe
-    const bookingSection = document.getElementById('booking');
-    if (bookingSection) {
-        bookingSection.scrollIntoView({ behavior: 'smooth' });
-        
-        // Focus vào trường tên
-        setTimeout(() => {
-            const nameInput = document.getElementById('customerName');
-            if (nameInput) {
-                nameInput.focus();
-                // Điền tên dịch vụ vào ghi chú nếu có
-                if (service && service.title) {
-                    nameInput.value = `Đặt ${service.title}`;
-                    // Tự động chọn toàn bộ text để dễ xóa
-                    nameInput.select();
-                }
-            }
-        }, 500);
-    }
-}
-
-// Cập nhật hàm init để gọi updateBookingForm
-function init() {
-    console.log("🚀 LuxuryMove Website Initializing...");
-    
-    // Tải dữ liệu dịch vụ
-    loadServices().then(() => {
-        // Cập nhật form đặt xe sau khi tải dữ liệu
-        updateBookingForm();
-    });
-    
-    // Khởi tạo các event listeners khác
-    setupEventListeners();
-}
-
+// Thay thế toàn bộ hàm renderUI() hiện tại bằng:
 function renderUI() {
     const servicesGrid = document.getElementById('servicesGrid');
-    const defaultGrid = document.querySelector('.services-grid.default-services');
-    
     if (!servicesGrid) return;
-    
-    // KIỂM TRA: Nếu không có dữ liệu từ GitHub
+
+    // KIỂM TRA: Nếu không có dữ liệu từ GitHub, KHÔNG làm gì cả
     if (!servicesData || !servicesData.services || Object.keys(servicesData.services).length === 0) {
-        console.log("ℹ️ Không có dữ liệu từ GitHub, hiển thị giao diện mặc định.");
-        
-        // Ẩn grid động, hiện grid mặc định
-        servicesGrid.style.display = 'none';
-        
-        if (defaultGrid) {
-            defaultGrid.style.display = 'grid';
-        } else {
-            // Nếu không có grid mặc định, tạo fallback
-            servicesGrid.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                    <h3>Không có dữ liệu dịch vụ</h3>
-                    <p>Vui lòng liên hệ: 0931.243.679</p>
-                </div>
-            `;
-            servicesGrid.style.display = 'grid';
-        }
-        return;
+        console.log("ℹ️ Không có dữ liệu từ GitHub, giữ nguyên giao diện mặc định.");
+        servicesGrid.innerHTML = ''; // Xóa placeholder
+        return; 
     }
+
+    console.log("✅ Đang thay thế giao diện bằng dữ liệu từ GitHub...");
     
-    console.log("✅ Đang hiển thị dữ liệu từ GitHub...");
+    // Xóa placeholder "Đang tải dữ liệu..."
+    servicesGrid.innerHTML = '';
     
-    // CÓ dữ liệu từ GitHub
-    // Ẩn hoàn toàn grid mặc định
-    if (defaultGrid) {
-        defaultGrid.style.display = 'none';
-        defaultGrid.style.visibility = 'hidden';
-        defaultGrid.style.position = 'absolute';
-        defaultGrid.style.opacity = '0';
-        defaultGrid.style.pointerEvents = 'none';
-    }
-    
-    // Hiển thị grid động
-    servicesGrid.style.display = 'grid';
-    servicesGrid.innerHTML = ''; // Xóa placeholder
-    
-    // Render từng dịch vụ từ GitHub
+    // Render từng dịch vụ
     Object.keys(servicesData.services).forEach(id => {
         const item = servicesData.services[id];
         
@@ -213,19 +91,14 @@ function renderUI() {
             ? item.images[0] 
             : 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=500';
         
-        // Lấy 3 features đầu tiên để hiển thị
+        // Lấy 3 features đầu tiên để hiển thị (giống HTML mặc định)
         const features = item.features || [];
         const displayFeatures = features.slice(0, 3);
         
-        // Nếu không đủ 3 features, thêm mặc định
-        while (displayFeatures.length < 3) {
-            displayFeatures.push('Chất lượng cao cấp');
-        }
-        
+        // HTML GIỐNG HỆT card mặc định
         card.innerHTML = `
             <div class="service-image">
-                <img src="${imageUrl}" alt="${item.title}" loading="lazy"
-                     onerror="this.src='https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=500'">
+                <img src="${imageUrl}" alt="${item.title}" loading="lazy">
             </div>
             <h3 class="service-name">${item.title || 'Dịch vụ'}</h3>
             <div class="service-experience">
@@ -234,37 +107,20 @@ function renderUI() {
                         <i class="fas fa-check"></i> <span>${feature}</span>
                     </div>
                 `).join('')}
+                ${displayFeatures.length === 0 ? `
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Chất lượng cao cấp</span></div>
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Đúng giờ 100%</span></div>
+                    <div class="experience-item"><i class="fas fa-check"></i> <span>Tài xế chuyên nghiệp</span></div>
+                ` : ''}
             </div>
-            <button class="btn-view-details" data-service="${id}">Chi tiết</button>
+            <button class="btn-view-details" onclick="showServiceDetail('${id}')">Chi tiết</button>
         `;
         
         servicesGrid.appendChild(card);
     });
-    
-    // Gắn event cho nút Chi tiết mới tạo
-    attachDetailEvents();
 }
 
-// Hàm gắn event cho nút Chi tiết
-function attachDetailEvents() {
-    document.querySelectorAll('#servicesGrid .btn-view-details').forEach(btn => {
-        if (!btn.hasAttribute('data-event-attached')) {
-            btn.setAttribute('data-event-attached', 'true');
-            
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const serviceId = this.getAttribute('data-service');
-                if (serviceId && servicesData.services[serviceId]) {
-                    showServiceDetail(serviceId);
-                }
-            });
-        }
-    });
-}
-
-// Cập nhật hàm loadServices
+// Thêm hàm loadServices() mới để tải dữ liệu
 async function loadServices() {
     console.log("🔄 Đang tải dữ liệu dịch vụ từ GitHub...");
     
@@ -272,45 +128,30 @@ async function loadServices() {
         // Tải dữ liệu từ GitHub
         const data = await fetchServicesFromGitHub();
         
-        if (data && data.services && Object.keys(data.services).length > 0) {
+        if (data && data.services) {
             servicesData = data;
             console.log("✅ Đã tải được dữ liệu từ GitHub:", Object.keys(data.services).length, "dịch vụ");
             
             // Lưu vào localStorage làm cache
             localStorage.setItem('luxurymove_services', JSON.stringify(data));
             
-            // Render giao diện và ẩn mặc định
+            // Render giao diện
             renderUI();
-            
-            // Trả về true để biết có dữ liệu
-            return true;
         } else {
             // Thử từ localStorage nếu GitHub không có
             const localData = localStorage.getItem('luxurymove_services');
             if (localData) {
-                const parsed = JSON.parse(localData);
-                if (parsed && parsed.services && Object.keys(parsed.services).length > 0) {
-                    servicesData = parsed;
-                    console.log("📂 Dùng dữ liệu từ localStorage cache");
-                    renderUI();
-                    return true;
-                }
+                servicesData = JSON.parse(localData);
+                console.log("📂 Dùng dữ liệu từ localStorage cache");
+                renderUI();
+            } else {
+                console.log("⚠️ Không có dữ liệu, giữ nguyên giao diện mặc định");
             }
-            
-            console.log("⚠️ Không có dữ liệu từ GitHub, sẽ hiển thị mặc định");
-            servicesData = { services: {} };
-            renderUI();
-            return false;
         }
     } catch (error) {
         console.error("❌ Lỗi tải dữ liệu:", error);
-        servicesData = { services: {} };
-        renderUI();
-        return false;
     }
 }
-
-
 
 // Sửa hàm fetchServicesFromGitHub để xử lý lỗi tốt hơn
 async function fetchServicesFromGitHub() {
@@ -489,7 +330,49 @@ function changeDetailImage(thumbElement, imageUrl) {
     thumbElement.classList.add('active');
 }
 
-
+// Hàm đặt dịch vụ từ modal
+function bookThisService(serviceId) {
+    const service = servicesData.services[serviceId];
+    if (!service) return;
+    
+    // Điền thông tin vào form đặt xe
+    const serviceSelect = document.getElementById('serviceType');
+    if (serviceSelect) {
+        // Tìm option tương ứng hoặc tạo mới
+        let found = false;
+        for (let option of serviceSelect.options) {
+            if (option.text.toLowerCase().includes(service.title.toLowerCase()) ||
+                service.title.toLowerCase().includes(option.text.toLowerCase())) {
+                serviceSelect.value = option.value;
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            // Thêm option mới
+            const newOption = new Option(service.title, serviceId);
+            serviceSelect.add(newOption);
+            serviceSelect.value = serviceId;
+        }
+    }
+    
+    // Đóng modal
+    document.getElementById('serviceDetails').style.display = 'none';
+    document.body.style.overflow = 'auto';
+    
+    // Cuộn đến form đặt xe
+    const bookingSection = document.getElementById('booking');
+    if (bookingSection) {
+        bookingSection.scrollIntoView({ behavior: 'smooth' });
+        
+        // Focus vào trường tên
+        setTimeout(() => {
+            const nameInput = document.getElementById('customerName');
+            if (nameInput) nameInput.focus();
+        }, 500);
+    }
+}
 
 // Thêm CSS cho modal chi tiết (thêm vào style.css hoặc thêm inline)
 function addModalStyles() {
@@ -731,7 +614,19 @@ function addModalStyles() {
     }
 }
 
-
+// Cập nhật hàm init() để gọi addModalStyles
+function init() {
+    console.log("🚀 LuxuryMove Website Initializing...");
+    
+    // Thêm CSS cho modal
+    addModalStyles();
+    
+    // Tải dữ liệu dịch vụ
+    loadServices();
+    
+    // Khởi tạo các event listeners khác
+    setupEventListeners();
+}
 // Thay thế toàn bộ hàm setupEventListeners() bằng:
 function setupEventListeners() {
     console.log("🔧 Thiết lập event listeners...");
