@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxuryMove - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-black: #000000;
+            --dark-black: #111111;
+            --light-black: #1A1A1A;
+            --card-black: #222222;
+            --champagne: #D4AF37;
+            --light-champagne: #F0D89C;
+            --text-primary: #FFFFFF;
+            --text-secondary: #CCCCCC;
+            --text-tertiary: #888888;
+            --danger: #ff4444;
+            --success: #00C851;
+            --warning: #ffbb33;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-black);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* ===== HEADER ADMIN ===== */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--champagne);
+            margin-bottom: 30px;
+        }
+        
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .admin-logo i {
+            color: var(--champagne);
+        }
+        
+        .admin-logo span {
+            color: var(--champagne);
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--champagne);
+            color: var(--primary-black);
+        }
+        
+        .btn-primary:hover {
+            background: var(--light-champagne);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--champagne);
+            border: 2px solid var(--champagne);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        /* ===== LOGIN SECTION ===== */
+        #loginSection {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 40px;
+            background: var(--card-black);
+            border-radius: 16px;
+            border: 1px solid var(--champagne);
+            text-align: center;
+        }
+        
+        .login-title {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--champagne);
+        }
+        
+        .login-subtitle {
+            color: var(--text-tertiary);
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--dark-black);
+            border: 1px solid var(--text-tertiary);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--champagne);
+        }
+        
+        /* ===== EDITOR SECTION ===== */
+        #editorSection {
+            display: none;
+        }
+        
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            color: var(--champagne);
+        }
+        
+        /* ===== SERVICES LIST ===== */
+        .services-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .service-item {
+            background: var(--card-black);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .service-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--champagne);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.1);
+        }
+        
+        .service-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .service-item-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--champagne);
+        }
+        
+        .service-item-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            background: var(--champagne);
+            color: var(--primary-black);
+        }
+        
+        .service-item-image {
+            width: 100%;
+            height: 120px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .service-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .service-item-desc {
+            color: var(--text-tertiary);
+            font-size: 14px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* ===== EDITOR FORM ===== */
+        .editor-form {
+            background: var(--card-black);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid var(--champagne);
+            margin-bottom: 40px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-full {
+            grid-column: 1 / -1;
+        }
+        
+        textarea.form-input {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        /* ===== IMAGES MANAGER ===== */
+        .images-manager {
+            margin: 30px 0;
+        }
+        
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .image-item {
+            position: relative;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+        
+        .image-item.selected {
+            border-color: var(--champagne);
+        }
+        
+        .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .image-item-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 24px;
+            height: 24px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .image-upload-area {
+            border: 2px dashed var(--champagne);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .image-upload-area:hover {
+            background: rgba(212, 175, 55, 0.05);
+        }
+        
+        .image-upload-area i {
+            font-size: 48px;
+            color: var(--champagne);
+            margin-bottom: 15px;
+        }
+        
+        /* ===== PRICING MANAGER ===== */
+        .pricing-manager {
+            margin: 30px 0;
+        }
+        
+        .pricing-items {
+            margin: 15px 0;
+        }
+        
+        .pricing-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        /* ===== FEATURES MANAGER ===== */
+        .features-manager {
+            margin: 30px 0;
+        }
+        
+        .features-list {
+            margin: 15px 0;
+        }
+        
+        .feature-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        /* ===== STATUS BAR ===== */
+        .status-bar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--card-black);
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--champagne);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .status-bar.show {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .status-success {
+            color: var(--success);
+        }
+        
+        .status-error {
+            color: var(--danger);
+        }
+        
+        .status-warning {
+            color: var(--warning);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* ===== LOADING ===== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .loading-overlay.show {
+            display: flex;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--text-tertiary);
+            border-top-color: var(--champagne);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .services-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .editor-form {
+                padding: 20px;
+            }
+            
+            .pricing-item {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- ===== LOGIN SECTION ===== -->
+        <div id="loginSection">
+    <h1 class="login-title"><i class="fas fa-crown"></i> LuxuryMove Admin</h1>
+    <p class="login-subtitle">Quản lý nội dung website</p>
+    
+    <div class="form-group">
+        <label class="form-label">Mã Admin</label>
+        <input type="password" id="adminToken" class="form-input" placeholder="Mặc định: luxurymove2024">
+        <small>Trạng thái token: <span id="savedTokenStatus" style="color: var(--text-tertiary);">Chưa lưu</span></small>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">GitHub PAT (Token)</label>
+        <input type="password" id="githubToken" class="form-input" placeholder="ghp_xxxxxxxxxxxx">
+    </div>
+
+    <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+        <input type="checkbox" id="rememberMe" style="width: 18px; height: 18px;">
+        <label for="rememberMe" style="color: var(--text-secondary); cursor: pointer; font-size: 14px;">Ghi nhớ thiết bị này</label>
+    </div>
+    
+    <button class="btn btn-primary" onclick="handleLogin()" style="width: 100%;">
+        <i class="fas fa-sign-in-alt"></i> Đăng nhập
+    </button>
+</div>
+            
+        </div>
+
+        <!-- ===== EDITOR SECTION ===== -->
+        <div id="editorSection">
+            <!-- Header -->
+            <div class="admin-header">
+                <div class="admin-logo">
+                    <i class="fas fa-crown"></i>
+                    Luxury<span>Move</span> Admin
+                </div>
+                <div class="admin-actions">
+                    <button class="btn btn-secondary" onclick="showTokenManager()">
+                        <i class="fas fa-key"></i> Token
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadServicesData()">
+                        <i class="fas fa-sync-alt"></i> Tải lại
+                    </button>
+                    <button class="btn btn-primary" onclick="saveAllServices()">
+                        <i class="fas fa-save"></i> Lưu tất cả
+                    </button>
+                    <button class="btn btn-secondary" onclick="showGitHubManager()">
+        <i class="fab fa-github"></i> GitHub
+    </button>
+                </div>
+            </div>
+
+            <!-- Services List -->
+            <div class="editor-header">
+                <h2 class="section-title">Quản lý Dịch vụ</h2>
+                <button class="btn btn-primary" onclick="addNewService()">
+                    <i class="fas fa-plus"></i> Thêm dịch vụ mới
+                </button>
+            </div>
+
+            <div class="services-list" id="servicesList">
+                <!-- Danh sách dịch vụ sẽ được thêm bằng JS -->
+            </div>
+
+            <!-- Editor Form (Ẩn ban đầu) -->
+            <div id="serviceEditor" class="editor-form" style="display: none;">
+                <div class="editor-header">
+                    <h2 class="section-title" id="editorTitle">Thêm dịch vụ mới</h2>
+                    <div>
+                        <button class="btn btn-secondary" onclick="closeEditor()">
+                            <i class="fas fa-times"></i> Hủy
+                        </button>
+                        <button class="btn btn-primary" onclick="saveService()">
+                            <i class="fas fa-save"></i> Lưu dịch vụ
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">ID Dịch vụ *</label>
+                        <input type="text" id="serviceId" class="form-input" placeholder="vd: airport, tour, business">
+                        <small style="color: var(--text-tertiary);">Dùng để nhận diện, không dấu, không khoảng trắng</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tiêu đề *</label>
+                        <input type="text" id="serviceTitle" class="form-input" placeholder="Đưa Đón Sân Bay">
+                    </div>
+                </div>
+
+                <div class="form-group form-full">
+                    <label class="form-label">Phụ đề</label>
+                    <input type="text" id="serviceSubtitle" class="form-input" placeholder="Dịch vụ cao cấp - Đúng giờ - Chuyên nghiệp">
+                </div>
+
+                <div class="form-group form-full">
+                    <label class="form-label">Mô tả *</label>
+                    <textarea id="serviceDescription" class="form-input" placeholder="Mô tả chi tiết dịch vụ..."></textarea>
+                </div>
+
+                <!-- Hình ảnh -->
+                <div class="images-manager">
+                    <h3 style="margin-bottom: 15px; color: var(--champagne);">
+                        <i class="fas fa-images"></i> Hình ảnh
+                    </h3>
+                    <div class="form-group">
+                        <label class="form-label">Thêm ảnh từ URL</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="imageUrl" class="form-input" placeholder="https://images.unsplash.com/photo-...">
+                            <button class="btn btn-secondary" onclick="addImageFromUrl()">
+                                <i class="fas fa-link"></i> Thêm
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="image-upload-area" onclick="document.getElementById('imageUpload').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h4>Hoặc kéo thả ảnh vào đây</h4>
+                        <p style="color: var(--text-tertiary);">Hỗ trợ JPG, PNG (Tối đa 2MB)</p>
+                        <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                    </div>
+
+                    <div class="images-grid" id="imagesList">
+                        <!-- Danh sách ảnh sẽ được thêm ở đây -->
+                    </div>
+                </div>
+
+                <!-- Tính năng nổi bật -->
+                <div class="features-manager">
+                    <h3 style="margin-bottom: 15px; color: var(--champagne);">
+                        <i class="fas fa-star"></i> Tính năng nổi bật
+                    </h3>
+                    <div class="features-list" id="featuresList">
+                        <!-- Danh sách tính năng -->
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="featureInput" class="form-input" placeholder="Tính năng mới...">
+                        <button class="btn btn-secondary" onclick="addFeature()">
+                            <i class="fas fa-plus"></i> Thêm
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bảng giá -->
+                <div class="pricing-manager">
+                    <h3 style="margin-bottom: 15px; color: var(--champagne);">
+                        <i class="fas fa-tags"></i> Bảng giá
+                    </h3>
+                    <div class="pricing-items" id="pricingList">
+                        <!-- Danh sách giá -->
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="priceLabel" class="form-input" placeholder="Tên gói (vd: Tour Nha Trang 1 ngày)">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="priceValue" class="form-input" placeholder="Giá (vd: 1,200,000 VND)">
+                        </div>
+                        <button class="btn btn-secondary" onclick="addPrice()">
+                            <i class="fas fa-plus"></i> Thêm
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="saveService()" style="flex: 1;">
+                        <i class="fas fa-save"></i> Lưu dịch vụ
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteService()" id="deleteBtn" style="display: none;">
+                        <i class="fas fa-trash"></i> Xóa dịch vụ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Token Manager Modal -->
+        <div id="tokenModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+            <div style="background: var(--card-black); padding: 30px; border-radius: 16px; border: 1px solid var(--champagne); max-width: 500px; width: 90%;">
+                <h2 style="color: var(--champagne); margin-bottom: 20px;">
+                    <i class="fas fa-key"></i> Quản lý Token
+                </h2>
+                
+                <div class="form-group">
+                    <label class="form-label">Token Admin hiện tại</label>
+                    <input type="text" id="currentTokenDisplay" class="form-input" readonly style="background: var(--dark-black);">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Token mới</label>
+                    <input type="password" id="newToken" class="form-input" placeholder="Nhập token mới">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Xác nhận token</label>
+                    <input type="password" id="confirmToken" class="form-input" placeholder="Nhập lại token mới">
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="updateToken()" style="flex: 1;">
+                        <i class="fas fa-save"></i> Cập nhật Token
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeTokenModal()">
+                        <i class="fas fa-times"></i> Đóng
+                    </button>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 8px;">
+                    <h4 style="color: var(--champagne); margin-bottom: 10px;">
+                        <i class="fas fa-info-circle"></i> Lưu ý
+                    </h4>
+                    <p style="color: var(--text-tertiary); font-size: 14px;">
+                        1. Token dùng để bảo vệ trang admin<br>
+                        2. Đặt token mạnh, có cả chữ và số<br>
+                        3. Token được lưu trong trình duyệt<br>
+                        4. Quên token phải xóa localStorage
+                    </p>
+                </div>
+            </div>
+        </div>
+<!-- GitHub Manager Modal -->
+<div id="githubModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+    <div style="background: var(--card-black); padding: 30px; border-radius: 16px; border: 1px solid var(--champagne); max-width: 500px; width: 90%;">
+        <h2 style="color: var(--champagne); margin-bottom: 20px;">
+            <i class="fab fa-github"></i> Quản lý GitHub
+        </h2>
+        
+        <div class="form-group">
+            <label class="form-label">Username GitHub</label>
+            <input type="text" id="githubUsername" class="form-input" value="hoangtung">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Repository Name</label>
+            <input type="text" id="githubRepo" class="form-input" value="luxurymove-data">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Branch</label>
+            <input type="text" id="githubBranch" class="form-input" value="main">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">GitHub Personal Access Token</label>
+            <!-- Trong modal GitHub - ĐỔI ID -->
+<input type="password" id="githubTokenModal" class="form-input" 
+       placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+            <small style="color: var(--text-tertiary); display: block; margin-top: 5px;">
+                <i class="fas fa-shield-alt"></i> Token được lưu an toàn trong localStorage
+            </small>
+        </div>
+        
+        <div style="margin: 20px 0; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 8px;">
+            <h4 style="color: var(--champagne); margin-bottom: 10px;">
+                <i class="fas fa-info-circle"></i> Hướng dẫn
+            </h4>
+            <ol style="color: var(--text-tertiary); font-size: 14px; padding-left: 20px;">
+                <li>Vào <a href="https://github.com/settings/tokens" target="_blank" style="color: var(--champagne);">GitHub Settings → Developer settings → Personal access tokens</a></li>
+                <li>Chọn "Generate new token (classic)"</li>
+                <li>Tick chọn quyền: <code>repo</code> (Full control of private repositories)</li>
+                <li>Copy token và paste vào ô trên</li>
+            </ol>
+        </div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button class="btn btn-success" onclick="testGitHubConnection()">
+                <i class="fas fa-plug"></i> Kiểm tra kết nối
+            </button>
+            <button class="btn btn-primary" onclick="saveGitHubConfig()" style="flex: 1;">
+                <i class="fas fa-save"></i> Lưu cấu hình
+            </button>
+            <button class="btn btn-secondary" onclick="closeGitHubModal()">
+                <i class="fas fa-times"></i> Đóng
+            </button>
+        </div>
+        
+        <div id="githubStatus" style="margin-top: 15px;"></div>
+    </div>
+</div>
+        <!-- Status Bar -->
+        <div class="status-bar" id="statusBar">
+            <i class="fas fa-check-circle status-success" id="statusIcon"></i>
+            <span id="statusMessage">Thành công!</span>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
