@@ -300,11 +300,21 @@
     </nav>
 
     <!-- Service Details Modal -->
-    <div class="service-details-overlay" id="serviceDetails">
-        <div class="service-details-container">
-            <!-- Modal content -->
+    <!-- Service Details Modal -->
+<div class="service-details-overlay" id="serviceDetails" style="display: none;">
+    <div class="service-details-container">
+        <div class="details-header">
+            <h3 id="detailTitle">Đưa Đón Sân Bay</h3>
+            <p class="details-subtitle" id="detailSubtitle">Dịch vụ cao cấp - Đúng giờ - Chuyên nghiệp</p>
+            <div class="close-details" id="closeDetails">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+        <div class="details-content" id="detailContent">
+            <!-- Content sẽ được thêm bằng JavaScript -->
         </div>
     </div>
+</div>
 
     <!-- Scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>

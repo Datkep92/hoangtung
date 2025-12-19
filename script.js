@@ -227,20 +227,38 @@ function renderBlogRow() {
 // ===== SERVICE DETAIL MODAL =====
 function showServiceDetail(serviceId) {
     const service = servicesData.services[serviceId];
-    if (!service) return;
+    if (!service) {
+        console.error('Service not found:', serviceId);
+        alert('Không tìm thấy thông tin dịch vụ');
+        return;
+    }
     
     const modal = document.getElementById('serviceDetails');
-    if (!modal) return;
+    if (!modal) {
+        console.error('Modal element not found');
+        return;
+    }
     
-    document.getElementById('detailTitle').textContent = service.title;
-    document.getElementById('detailSubtitle').textContent = service.subtitle || service.title;
+    // Cập nhật tiêu đề - KIỂM TRA PHẦN TỬ TỒN TẠI TRƯỚC KHI SET
+    const detailTitle = document.getElementById('detailTitle');
+    const detailSubtitle = document.getElementById('detailSubtitle');
     
+    if (detailTitle) detailTitle.textContent = service.title || 'Dịch vụ';
+    if (detailSubtitle) detailSubtitle.textContent = service.subtitle || service.title || 'Dịch vụ cao cấp';
+    
+    // Lấy container nội dung
     const detailContent = document.getElementById('detailContent');
+    if (!detailContent) {
+        console.error('Detail content element not found');
+        return;
+    }
     
+    // Tạo HTML nội dung
     let contentHTML = `
         <div class="details-images">
     `;
     
+    // Xử lý hình ảnh
     if (service.images && service.images.length > 0) {
         contentHTML += `
             <div class="detail-image-main">
@@ -259,6 +277,13 @@ function showServiceDetail(serviceId) {
             });
             contentHTML += `</div>`;
         }
+    } else {
+        // Ảnh mặc định nếu không có
+        contentHTML += `
+            <div class="detail-image-main">
+                <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800" alt="${service.title}" loading="lazy">
+            </div>
+        `;
     }
     
     contentHTML += `
@@ -266,12 +291,13 @@ function showServiceDetail(serviceId) {
         
         <div class="details-info">
             <h4>Mô tả dịch vụ</h4>
-            <p class="detail-description">${service.description || 'Đang cập nhật...'}</p>
+            <p class="detail-description">${service.description || 'Đang cập nhật thông tin chi tiết...'}</p>
             
             <h4>Tính năng nổi bật</h4>
             <div class="detail-features">
     `;
     
+    // Xử lý tính năng
     if (service.features && service.features.length > 0) {
         service.features.forEach(feature => {
             contentHTML += `
@@ -281,6 +307,22 @@ function showServiceDetail(serviceId) {
                 </div>
             `;
         });
+    } else {
+        // Tính năng mặc định
+        contentHTML += `
+            <div class="detail-feature-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Chất lượng cao cấp</span>
+            </div>
+            <div class="detail-feature-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Đúng giờ 100%</span>
+            </div>
+            <div class="detail-feature-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Tài xế chuyên nghiệp</span>
+            </div>
+        `;
     }
     
     contentHTML += `
@@ -290,16 +332,18 @@ function showServiceDetail(serviceId) {
             <div class="detail-pricing">
     `;
     
+    // Xử lý bảng giá
     if (service.pricing && service.pricing.length > 0) {
         service.pricing.forEach(price => {
             contentHTML += `
                 <div class="detail-price-item">
-                    <span class="price-label">${price.label}</span>
-                    <span class="price-value">${price.price}</span>
+                    <span class="price-label">${price.label || 'Dịch vụ'}</span>
+                    <span class="price-value">${price.price || 'Liên hệ'}</span>
                 </div>
             `;
         });
     } else {
+        // Giá mặc định
         contentHTML += `
             <div class="detail-price-item">
                 <span class="price-label">Liên hệ để có giá tốt nhất</span>
@@ -322,7 +366,10 @@ function showServiceDetail(serviceId) {
         </div>
     `;
     
+    // Gán nội dung vào modal
     detailContent.innerHTML = contentHTML;
+    
+    // Hiển thị modal
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
