@@ -197,28 +197,6 @@
           "price": "0931.243.679"
         }
       ]
-    },
-    "0987654": {
-      "title": "098765",
-      "subtitle": "098765",
-      "images": [
-        "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600"
-      ],
-      "description": "98765e",
-      "features": [
-        "Tài xế mặc vest, chuyên nghiệp",
-        "321"
-      ],
-      "pricing": [
-        {
-          "label": "Liên hệ để có giá tốt nhất",
-          "price": "0931.243.679"
-        },
-        {
-          "label": "4321",
-          "price": "4321"
-        }
-      ]
     }
   },
   "last_updated": "2025-12-19T06:11:51.843Z"
