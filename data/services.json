@@ -154,7 +154,21 @@
           "price": "3,500,000 VND"
         }
       ]
+    },
+    "Tour": {
+      "title": "Vĩnh hy",
+      "subtitle": "Vĩnh hy",
+      "description": "Vĩnh hy",
+      "images": [
+        "https://thamhiemninhthuan.com/wp-content/uploads/2021/09/z2865260423507_94af038a4676179790bfbd910c4ba974-e1634806029301.jpg"
+      ],
+      "features": [
+        "Chất lượng cao cấp",
+        "Đúng giờ 100%",
+        "Tài xế chuyên nghiệp"
+      ],
+      "pricing": []
     }
   },
-  "last_updated": "2025-12-18T16:57:15.433Z"
+  "last_updated": "2025-12-19T02:57:53.009Z"
 }
