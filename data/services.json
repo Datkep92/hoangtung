@@ -178,7 +178,26 @@
           "price": "20000000"
         }
       ]
+    },
+    "rừng": {
+      "title": "rừng",
+      "subtitle": "123",
+      "images": [
+        "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600"
+      ],
+      "description": "123",
+      "features": [
+        "Chất lượng cao cấp",
+        "Đúng giờ 100%",
+        "Tài xế chuyên nghiệp"
+      ],
+      "pricing": [
+        {
+          "label": "Liên hệ để có giá tốt nhất",
+          "price": "0931.243.679"
+        }
+      ]
     }
   },
-  "last_updated": "2025-12-19T06:00:20.181Z"
+  "last_updated": "2025-12-19T06:07:34.537Z"
 }
