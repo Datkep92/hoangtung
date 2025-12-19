@@ -2931,7 +2931,6 @@ a {
     margin-bottom: 12px;
     line-height: 1.3;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     min-height: 46px;
@@ -2943,7 +2942,6 @@ a {
     line-height: 1.5;
     margin-bottom: 15px;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     min-height: 58px;
@@ -3150,4 +3148,430 @@ a {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Gallery Section */
+.gallery-section {
+    padding: 80px 0;
+    background: var(--primary-black);
+    position: relative;
+    overflow: hidden;
+}
+
+.gallery-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 25px;
+    padding: 30px 10px 40px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--champagne) rgba(212, 175, 55, 0.1);
+    cursor: grab;
+    scroll-behavior: smooth;
+}
+
+.gallery-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.gallery-container::-webkit-scrollbar-track {
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 4px;
+}
+
+.gallery-container::-webkit-scrollbar-thumb {
+    background: var(--champagne);
+    border-radius: 4px;
+}
+
+.gallery-container:active {
+    cursor: grabbing;
+}
+
+.gallery-card {
+    min-width: 320px;
+    flex-shrink: 0;
+    background: var(--card-black);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    position: relative;
+}
+
+.gallery-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: var(--champagne);
+    box-shadow: 0 20px 40px rgba(212, 175, 55, 0.3);
+}
+
+.gallery-image-container {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+}
+
+.gallery-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.gallery-card:hover .gallery-image {
+    transform: scale(1.1);
+}
+
+.gallery-category-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--champagne);
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid var(--champagne);
+}
+
+.gallery-info {
+    padding: 25px;
+}
+
+.gallery-title {
+    color: var(--champagne);
+    font-size: 20px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.gallery-description {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.gallery-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.gallery-tag {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--light-champagne);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.gallery-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 12px;
+    color: var(--text-tertiary);
+}
+
+.gallery-order i {
+    color: var(--champagne);
+    margin-right: 5px;
+}
+
+.gallery-scroll-hint {
+    text-align: center;
+    color: var(--champagne);
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    animation: pulse 2s infinite;
+}
+
+.gallery-scroll-hint i {
+    animation: bounceRight 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes bounceRight {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(10px); }
+}
+
+/* Loading skeleton */
+.gallery-skeleton {
+    display: flex;
+    gap: 25px;
+    padding: 30px 10px;
+}
+
+.skeleton-card {
+    min-width: 320px;
+    height: 380px;
+    background: linear-gradient(90deg, #222 25%, #2a2a2a 50%, #222 75%);
+    background-size: 200% 100%;
+    animation: skeletonLoading 1.5s infinite;
+    border-radius: 20px;
+}
+
+@keyframes skeletonLoading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .gallery-section {
+        padding: 60px 0;
+    }
+    
+    .gallery-card {
+        min-width: 280px;
+    }
+    
+    .gallery-image-container {
+        height: 180px;
+    }
+    
+    .gallery-info {
+        padding: 20px;
+    }
+    
+    .gallery-title {
+        font-size: 18px;
+    }
+    
+    .gallery-scroll-hint {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-card {
+        min-width: 260px;
+    }
+    
+    .gallery-container {
+        gap: 20px;
+    }
+}
+
+/* ===== Pricing Mobile First ===== */
+.pricing-container {
+    padding: 12px;
+}
+
+.pricing-header {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.pricing-header h2 {
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+.pricing-note {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-bottom: 4px;
+}
+
+.pricing-updated {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* Category */
+.pricing-category {
+    margin-bottom: 18px;
+}
+
+.category-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* Item */
+.pricing-item {
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Route info */
+.route-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.route-desc {
+    font-size: 13px;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+.route-note {
+    font-size: 12px;
+    color: #d35400;
+    margin-top: 4px;
+}
+
+/* Price */
+.price-box {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+}
+
+.price-old {
+    font-size: 13px;
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.price-current {
+    font-size: 16px;
+    font-weight: 700;
+    color: #e74c3c;
+}
+
+/* Footer */
+.pricing-footer {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 12px;
+    opacity: 0.7;
+}
+/* ===== ADMIN PRICING STYLES ===== */
+.pricing-section-header {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--champagne);
+    grid-column: 1 / -1;
+}
+
+.pricing-section-header h3 {
+    color: var(--champagne);
+    font-size: 18px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pricing-section-header small {
+    color: var(--text-tertiary);
+    font-size: 13px;
+}
+
+.service-pricing-item {
+    border-left: 4px solid var(--champagne);
+}
+
+.service-pricing-item .grid-item-title {
+    color: var(--champagne);
+}
+
+.pricing-preview {
+    margin-top: 10px;
+}
+
+.price-category {
+    display: inline-block;
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--champagne);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.price-values {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.original-price {
+    color: var(--text-tertiary);
+    text-decoration: line-through;
+    font-size: 14px;
+}
+
+.current-price {
+    color: var(--champagne);
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.price-note {
+    color: var(--text-tertiary);
+    font-size: 12px;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* ===== WEBSITE PRICING STYLES ===== */
+.service-tag {
+    display: inline-block;
+    background: rgba(33, 150, 243, 0.1);
+    color: #2196F3;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.route-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.service-item {
+    background: rgba(33, 150, 243, 0.02);
+}
+
+.service-item:hover {
+    background: rgba(33, 150, 243, 0.05);
+}
+
+/* Loading state */
+.loading-pricing {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-tertiary);
+}
+
+.loading-pricing i {
+    font-size: 32px;
+    margin-bottom: 20px;
+    display: block;
 }
