@@ -154,30 +154,6 @@
           "price": "3,500,000 VND"
         }
       ]
-    },
-    "test6": {
-      "title": "123",
-      "subtitle": "123",
-      "images": [
-        "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600"
-      ],
-      "description": "123",
-      "features": [
-        "Đón tận cửa, hỗ trợ hành lý",
-        "Xe đời mới, nội thất cao cấp",
-        "Tài xế mặc vest, chuyên nghiệp",
-        "123"
-      ],
-      "pricing": [
-        {
-          "label": "Liên hệ để có giá tốt nhất",
-          "price": "0931.243.679"
-        },
-        {
-          "label": "đi",
-          "price": "20000000"
-        }
-      ]
     }
   },
   "last_updated": "2025-12-19T06:11:51.843Z"
