@@ -36,7 +36,17 @@
       "excerpt": "12312312",
       "content": "<div class=\"features-section\">\n    <h3>Tính năng nổi bật</h3>\n    <div class=\"feature-item\">\n        <i class=\"fas fa-check-circle\"></i>\n        <span>Tính năng 1 - Mô tả ngắn</span>\n    </div>\n    <div class=\"feature-item\">\n        <i class=\"fas fa-check-circle\"></i>\n        <span>Tính năng 2 - Mô tả ngắn</span>\n    </div>\n    <div class=\"feature-item\">\n        <i class=\"fas fa-check-circle\"></i>\n        <span>Tính năng 3 - Mô tả ngắn</span>\n    </div>\n</div>\n<div class=\"pricing-section\">\n    <h3>Bảng giá tham khảo</h3>\n    <div class=\"price-item\">\n        <i class=\"fas fa-car\"></i>\n        <span>Dịch vụ A: <strong>500,000 VND</strong></span>\n    </div>\n    <div class=\"price-item\">\n        <i class=\"fas fa-road\"></i>\n        <span>Dịch vụ B: <strong>1,000,000 VND</strong></span>\n    </div>\n    <div class=\"price-item\">\n        <i class=\"fas fa-clock\"></i>\n        <span>Theo giờ: <strong>350,000 VND/giờ</strong></span>\n    </div>\n</div>",
       "tags": []
+    },
+    "test": {
+      "title": "098765",
+      "author": "111",
+      "date": "2025-12-19",
+      "category": "news",
+      "image": "https://tse2.mm.bing.net/th/id/OIP.3aRtJk5C5V3xRpdutAxkygHaEK?pid=Api&P=0&h=180",
+      "excerpt": "1211111111",
+      "content": "11111111111111111111111",
+      "tags": []
     }
   },
-  "last_updated": "2025-12-19T04:36:15.350Z"
+  "last_updated": "2025-12-19T06:14:14.892Z"
 }
