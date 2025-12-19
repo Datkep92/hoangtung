@@ -1,3 +1,4 @@
+
 // ===== FIREBASE CONFIG =====
 const firebaseConfig = {
     apiKey: "AIzaSyCeYPoizbE-Op79186r7pmndGpJ-JfESAk",
@@ -10,29 +11,334 @@ const firebaseConfig = {
     measurementId: "G-FWHFP1W032"
 };
 
-// Biến toàn cục
+// Biến toàn cục - SỬA TÊN BIẾN BLOG
 let servicesData = { services: {} };
 let experiencesData = { experiences: {} };
-let blogData = { posts: {} };
+let homepageBlogData = { posts: {} }; // ĐỔI TÊN THÀNH homepageBlogData
 let database = null;
 
-// ===== INITIALIZATION =====
-document.addEventListener('DOMContentLoaded', initApp);
+// ===== HORIZONTAL SCROLL FUNCTIONS =====
+function setupHorizontalScroll() {
+    console.log('Setting up horizontal scroll...');
+    
+    const experienceRow = document.querySelector('.user-experience-row');
+    const blogRow = document.querySelector('.blog-horizontal-row');
+    const galleryGrid = document.querySelector('.gallery-grid');
+    
+    if (experienceRow) {
+        fixScrollContainer(experienceRow);
+    }
+    if (blogRow) {
+        fixScrollContainer(blogRow);
+    }
+    if (galleryGrid) {
+        fixScrollContainer(galleryGrid);
+    }
+}
 
+function fixScrollContainer(container) {
+    if (!container) return;
+    
+    // Đảm bảo có đúng CSS
+    container.style.display = 'flex';
+    container.style.flexWrap = 'nowrap';
+    container.style.overflowX = 'auto';
+    container.style.scrollBehavior = 'smooth';
+    container.style.WebkitOverflowScrolling = 'touch';
+    container.style.scrollbarWidth = 'none';
+    container.style.msOverflowStyle = 'none';
+    
+    // Kiểm tra và fix các items bên trong
+    const items = container.children;
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        item.style.flexShrink = '0';
+        item.style.flexGrow = '0';
+        
+        // Đặt width cố định nếu chưa có
+        if (!item.style.width) {
+            if (container.classList.contains('user-experience-row')) {
+                item.style.width = '280px';
+            } else if (container.classList.contains('blog-horizontal-row')) {
+                item.style.width = '320px';
+            } else if (container.classList.contains('gallery-grid')) {
+                item.style.width = '300px';
+            }
+        }
+    }
+}
+
+// ===== BLOG FUNCTIONS FOR HOMEPAGE =====
+async function fetchBlogFromFirebase() {
+    if (!database) return null;
+    
+    try {
+        const snapshot = await database.ref('blog').once('value');
+        const data = snapshot.val();
+        
+        if (data) {
+            console.log("✅ Loaded blog from Firebase:", Object.keys(data.posts || {}).length, "posts");
+            localStorage.setItem('luxurymove_blog', JSON.stringify(data));
+            return data;
+        }
+        return null;
+    } catch (error) {
+        console.error("❌ Error fetching blog from Firebase:", error);
+        return null;
+    }
+}
+
+async function loadBlogForHomepage() {
+    try {
+        console.log("📚 Loading blog for homepage...");
+        
+        // Try Firebase first
+        let blog = await fetchBlogFromFirebase();
+        
+        if (!blog || !blog.posts) {
+            // Fallback to localStorage
+            const localData = localStorage.getItem('luxurymove_blog');
+            if (localData) {
+                blog = JSON.parse(localData);
+                console.log("📂 Loaded blog from localStorage:", Object.keys(blog.posts || {}).length);
+            } else {
+                // Use sample data
+                blog = { posts: getSampleBlogPosts() };
+                console.log("🎨 Using sample blog posts");
+            }
+        }
+        
+        homepageBlogData = blog; // SỬ DỤNG homepageBlogData
+        renderBlogRow();
+        
+    } catch (error) {
+        console.error("❌ Error loading blog for homepage:", error);
+        // Show error state
+        showBlogError();
+    }
+}
+
+function renderBlogRow() {
+    const blogRow = document.getElementById('blogRow');
+    if (!blogRow) {
+        console.error("❌ blogRow element not found");
+        return;
+    }
+    
+    const posts = homepageBlogData.posts || {}; // SỬ DỤNG homepageBlogData
+    
+    if (Object.keys(posts).length === 0) {
+        blogRow.innerHTML = `
+            <div class="empty-blog" style="min-width: 300px; text-align: center; padding: 40px; color: var(--text-tertiary);">
+                <i class="fas fa-newspaper" style="font-size: 32px; margin-bottom: 15px; display: block;"></i>
+                <p>Chưa có bài viết nào</p>
+                <a href="blog.html" class="btn btn-outline" style="margin-top: 15px; font-size: 14px; padding: 8px 16px;">
+                    <i class="fas fa-plus"></i> Đăng bài viết
+                </a>
+            </div>
+        `;
+        return;
+    }
+    
+    // Get latest posts sorted by date
+    const latestPosts = Object.entries(posts)
+        .sort((a, b) => {
+            const dateA = new Date(a[1].date || '2000-01-01');
+            const dateB = new Date(b[1].date || '2000-01-01');
+            return dateB - dateA;
+        })
+        .slice(0, 6);
+    
+    if (latestPosts.length === 0) {
+        blogRow.innerHTML = `
+            <div class="empty-blog">
+                <i class="fas fa-newspaper"></i>
+                <p>Chưa có bài viết nào</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    latestPosts.forEach(([id, post]) => {
+        const date = new Date(post.date || new Date()).toLocaleDateString('vi-VN');
+        const categoryName = getCategoryName(post.category);
+        
+        html += `
+            <div class="blog-horizontal-card" onclick="openBlogPostFromHomepage('${id}')">
+                <div class="blog-card-image">
+                    <img src="${post.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800'}" 
+                         alt="${post.title}" 
+                         loading="lazy"
+                         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800'">
+                    <span class="blog-card-category">${categoryName}</span>
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-card-meta">
+                        <span class="blog-card-author">
+                            <i class="fas fa-user"></i> ${post.author || 'Admin'}
+                        </span>
+                        <span class="blog-card-date">
+                            <i class="far fa-calendar"></i> ${date}
+                        </span>
+                    </div>
+                    <h3 class="blog-card-title">${post.title || 'Bài viết mới'}</h3>
+                    <p class="blog-card-excerpt">${post.excerpt || 'Đang cập nhật nội dung...'}</p>
+                    
+                    ${post.tags && post.tags.length > 0 ? `
+                        <div class="blog-card-tags">
+                            ${post.tags.slice(0, 2).map(tag => `
+                                <span class="blog-card-tag">#${tag}</span>
+                            `).join('')}
+                            ${post.tags.length > 2 ? `<span class="blog-card-tag">+${post.tags.length - 2}</span>` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    <a href="#" class="blog-read-more" onclick="openBlogPostFromHomepage('${id}'); event.stopPropagation(); return false;">
+                        Đọc tiếp <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        `;
+    });
+    
+    blogRow.innerHTML = html;
+    
+    // Setup horizontal scroll after rendering
+    setTimeout(() => {
+        setupHorizontalScroll();
+    }, 100);
+}
+
+function showBlogError() {
+    const blogRow = document.getElementById('blogRow');
+    if (!blogRow) return;
+    
+    blogRow.innerHTML = `
+        <div class="blog-error" style="min-width: 300px; text-align: center; padding: 40px; color: var(--text-tertiary);">
+            <i class="fas fa-exclamation-triangle" style="font-size: 32px; margin-bottom: 15px; color: #ff4444; display: block;"></i>
+            <p>Không thể tải bài viết</p>
+            <button onclick="loadBlogForHomepage()" class="btn btn-secondary" style="margin-top: 15px; font-size: 14px; padding: 8px 16px;">
+                <i class="fas fa-redo"></i> Thử lại
+            </button>
+        </div>
+    `;
+}
+
+function openBlogPostFromHomepage(postId) {
+    // Save postId to localStorage to open in blog.html
+    localStorage.setItem('luxurymove_open_post', postId);
+    
+    // Redirect to blog.html
+    window.location.href = 'blog.html';
+}
+
+// ===== UPDATE INITIALIZATION =====
+async function loadAllData() {
+    console.log("🔄 Loading all data...");
+    
+    try {
+        // Load services, experiences, gallery, and blog in parallel
+        const [services, experiences, gallery, blog] = await Promise.allSettled([
+            fetchFromFirebase('services'),
+            fetchFromFirebase('experiences'),
+            fetchFromFirebase('gallery'),
+            fetchBlogFromFirebase()
+        ]);
+        
+        // Xử lý services
+        servicesData = services.value || JSON.parse(localStorage.getItem('luxurymove_services')) || { services: {} };
+        
+        // Xử lý experiences
+        experiencesData = experiences.value || JSON.parse(localStorage.getItem('luxurymove_experiences')) || { experiences: getDefaultExperiences() };
+        
+        // Xử lý gallery - chỉ gọi nếu có gallery.js
+        if (typeof window.renderGallery === 'function' && gallery.value) {
+            window.galleryData = gallery.value;
+            window.renderGallery();
+        }
+        
+        // Xử lý blog - SỬ DỤNG homepageBlogData
+        if (blog.status === 'fulfilled' && blog.value) {
+            homepageBlogData = blog.value;
+        } else {
+            const localBlog = localStorage.getItem('luxurymove_blog');
+            homepageBlogData = localBlog ? JSON.parse(localBlog) : { posts: getSampleBlogPosts() };
+        }
+        
+        // Render UI
+        renderUI();
+        renderExperiencesUI();
+        renderBlogRow();
+        
+        console.log("✅ All data loaded successfully");
+        
+    } catch (error) {
+        console.error("❌ Error loading data:", error);
+        // Fallback to localStorage
+        loadFromLocalStorage();
+        renderBlogRow();
+    }
+}
+
+// ===== FIREBASE LISTENER FOR BLOG UPDATES =====
+function setupBlogFirebaseListener() {
+    if (!database) return;
+    
+    // Listen for blog updates in real-time
+    database.ref('blog/posts').on('value', (snapshot) => {
+        console.log("🔄 Blog data updated from Firebase");
+        const data = snapshot.val();
+        
+        if (data) {
+            homepageBlogData.posts = data; // SỬ DỤNG homepageBlogData
+            localStorage.setItem('luxurymove_blog', JSON.stringify({ posts: data }));
+            renderBlogRow();
+        }
+    });
+}
+
+// ===== INITIALIZATION =====
 async function initApp() {
     try {
+        console.log("🚀 LuxuryMove Website Initializing...");
+        
+        // Initialize Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         database = firebase.database();
+        
+        // Load all data
         await loadAllData();
+        
+        // Setup event listeners
         setupEventListeners();
         setupMobileTouch();
+        setupHorizontalScroll(); // GỌI HÀM NÀY
+        
+        // Setup blog Firebase listener for real-time updates
+        setupBlogFirebaseListener();
+        
+        console.log("✅ Website initialized successfully");
+        
     } catch (error) {
-        console.error("Initialization error:", error);
+        console.error("❌ Lỗi khởi tạo:", error);
+        // Load from localStorage as fallback
         loadFromLocalStorage();
+        renderBlogRow();
+        setupHorizontalScroll(); // VẪN GỌI KHI CÓ LỖI
     }
 }
+
+// ===== CÁC HÀM CÒN LẠI GIỮ NGUYÊN =====
+// ... (các hàm fetchFromFirebase, loadFromLocalStorage, renderUI, 
+// renderExperiencesUI, setupEventListeners, setupMobileTouch,
+// getDefaultExperiences, getSampleBlogPosts, getCategoryName,
+// showServiceDetail, bookThisService, changeDetailImage vẫn giữ nguyên) ...
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', initApp);
 
 // ===== DATA FUNCTIONS =====
 async function fetchFromFirebase(path) {
@@ -61,26 +367,7 @@ function loadFromLocalStorage(path) {
     }
 }
 
-// ===== DATA LOADING =====
-async function loadAllData() {
-    try {
-        const [services, experiences, blog] = await Promise.allSettled([
-            fetchFromFirebase('services'),
-            fetchFromFirebase('experiences'),
-            fetchFromFirebase('blog')
-        ]);
-        
-        servicesData = services.value || JSON.parse(localStorage.getItem('luxurymove_services')) || { services: {} };
-        experiencesData = experiences.value || JSON.parse(localStorage.getItem('luxurymove_experiences')) || { experiences: getDefaultExperiences() };
-        blogData = blog.value || JSON.parse(localStorage.getItem('luxurymove_blog')) || { posts: getSampleBlogPosts() };
-        
-        renderUI();
-        renderExperiencesUI();
-        renderBlogRow();
-    } catch (error) {
-        console.error("Error loading data:", error);
-    }
-}
+
 
 // ===== RENDER FUNCTIONS =====
 function renderUI() {
@@ -164,65 +451,7 @@ function renderExperiencesUI() {
     });
 }
 
-function renderBlogRow() {
-    const blogRow = document.getElementById('blogRow');
-    const posts = blogData.posts || {};
-    
-    if (!blogRow) return;
-    
-    if (Object.keys(posts).length === 0) {
-        blogRow.innerHTML = `
-            <div class="empty-blog">
-                <i class="fas fa-newspaper"></i>
-                <p>Chưa có bài viết nào</p>
-                <a href="blog.html" class="btn btn-outline">Xem blog</a>
-            </div>
-        `;
-        return;
-    }
-    
-    const latestPosts = Object.entries(posts)
-        .sort((a, b) => {
-            const dateA = new Date(a[1].date || '2000-01-01');
-            const dateB = new Date(b[1].date || '2000-01-01');
-            return dateB - dateA;
-        })
-        .slice(0, 8);
-    
-    let html = '';
-    latestPosts.forEach(([id, post]) => {
-        const date = new Date(post.date || new Date()).toLocaleDateString('vi-VN');
-        const categoryName = getCategoryName(post.category);
-        
-        html += `
-            <div class="blog-horizontal-card" onclick="openBlogPostFromHomepage('${id}')">
-                <div class="blog-card-image">
-                    <img src="${post.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800'}" 
-                         alt="${post.title}" 
-                         loading="lazy">
-                    <span class="blog-card-category">${categoryName}</span>
-                </div>
-                <div class="blog-card-content">
-                    <div class="blog-card-meta">
-                        <span class="blog-card-author">
-                            <i class="fas fa-user"></i> ${post.author || 'Admin'}
-                        </span>
-                        <span class="blog-card-date">
-                            <i class="far fa-calendar"></i> ${date}
-                        </span>
-                    </div>
-                    <h3 class="blog-card-title">${post.title || 'Bài viết mới'}</h3>
-                    <p class="blog-card-excerpt">${post.excerpt || 'Đang cập nhật nội dung...'}</p>
-                    <a href="#" class="blog-read-more" onclick="openBlogPostFromHomepage('${id}'); return false;">
-                        Đọc tiếp <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-        `;
-    });
-    
-    blogRow.innerHTML = html;
-}
+
 
 // ===== SERVICE DETAIL MODAL =====
 function showServiceDetail(serviceId) {
@@ -435,13 +664,7 @@ function getCategoryName(category) {
     return categories[category] || 'Khác';
 }
 
-function openBlogPostFromHomepage(postId) {
-    if (typeof openBlogPost === 'function') {
-        openBlogPost(postId);
-    } else {
-        window.location.href = `blog.html#post-${postId}`;
-    }
-}
+
 
 // ===== SETUP FUNCTIONS =====
 function setupEventListeners() {

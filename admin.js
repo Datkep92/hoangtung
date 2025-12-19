@@ -190,7 +190,53 @@ async function saveItem() {
     const tabToShow = tabMap[currentEditorType] || 'services';
     showTab(tabToShow);
 }
-
+// ===== GALLERY PREVIEW =====
+function previewGalleryImage() {
+    const imageUrl = document.getElementById('editGalleryImage').value.trim();
+    if (!imageUrl) {
+        showStatus('Vui lòng nhập URL ảnh', 'error');
+        return;
+    }
+    
+    const preview = document.getElementById('galleryPreview');
+    const img = preview.querySelector('img');
+    img.src = imageUrl;
+    preview.style.display = 'block';
+}
+// Sửa function hiện tại thành:
+function addExpBenefit() {
+    const input = document.getElementById('newExpBenefit');
+    const benefit = input.value.trim();
+    
+    if (!benefit) {
+        showStatus('Vui lòng nhập lợi ích', 'error');
+        return;
+    }
+    
+    const benefits = JSON.parse(document.getElementById('editExpBenefits').value || '[]');
+    benefits.push(benefit);
+    document.getElementById('editExpBenefits').value = JSON.stringify(benefits);
+    
+    // Add to UI
+    const benefitsList = document.getElementById('expBenefitsList');
+    const benefitItem = document.createElement('div');
+    benefitItem.className = 'feature-item';
+    benefitItem.innerHTML = `
+        <input type="text" class="form-input" value="${benefit}" 
+               placeholder="Lợi ích..." data-index="${benefits.length - 1}" style="flex: 1;">
+        <button type="button" onclick="removeExpBenefit(${benefits.length - 1})" class="action-btn" style="background: rgba(255, 68, 68, 0.2);">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    benefitsList.appendChild(benefitItem);
+    input.value = '';
+    showStatus('Đã thêm lợi ích', 'success');
+}
+function removeBenefit(button) {
+    const benefitGroup = button.parentElement;
+    benefitGroup.remove();
+}
 // Thêm vào admin.js, trong hàm saveServiceData:
 async function saveServiceData(formData) {
     console.log('📦 Saving service to Firebase:', formData.id);
@@ -248,15 +294,46 @@ async function saveGalleryData(formData) {
     window.dispatchEvent(new Event('galleryUpdated'));
 }
 
+// ===== BLOG FUNCTIONS FOR ADMIN =====
 async function saveBlogData(formData) {
-    if (!dataStore.blog.posts) dataStore.blog.posts = {};
-    dataStore.blog.posts[formData.id] = formData.data;
-    dataStore.blog.last_updated = new Date().toISOString();
+    console.log('📝 Saving blog to Firebase:', formData.id);
     
+    if (!dataStore.blog.posts) {
+        dataStore.blog.posts = {};
+    }
+    
+    // Add timestamps
+    const now = new Date().toISOString();
+    const postData = {
+        ...formData.data,
+        id: formData.id,
+        created_at: dataStore.blog.posts[formData.id]?.created_at || now,
+        updated_at: now
+    };
+    
+    dataStore.blog.posts[formData.id] = postData;
+    dataStore.blog.last_updated = now;
+    
+    // Save to Firebase
     await saveToFirebase('blog', dataStore.blog);
+    
+    // Trigger update on blog page
+    window.dispatchEvent(new Event('blogUpdated'));
+    
     renderBlog();
-    showStatus(`Đã lưu bài viết: ${formData.data.title}`, 'success');
+    showStatus(`Đã lưu bài viết: ${postData.title}`, 'success');
 }
+
+// Function to trigger blog update
+function triggerBlogUpdate() {
+    window.dispatchEvent(new Event('blogUpdated'));
+}
+
+// Add blog update listener in admin
+window.addEventListener('blogUpdated', function() {
+    console.log('🔄 Blog data updated, refreshing admin view');
+    renderBlog();
+});
 
 // ===== DELETE FUNCTIONS =====
 async function deleteItem(type = null, id = null) {
@@ -927,22 +1004,7 @@ function getDefaultExperiences() {
 
 function getDefaultGallery() {
     return [
-        {
-            id: 'car1',
-            title: 'Mercedes V-Class Luxury',
-            image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800',
-            description: 'Xe 7 chỗ, nội thất da cao cấp, WiFi miễn phí',
-            category: 'premium',
-            order: 1
-        },
-        {
-            id: 'car2',
-            title: 'Toyota Innova Premium',
-            image: 'https://images.unsplash.com/photo-1555212697-194d092e3b8f?auto=format&fit=crop&w=800',
-            description: '7 chỗ tiện nghi, phù hợp gia đình',
-            category: 'family',
-            order: 2
-        }
+        
     ];
 }
 

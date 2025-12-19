@@ -55,6 +55,7 @@
     <!-- Blog Posts Grid -->
     <section class="blog-posts">
         <div class="container">
+            <!-- QUAN TRỌNG: Đảm bảo có ID postsGrid -->
             <div class="posts-grid" id="postsGrid">
                 <!-- Posts will be loaded by JavaScript -->
                 <div class="loading-posts">
@@ -66,7 +67,8 @@
     </section>
 
     <!-- Blog Post Modal -->
-    <div class="blog-modal-overlay" id="blogModal">
+    <!-- QUAN TRỌNG: Đảm bảo có đúng ID cho modal -->
+    <div class="blog-modal-overlay" id="blogModal" style="display: none;">
         <div class="blog-modal-container">
             <div class="blog-modal-header">
                 <button class="blog-modal-close" id="closeBlogModal">
@@ -100,6 +102,24 @@
         <div class="container">
             <div class="footer-content">
                 <!-- Same footer as index.html -->
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-crown"></i>
+                        <span>Luxury<span>Move</span></span>
+                    </div>
+                    <p class="footer-desc">Đơn vị vận tải cao cấp hàng đầu khu vực miền Trung - Tây Nguyên</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Liên Hệ</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-phone-alt"></i> <strong>0931.243.679</strong></p>
+                        <p><i class="fas fa-map-marker-alt"></i> TP. Nha Trang, Khánh Hòa</p>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2024 LuxuryMove. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
@@ -125,6 +145,9 @@
             </a>
         </div>
     </nav>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <!-- Đặt script ở cuối body -->
     <script src="blog.js"></script>
 </body>
 </html>
