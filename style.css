@@ -3205,20 +3205,28 @@ a {
     box-shadow: 0 20px 40px rgba(212, 175, 55, 0.3);
 }
 
-/* Desktop / default */
+
+
+/* ===== Mobile ===== */
+@media (max-width: 768px) {
+    .gallery-image-container {
+        aspect-ratio: 16 / 12; /* mobile thấp hơn */
+        max-height: 160px;
+    }
+}
+.gallery-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* cắt vừa – không méo */
+}
+
+/* ===== Desktop ===== */
 .gallery-image-container {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 16 / 9;   /* PC: ngang, sang */
+    max-height: 220px;
     overflow: hidden;
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-    .gallery-image-container {
-        aspect-ratio: 16 / 12; /* thấp hơn */
-        max-height: 160px;     /* khóa chiều cao */
-    }
 }
 
 
