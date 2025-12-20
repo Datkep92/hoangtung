@@ -22,7 +22,41 @@ let dataStore = {
     gallery: { featured: [] },
     blog: { posts: {} }
 };
+// Thêm vào đầu file hoặc trong phần initialization
+function initExperienceForm() {
+    const benefitsInput = document.getElementById('editExpBenefits');
+    if (benefitsInput) {
+        const currentValue = benefitsInput.value;
+        if (!currentValue || currentValue.trim() === '') {
+            benefitsInput.value = '[]';
+        }
+    }
+}
 
+// Gọi hàm này khi mở editor
+function openEditor(type, id = null) {
+    currentEditorType = type;
+    currentEditingId = id;
+    
+    const titles = {
+        'service': id ? 'Chỉnh sửa Dịch vụ' : 'Thêm Dịch vụ mới',
+        'experience': id ? 'Chỉnh sửa Trải nghiệm' : 'Thêm Trải nghiệm mới',
+        'gallery': id ? 'Chỉnh sửa Ảnh' : 'Thêm Ảnh mới',
+        'blog': id ? 'Chỉnh sửa Bài viết' : 'Thêm Bài viết mới'
+    };
+    
+    document.getElementById('editorModalTitle').textContent = titles[type];
+    document.getElementById('deleteItemBtn').style.display = id ? 'block' : 'none';
+    
+    loadEditorForm(type, id);
+    
+    // Khởi tạo form cho experience
+    if (type === 'experience') {
+        setTimeout(initExperienceForm, 100);
+    }
+    
+    showModal('editorModal');
+}
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
     const savedToken = localStorage.getItem('luxurymove_admin_token');
@@ -31,7 +65,19 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeFirebase();
     }
 });
-
+// ===== HELPER FUNCTIONS FOR EXPERIENCE EDITOR =====
+function previewExpImage() {
+    const imageUrl = document.getElementById('editExpImage').value.trim();
+    if (!imageUrl) {
+        showStatus('Vui lòng nhập URL ảnh', 'error');
+        return;
+    }
+    
+    const preview = document.getElementById('expImagePreview');
+    const img = preview.querySelector('img');
+    img.src = imageUrl;
+    preview.style.display = 'block';
+}
 // ===== FIREBASE INIT =====
 function initializeFirebase() {
     try {
@@ -216,9 +262,16 @@ function renderAllTabs() {
     renderBlog();
 }
 
-// ===== SAVE FUNCTIONS =====
 async function saveItem() {
     if (!currentEditorType) return;
+    
+    // Fix JSON trước khi lấy dữ liệu
+    if (currentEditorType === 'experience') {
+        const benefitsInput = document.getElementById('editExpBenefits');
+        if (benefitsInput && benefitsInput.value) {
+            benefitsInput.value = fixInvalidJson(benefitsInput.value);
+        }
+    }
     
     let formData;
     switch(currentEditorType) {
@@ -229,6 +282,13 @@ async function saveItem() {
     }
     
     if (!formData) return;
+    
+    // Validate dữ liệu
+    if (currentEditorType === 'experience' && formData.data.benefits) {
+        if (!Array.isArray(formData.data.benefits)) {
+            formData.data.benefits = [];
+        }
+    }
     
     switch(currentEditorType) {
         case 'service': await saveServiceData(formData); break;
@@ -262,7 +322,6 @@ function previewGalleryImage() {
     img.src = imageUrl;
     preview.style.display = 'block';
 }
-// Sửa function hiện tại thành:
 function addExpBenefit() {
     const input = document.getElementById('newExpBenefit');
     const benefit = input.value.trim();
@@ -272,29 +331,78 @@ function addExpBenefit() {
         return;
     }
     
-    const benefits = JSON.parse(document.getElementById('editExpBenefits').value || '[]');
+    const benefitsInput = document.getElementById('editExpBenefits');
+    if (!benefitsInput) {
+        console.error('Không tìm thấy input editExpBenefits');
+        return;
+    }
+    
+    // Đảm bảo luôn có giá trị JSON hợp lệ
+    let benefits = [];
+    try {
+        const currentValue = benefitsInput.value;
+        if (currentValue && currentValue.trim()) {
+            benefits = JSON.parse(currentValue.trim());
+            if (!Array.isArray(benefits)) benefits = [];
+        }
+    } catch (e) {
+        console.warn('Invalid benefits JSON, resetting to empty array:', e);
+        benefits = [];
+    }
+    
+    // Thêm benefit mới
     benefits.push(benefit);
-    document.getElementById('editExpBenefits').value = JSON.stringify(benefits);
     
-    // Add to UI
+    // Cập nhật giá trị
+    benefitsInput.value = JSON.stringify(benefits);
+    
+    // Cập nhật UI
     const benefitsList = document.getElementById('expBenefitsList');
-    const benefitItem = document.createElement('div');
-    benefitItem.className = 'feature-item';
-    benefitItem.innerHTML = `
-        <input type="text" class="form-input" value="${benefit}" 
-               placeholder="Lợi ích..." data-index="${benefits.length - 1}" style="flex: 1;">
-        <button type="button" onclick="removeExpBenefit(${benefits.length - 1})" class="action-btn" style="background: rgba(255, 68, 68, 0.2);">
-            <i class="fas fa-times"></i>
-        </button>
-    `;
+    if (!benefitsList) {
+        console.error('Không tìm thấy benefitsList');
+        return;
+    }
     
-    benefitsList.appendChild(benefitItem);
+    // Xóa và render lại toàn bộ
+    benefitsList.innerHTML = '';
+    
+    benefits.forEach((b, index) => {
+        const benefitItem = document.createElement('div');
+        benefitItem.className = 'feature-item';
+        benefitItem.innerHTML = `
+            <input type="text" class="form-input benefit-input" 
+                   value="${b.replace(/"/g, '&quot;')}" 
+                   placeholder="Lợi ích..." 
+                   data-index="${index}"
+                   oninput="updateExpBenefit(${index}, this.value)"
+                   style="flex: 1;">
+            <button type="button" onclick="removeExpBenefit(${index})" class="action-btn" style="background: rgba(255, 68, 68, 0.2);">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        benefitsList.appendChild(benefitItem);
+    });
+    
     input.value = '';
     showStatus('Đã thêm lợi ích', 'success');
 }
 function removeBenefit(button) {
     const benefitGroup = button.parentElement;
     benefitGroup.remove();
+}
+function updateExpBenefit(index, newValue) {
+    const benefitsInput = document.getElementById('editExpBenefits');
+    if (!benefitsInput) return;
+    
+    try {
+        let benefits = safeJsonParse(benefitsInput.value, []);
+        if (index >= 0 && index < benefits.length) {
+            benefits[index] = newValue.trim();
+            benefitsInput.value = JSON.stringify(benefits);
+        }
+    } catch (error) {
+        console.error('Error updating benefit:', error);
+    }
 }
 // Thêm vào admin.js, trong hàm saveServiceData:
 async function saveServiceData(formData) {
@@ -719,9 +827,55 @@ function getServiceForm(data = null, id = null) {
         </div>
     `;
 }
-
+// Thêm hàm này để fix JSON trước khi lưu
+function fixInvalidJson(str) {
+    if (!str || typeof str !== 'string') return '[]';
+    
+    const trimmed = str.trim();
+    
+    // Nếu bắt đầu bằng [ nhưng không kết thúc bằng ]
+    if (trimmed.startsWith('[') && !trimmed.endsWith(']')) {
+        return trimmed + ']';
+    }
+    
+    // Nếu kết thúc bằng ] nhưng không bắt đầu bằng [
+    if (trimmed.endsWith(']') && !trimmed.startsWith('[')) {
+        return '[' + trimmed;
+    }
+    
+    // Nếu không có dấu ngoặc nào
+    if (!trimmed.includes('[') && !trimmed.includes(']')) {
+        try {
+            // Thử parse xem có phải array không
+            const parsed = JSON.parse(trimmed);
+            if (Array.isArray(parsed)) {
+                return trimmed;
+            }
+        } catch (e) {
+            // Nếu là chuỗi đơn, wrap thành array
+            return `["${trimmed}"]`;
+        }
+    }
+    
+    return trimmed;
+}
 function getExperienceForm(data = null, id = null) {
-    const benefits = data?.benefits || [];
+    // Đảm bảo benefits luôn là mảng hợp lệ
+    let benefits = [];
+    if (data?.benefits) {
+        if (Array.isArray(data.benefits)) {
+            benefits = data.benefits;
+        } else if (typeof data.benefits === 'string') {
+            try {
+                benefits = JSON.parse(data.benefits);
+                if (!Array.isArray(benefits)) benefits = [];
+            } catch (e) {
+                benefits = [];
+            }
+        }
+    }
+    
+    const benefitsJson = JSON.stringify(benefits);
     
     return `
         <input type="hidden" id="editId" value="${id || ''}">
@@ -758,7 +912,11 @@ function getExperienceForm(data = null, id = null) {
             <div id="expBenefitsList">
                 ${benefits.map((benefit, index) => `
                     <div class="feature-item">
-                        <input type="text" class="form-input" value="${benefit}" data-index="${index}">
+                        <input type="text" class="form-input benefit-input" 
+                               value="${benefit.replace(/"/g, '&quot;')}" 
+                               data-index="${index}"
+                               oninput="updateExpBenefit(${index}, this.value)"
+                               placeholder="Lợi ích...">
                         <button type="button" onclick="removeExpBenefit(${index})">
                             <i class="fas fa-times"></i>
                         </button>
@@ -769,11 +927,112 @@ function getExperienceForm(data = null, id = null) {
                 <input type="text" id="newExpBenefit" class="form-input" placeholder="Lợi ích mới">
                 <button type="button" class="btn btn-secondary" onclick="addExpBenefit()">Thêm</button>
             </div>
-            <input type="hidden" id="editExpBenefits" value="${JSON.stringify(benefits)}">
+            <input type="hidden" id="editExpBenefits" value='${benefitsJson}'>
         </div>
     `;
 }
-
+// ===== HELPER FUNCTIONS FOR SERVICE EDITOR =====
+function addServiceImage() {
+    const urlInput = document.getElementById('newImageUrl');
+    const url = urlInput.value.trim();
+    
+    if (!url) {
+        showStatus('Vui lòng nhập URL ảnh', 'error');
+        return;
+    }
+    
+    try {
+        new URL(url); // Validate URL
+    } catch {
+        showStatus('URL không hợp lệ', 'error');
+        return;
+    }
+    
+    const imagesList = document.getElementById('serviceImagesList');
+    const images = JSON.parse(document.getElementById('editImages').value || '[]');
+    
+    // Add to array
+    images.push(url);
+    document.getElementById('editImages').value = JSON.stringify(images);
+    
+    // Add to UI
+    const imageItem = document.createElement('div');
+    imageItem.className = 'image-item';
+    imageItem.innerHTML = `
+        <img src="${url}" alt="Service image" style="width: 100%; height: 100%; object-fit: cover;">
+        <button type="button" onclick="removeServiceImage(${images.length - 1})" 
+                style="position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <i class="fas fa-times" style="font-size: 12px;"></i>
+        </button>
+    `;
+    
+    imagesList.appendChild(imageItem);
+    urlInput.value = '';
+    showStatus('Đã thêm ảnh', 'success');
+}
+function removeServiceImage(index) {
+    const images = JSON.parse(document.getElementById('editImages').value || '[]');
+    if (index >= 0 && index < images.length) {
+        images.splice(index, 1);
+        document.getElementById('editImages').value = JSON.stringify(images);
+        
+        // Re-render images list
+        const imagesList = document.getElementById('serviceImagesList');
+        imagesList.innerHTML = images.map((img, i) => `
+            <div class="image-item" style="position: relative; height: 80px; border-radius: 8px; overflow: hidden; border: 2px solid rgba(212, 175, 55, 0.3);">
+                <img src="${img}" alt="Service image" style="width: 100%; height: 100%; object-fit: cover;">
+                <button type="button" onclick="removeServiceImage(${i})" 
+                        style="position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <i class="fas fa-times" style="font-size: 12px;"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+}
+function removeExpBenefit(index) {
+    const benefitsInput = document.getElementById('editExpBenefits');
+    const benefitsList = document.getElementById('expBenefitsList');
+    
+    if (!benefitsInput || !benefitsList) return;
+    
+    try {
+        let benefits = [];
+        const currentValue = benefitsInput.value;
+        if (currentValue && currentValue.trim()) {
+            benefits = JSON.parse(currentValue);
+            if (!Array.isArray(benefits)) benefits = [];
+        }
+        
+        if (index >= 0 && index < benefits.length) {
+            benefits.splice(index, 1);
+            benefitsInput.value = JSON.stringify(benefits);
+            
+            // Re-render UI
+            benefitsList.innerHTML = '';
+            benefits.forEach((b, i) => {
+                const benefitItem = document.createElement('div');
+                benefitItem.className = 'feature-item';
+                benefitItem.innerHTML = `
+                    <input type="text" class="form-input benefit-input" 
+                           value="${b.replace(/"/g, '&quot;')}" 
+                           placeholder="Lợi ích..." 
+                           data-index="${i}"
+                           oninput="updateExpBenefit(${i}, this.value)"
+                           style="flex: 1;">
+                    <button type="button" onclick="removeExpBenefit(${i})" class="action-btn" style="background: rgba(255, 68, 68, 0.2);">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                benefitsList.appendChild(benefitItem);
+            });
+            
+            showStatus('Đã xóa lợi ích', 'success');
+        }
+    } catch (error) {
+        console.error('Error removing benefit:', error);
+        showStatus('Lỗi khi xóa lợi ích', 'error');
+    }
+}
 function getGalleryForm(data = null, id = null) {
     return `
         <input type="hidden" id="editId" value="${id || ''}">
@@ -906,7 +1165,24 @@ function getExperienceFormData() {
         return null;
     }
     
-    const benefits = safeJsonParse(document.getElementById('editExpBenefits')?.value, []);
+    const benefitsInput = document.getElementById('editExpBenefits');
+    let benefits = [];
+    
+    if (benefitsInput && benefitsInput.value) {
+        try {
+            // Validate JSON trước khi sử dụng
+            const parsed = JSON.parse(benefitsInput.value);
+            benefits = Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+            console.warn('Invalid benefits format, using empty array:', error);
+            benefits = [];
+        }
+    }
+    
+    // Đảm bảo benefits là mảng
+    if (!Array.isArray(benefits)) {
+        benefits = [];
+    }
     
     return {
         id: id,
@@ -914,7 +1190,7 @@ function getExperienceFormData() {
             title: title,
             image: image,
             description: description,
-            benefits: benefits.length > 0 ? benefits : ['Lợi ích 1', 'Lợi ích 2', 'Lợi ích 3']
+            benefits: benefits
         }
     };
 }
@@ -978,17 +1254,64 @@ function getBlogFormData() {
     };
 }
 
-// ===== UTILITY FUNCTIONS =====
 function safeJsonParse(str, defaultValue = []) {
-    if (!str || typeof str !== 'string' || str.trim() === '') return defaultValue;
+    // Kiểm tra chặt chẽ hơn
+    if (str === null || str === undefined || str === '') {
+        return defaultValue;
+    }
+    
+    // Nếu đã là mảng, trả về luôn
+    if (Array.isArray(str)) {
+        return str;
+    }
+    
+    // Nếu không phải string, chuyển thành string
+    const strValue = String(str).trim();
+    
+    // Kiểm tra xem có phải JSON không
+    if (strValue === '' || strValue === 'null' || strValue === 'undefined') {
+        return defaultValue;
+    }
+    
+    // Thêm dấu đóng ngoặc nếu thiếu
+    let fixedStr = strValue;
+    if (fixedStr.startsWith('[') && !fixedStr.endsWith(']')) {
+        fixedStr = fixedStr + ']';
+    }
     
     try {
-        const parsed = JSON.parse(str.trim());
-        if (Array.isArray(parsed)) return parsed;
-        if (parsed && typeof parsed === 'object') return Object.values(parsed);
+        const parsed = JSON.parse(fixedStr);
+        if (Array.isArray(parsed)) {
+            return parsed;
+        } else if (parsed && typeof parsed === 'object') {
+            return Object.values(parsed);
+        }
         return defaultValue;
     } catch (error) {
-        console.error('JSON parse error:', error.message);
+        console.warn('JSON parse error:', error.message, 'Input:', strValue);
+        
+        // Thử fix các trường hợp đặc biệt
+        try {
+            // Nếu có dấu ngoặc vuông mở nhưng không đóng
+            if (strValue.includes('[') && !strValue.includes(']')) {
+                const fixed = strValue + ']';
+                return JSON.parse(fixed);
+            }
+            
+            // Nếu là chuỗi phân cách bằng dấu phẩy
+            if (strValue.includes(',') && !strValue.startsWith('[')) {
+                const items = strValue.split(',').map(item => item.trim()).filter(item => item);
+                return items;
+            }
+            
+            // Nếu là chuỗi đơn
+            if (!strValue.startsWith('[') && !strValue.startsWith('{')) {
+                return [strValue];
+            }
+        } catch (e) {
+            console.error('Failed to fix JSON:', e);
+        }
+        
         return defaultValue;
     }
 }
