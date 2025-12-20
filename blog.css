@@ -595,3 +595,104 @@
         font-size: 20px;
     }
 }
+
+
+/* ===== FULLSCREEN BLOG MODAL ON MOBILE ===== */
+@media (max-width: 768px) {
+    .blog-modal-overlay {
+        padding: 0; /* bỏ padding để sát viền */
+        align-items: stretch;
+    }
+
+    .blog-modal-container {
+        width: 100vw;
+        height: 100vh;
+        max-width: 100vw;
+        max-height: 100vh;
+        border-radius: 0;
+        border: none;
+    }
+
+    .blog-modal-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .blog-modal-content {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .blog-modal-actions {
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+    }
+}
+
+/* ===== ICON ACTION BUTTONS (BLOG MODAL) ===== */
+.icon-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.icon-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+/* Đặt dịch vụ */
+.book-btn {
+    background: var(--champagne);
+    color: var(--primary-black);
+}
+
+.book-btn i {
+    font-size: 18px;
+}
+
+.book-btn:hover {
+    background: var(--light-champagne);
+    transform: translateY(-2px);
+}
+
+/* Gọi điện */
+.call-btn {
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--champagne);
+    border: 1px solid var(--champagne);
+}
+
+.call-btn i {
+    font-size: 18px;
+}
+
+.call-btn:hover {
+    background: var(--champagne);
+    color: var(--primary-black);
+    transform: translateY(-2px);
+}
+
+/* ===== FORCE ICON BUTTONS ONE LINE ===== */
+.icon-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.icon-btn {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+}
+

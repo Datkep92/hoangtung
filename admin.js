@@ -92,30 +92,89 @@ async function saveToFirebase(path, data) {
     }
 }
 
-// ===== LOGIN SYSTEM =====
+// ===== ENHANCED LOGIN SYSTEM =====
 function handleLogin() {
     const inputToken = document.getElementById('adminToken').value;
-    const savedToken = localStorage.getItem('luxurymove_admin_token');
+    const rememberMe = document.getElementById('rememberMe')?.checked || false;
     
     if (!inputToken) {
         showStatus('Vui lòng nhập token admin', 'error');
         return;
     }
     
-    if (inputToken !== adminToken && inputToken !== savedToken) {
+    // Kiểm tra token
+    if (inputToken !== adminToken) {
         showStatus('Token không đúng', 'error');
         return;
     }
     
-    adminToken = inputToken;
-    
-    if (document.getElementById('rememberMe').checked) {
-        localStorage.setItem('luxurymove_admin_token', adminToken);
+    // Lưu trạng thái đăng nhập
+    if (rememberMe) {
+        // Lưu với timestamp để kiểm tra hết hạn
+        const loginData = {
+            token: inputToken,
+            timestamp: Date.now(),
+            expires: Date.now() + (30 * 24 * 60 * 60 * 1000) // 30 ngày
+        };
+        localStorage.setItem('luxurymove_admin_login', JSON.stringify(loginData));
+    } else {
+        // Chỉ lưu session
+        sessionStorage.setItem('luxurymove_admin_token', inputToken);
+        localStorage.removeItem('luxurymove_admin_login');
     }
     
+    // Cập nhật biến toàn cục
+    adminToken = inputToken;
+    
+    // Hiển thị editor
     showEditorSection();
     initializeFirebase();
     showStatus('Đăng nhập thành công', 'success');
+}
+
+// Sửa hàm DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Kiểm tra đăng nhập
+    checkAutoLogin();
+});
+
+function checkAutoLogin() {
+    // Kiểm tra sessionStorage trước
+    const sessionToken = sessionStorage.getItem('luxurymove_admin_token');
+    if (sessionToken === adminToken) {
+        adminToken = sessionToken;
+        showEditorSection();
+        initializeFirebase();
+        return;
+    }
+    
+    // Kiểm tra localStorage (remember me)
+    const savedLogin = localStorage.getItem('luxurymove_admin_login');
+    if (savedLogin) {
+        try {
+            const loginData = JSON.parse(savedLogin);
+            const now = Date.now();
+            
+            // Kiểm tra hết hạn
+            if (loginData.expires > now) {
+                adminToken = loginData.token;
+                showEditorSection();
+                initializeFirebase();
+                console.log('Auto-login successful');
+                return;
+            } else {
+                // Xóa login đã hết hạn
+                localStorage.removeItem('luxurymove_admin_login');
+                console.log('Login expired');
+            }
+        } catch (e) {
+            console.error('Error parsing login data:', e);
+            localStorage.removeItem('luxurymove_admin_login');
+        }
+    }
+    
+    // Nếu không có login nào hợp lệ, hiển thị login section
+    document.getElementById('loginSection').style.display = 'flex';
 }
 
 function showEditorSection() {

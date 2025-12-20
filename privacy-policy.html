@@ -3,335 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chính Sách Bảo Mật - LuxuryMove</title>
+    <title>Chính Sách Bảo Mật | LuxuryMove</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
-            color: #fff;
-            min-height: 100vh;
+            font-family: 'Inter', Arial, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c, #1a1a1a);
+            color: #ffffff;
+            line-height: 1.7;
         }
-        
+
+        a {
+            color: #D4AF37;
+            text-decoration: none;
+        }
+
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
-        
-        /* Header */
+
+        /* ===== HEADER ===== */
         .header {
-            background: rgba(212, 175, 55, 0.1);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
-            padding: 20px 0;
             position: sticky;
             top: 0;
             z-index: 1000;
+            background: rgba(12, 12, 12, 0.9);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
         }
-        
+
+        .header-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+        }
+
         .logo {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 20px;
         }
-        
-        .logo-icon {
-            font-size: 32px;
+
+        .logo i {
             color: #D4AF37;
         }
-        
-        .logo h1 {
-            font-size: 28px;
+
+        .logo span {
             background: linear-gradient(90deg, #D4AF37, #FFD700);
             -webkit-background-clip: text;
-            background-clip: text;
             color: transparent;
         }
-        
-        /* Content */
+
+        /* ===== CONTENT ===== */
         .content {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 40px;
-            margin: 30px 0;
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(212, 175, 55, 0.2);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+            margin-top: 30px;
         }
-        
-        h1, h2, h3 {
-            color: #D4AF37;
-            margin: 25px 0 15px;
-        }
-        
+
         h1 {
-            font-size: 2.5rem;
             text-align: center;
+            color: #D4AF37;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .policy-date {
+            text-align: center;
+            font-size: 0.95rem;
+            color: #ccc;
             margin-bottom: 30px;
         }
-        
+
         h2 {
-            font-size: 1.8rem;
+            color: #FFD700;
+            font-size: 1.4rem;
+            margin: 30px 0 10px;
             border-left: 4px solid #D4AF37;
-            padding-left: 15px;
+            padding-left: 12px;
         }
-        
-        h3 {
-            font-size: 1.3rem;
-            color: #FFD700;
-        }
-        
+
         p {
-            margin-bottom: 15px;
-            font-size: 1.05rem;
-            line-height: 1.8;
+            margin-bottom: 12px;
+            font-size: 1rem;
         }
-        
+
         ul, ol {
-            margin: 15px 0 15px 30px;
+            margin: 10px 0 10px 25px;
         }
-        
+
         li {
-            margin-bottom: 10px;
-            padding-left: 10px;
+            margin-bottom: 8px;
         }
-        
-        .highlight {
-            background: rgba(212, 175, 55, 0.1);
+
+        .box {
+            background: rgba(212, 175, 55, 0.08);
             border-left: 3px solid #D4AF37;
-            padding: 15px;
-            margin: 20px 0;
+            padding: 16px;
             border-radius: 8px;
-        }
-        
-        .contact-info {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 30px 0;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-        }
-        
-        .contact-info h3 {
-            color: #D4AF37;
-            margin-bottom: 15px;
-        }
-        
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .info-item i {
-            color: #D4AF37;
-            width: 20px;
-        }
-        
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 30px 0;
-            margin-top: 50px;
-            border-top: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
             margin: 20px 0;
-            flex-wrap: wrap;
         }
-        
-        .footer-links a {
-            color: #D4AF37;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-links a:hover {
-            color: #FFD700;
-            text-decoration: underline;
-        }
-        
-        .copyright {
-            color: #aaa;
-            font-size: 0.9rem;
+
+        .contact-box {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 20px;
             margin-top: 20px;
         }
-        
-        /* Back Button */
-        .back-btn {
+
+        .contact-box p {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            margin: 40px 0 20px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .back-home {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(212, 175, 55, 0.2);
-            color: #D4AF37;
-            padding: 10px 20px;
+            margin-top: 25px;
+            padding: 10px 18px;
             border-radius: 8px;
-            text-decoration: none;
-            margin-top: 20px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            transition: all 0.3s;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            background: rgba(212, 175, 55, 0.15);
         }
-        
-        .back-btn:hover {
-            background: rgba(212, 175, 55, 0.3);
-            transform: translateY(-2px);
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
+
+        /* ===== MOBILE ===== */
+        @media (max-width: 480px) {
             .content {
                 padding: 20px;
             }
-            
+
             h1 {
-                font-size: 2rem;
-            }
-            
-            h2 {
-                font-size: 1.5rem;
+                font-size: 1.6rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-inner">
             <div class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-crown"></i>
-                </div>
-                <h1>LuxuryMove</h1>
-            </div>
-        </div>
-        
-        <!-- Main Content -->
-        <div class="content">
-            <h1><i class="fas fa-shield-alt"></i> CHÍNH SÁCH BẢO MẬT</h1>
-            <p><strong>Cập nhật lần cuối:</strong> 20/12/2024</p>
-            
-            <div class="highlight">
-                <p><i class="fas fa-info-circle"></i> <strong>Tuyên bố:</strong> LuxuryMove cam kết bảo vệ quyền riêng tư và thông tin cá nhân của khách hàng. Chính sách này giải thích cách chúng tôi thu thập, sử dụng và bảo vệ thông tin của bạn.</p>
-            </div>
-            
-            <h2>1. Thông Tin Chúng Tôi Thu Thập</h2>
-            <h3>1.1 Thông tin cá nhân</h3>
-            <ul>
-                <li><strong>Họ tên, số điện thoại, email:</strong> Khi bạn đặt dịch vụ hoặc liên hệ</li>
-                <li><strong>Địa chỉ đón/trả:</strong> Để thực hiện dịch vụ vận chuyển</li>
-                <li><strong>Thông tin thanh toán:</strong> Số thẻ, tài khoản ngân hàng (nếu có)</li>
-            </ul>
-            
-            <h3>1.2 Thông tin tự động thu thập</h3>
-            <ul>
-                <li><strong>Địa chỉ IP, loại trình duyệt:</strong> Để cải thiện trải nghiệm website</li>
-                <li><strong>Vị trí (nếu cho phép):</strong> Để gợi ý điểm đón gần nhất</li>
-                <li><strong>Cookies:</strong> Lưu trữ tùy chọn và phiên đăng nhập</li>
-            </ul>
-            
-            <h2>2. Mục Đích Sử Dụng Thông Tin</h2>
-            <ol>
-                <li>Thực hiện dịch vụ đặt xe và vận chuyển</li>
-                <li>Xác nhận đặt chỗ và gửi thông báo</li>
-                <li>Cải thiện chất lượng dịch vụ</li>
-                <li>Gửi thông tin khuyến mãi (nếu bạn đồng ý)</li>
-                <li>Phân tích và nghiên cứu thị trường</li>
-                <li>Tuân thủ quy định pháp luật</li>
-            </ol>
-            
-            <h2>3. Chia Sẻ Thông Tin</h2>
-            <p>Chúng tôi <strong>KHÔNG bán</strong> thông tin cá nhân của bạn. Thông tin chỉ được chia sẻ trong các trường hợp:</p>
-            <ul>
-                <li><strong>Tài xế đối tác:</strong> Chỉ cung cấp thông tin cần thiết để thực hiện chuyến đi</li>
-                <li><strong>Đối tác thanh toán:</strong> Các cổng thanh toán trực tuyến</li>
-                <li><strong>Cơ quan pháp luật:</strong> Khi có yêu cầu hợp pháp</li>
-                <li><strong>Dịch vụ hỗ trợ:</strong> Nhà cung cấp email, SMS marketing</li>
-            </ul>
-            
-            <h2>4. Bảo Mật Dữ Liệu</h2>
-            <p>Chúng tôi áp dụng các biện pháp bảo mật:</p>
-            <ul>
-                <li>Mã hóa SSL 256-bit cho mọi giao dịch</li>
-                <li>Hệ thống tường lửa và chống xâm nhập</li>
-                <li>Quy trình truy cập thông tin nghiêm ngặt</li>
-                <li>Đào tạo nhân viên về bảo mật dữ liệu</li>
-            </ul>
-            
-            <h2>5. Quyền Của Khách Hàng</h2>
-            <p>Bạn có quyền:</p>
-            <ol>
-                <li>Truy cập và xem thông tin cá nhân</li>
-                <li>Yêu cầu chỉnh sửa thông tin không chính xác</li>
-                <li>Yêu cầu xóa dữ liệu (trừ trường hợp pháp luật yêu cầu lưu trữ)</li>
-                <li>Rút lại sự đồng ý xử lý dữ liệu</li>
-                <li>Khiếu nại về việc xử lý dữ liệu</li>
-            </ol>
-            
-            <h2>6. Cookies</h2>
-            <p>Website sử dụng cookies để:</p>
-            <ul>
-                <li>Nhớ tùy chọn người dùng</li>
-                <li>Phân tích lưu lượng truy cập</li>
-                <li>Cải thiện trải nghiệm người dùng</li>
-            </ul>
-            <p>Bạn có thể tắt cookies trong cài đặt trình duyệt, nhưng một số tính năng có thể không hoạt động.</p>
-            
-            <h2>7. Liên Hệ</h2>
-            <div class="contact-info">
-                <h3><i class="fas fa-headset"></i> Bộ phận Bảo mật & Hỗ trợ</h3>
-                <div class="info-item">
-                    <i class="fas fa-envelope"></i>
-                    <span><strong>Email:</strong> security@luxurymove.vn</span>
-                </div>
-                <div class="info-item">
-                    <i class="fas fa-phone"></i>
-                    <span><strong>Hotline:</strong> 0931243679</span>
-                </div>
-                <div class="info-item">
-                    <i class="fas fa-clock"></i>
-                    <span><strong>Giờ làm việc:</strong> 8:00 - 20:00 hàng ngày</span>
-                </div>
-                <div class="info-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span><strong>Địa chỉ:</strong> Tầng 10, Tòa nhà Luxury, Quận 1, TP.HCM</span>
-                </div>
-            </div>
-            
-            <h2>8. Thay Đổi Chính Sách</h2>
-            <p>Chúng tôi có thể cập nhật chính sách này. Phiên bản mới sẽ được đăng trên website. Vui lòng kiểm tra định kỳ.</p>
-            
-            <a href="index.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i> Quay lại Trang chủ
-            </a>
-        </div>
-        
-        <!-- Footer -->
-        <div class="footer">
-            <div class="footer-links">
-                <a href="index.html">Trang chủ</a>
-                <a href="terms-of-service.html">Điều khoản dịch vụ</a>
-                <a href="privacy-policy.html">Chính sách bảo mật</a>
-                <a href="contact.html">Liên hệ</a>
-            </div>
-            <div class="copyright">
-                <p>© 2024 LuxuryMove. Tất cả các quyền được bảo lưu.</p>
-                <p>Giấy phép kinh doanh vận tải số: 0123456789 do Sở GTVT TP.HCM cấp</p>
+                <i class="fas fa-crown"></i>
+                <span>LuxuryMove</span>
             </div>
         </div>
     </div>
+
+    <div class="container">
+        <div class="content">
+
+            <h1>Chính Sách Bảo Mật</h1>
+            <div class="policy-date">Cập nhật lần cuối: 20/12/2024</div>
+
+            <div class="box">
+                LuxuryMove cam kết bảo vệ quyền riêng tư và thông tin cá nhân của khách hàng.
+                Chính sách này mô tả cách chúng tôi thu thập, sử dụng và bảo vệ dữ liệu khi bạn
+                truy cập website và sử dụng dịch vụ.
+            </div>
+
+            <h2>Phạm Vi Áp Dụng</h2>
+            <p>
+                Chính sách này áp dụng cho toàn bộ website và các dịch vụ vận chuyển,
+                đưa đón sân bay, du lịch, xe hợp đồng do LuxuryMove cung cấp.
+            </p>
+
+            <h2>Thông Tin Chúng Tôi Thu Thập</h2>
+            <ul>
+                <li>Họ tên, số điện thoại, email khi bạn đặt xe hoặc liên hệ</li>
+                <li>Địa điểm đón – trả để thực hiện dịch vụ</li>
+                <li>Dữ liệu kỹ thuật: IP, trình duyệt, thiết bị truy cập</li>
+            </ul>
+
+            <h2>Mục Đích Sử Dụng Thông Tin</h2>
+            <ol>
+                <li>Tiếp nhận và xử lý yêu cầu đặt xe</li>
+                <li>Liên hệ xác nhận, hỗ trợ khách hàng</li>
+                <li>Cải thiện chất lượng dịch vụ</li>
+                <li>Tuân thủ yêu cầu pháp luật khi cần thiết</li>
+            </ol>
+
+            <h2>Sử Dụng Dữ Liệu Quảng Cáo</h2>
+            <p>
+                LuxuryMove có thể sử dụng dữ liệu tổng hợp, không định danh cá nhân
+                để đo lường và tối ưu các chiến dịch quảng cáo như Google Ads.
+                Chúng tôi không bán hoặc chia sẻ thông tin cá nhân cho bên thứ ba ngoài phạm vi dịch vụ.
+            </p>
+
+            <h2>Cookies</h2>
+            <p>
+                Website có thể sử dụng cookies để ghi nhớ tùy chọn người dùng
+                và phân tích lưu lượng truy cập nhằm cải thiện trải nghiệm.
+                Bạn có thể tắt cookies trong trình duyệt nếu muốn.
+            </p>
+
+            <h2>Thời Gian Lưu Trữ Dữ Liệu</h2>
+            <p>
+                Thông tin cá nhân được lưu trữ trong thời gian cần thiết
+                để phục vụ dịch vụ và sẽ được xóa hoặc ẩn danh khi không còn sử dụng.
+            </p>
+
+            <h2>Quyền Của Khách Hàng</h2>
+            <ul>
+                <li>Yêu cầu xem, chỉnh sửa hoặc xóa thông tin cá nhân</li>
+                <li>Rút lại sự đồng ý xử lý dữ liệu</li>
+                <li>Liên hệ khi có thắc mắc về quyền riêng tư</li>
+            </ul>
+
+            <h2>Liên Hệ</h2>
+            <div class="contact-box">
+                <p><i class="fas fa-phone"></i> Hotline: <a href="tel:0931243679">0931 243 679</a></p>
+                <p><i class="fas fa-envelope"></i> Email: security@luxurymove.vn</p>
+                <p><i class="fas fa-map-marker-alt"></i> Khu vực hoạt động: Khánh Hòa – Ninh Thuận</p>
+            </div>
+
+            <a href="index.html" class="back-home">
+                <i class="fas fa-arrow-left"></i> Quay về Trang chủ
+            </a>
+
+        </div>
+
+        <div class="footer">
+            © 2024 LuxuryMove. All Rights Reserved.
+        </div>
+    </div>
+
 </body>
 </html>
