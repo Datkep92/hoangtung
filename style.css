@@ -1,5 +1,7 @@
 
 
+
+
 /* ===== RESET & BASE STYLES ===== */
 :root {
     
@@ -3579,3 +3581,80 @@ a {
     display: block;
 }
 
+.hero-title {
+    text-align: center;
+    line-height: 1.25;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 1.25;
+        margin-bottom: 12px;
+    }
+
+    .hero-title br {
+        line-height: 0.8;
+    }
+
+    .hero-title span.text-champagne {
+        display: block;
+        margin-top: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+    }
+}
+
+.hero-cta {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 14px;
+    flex-wrap: nowrap;
+}
+
+/* Nút chung */
+.cta-btn {
+    flex: 1;
+    max-width: 160px;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+/* Nút gọi */
+.cta-call {
+    background: linear-gradient(135deg, #cfae70, #e6c98b);
+    color: #1a1a1a;
+}
+
+/* Nút đặt xe */
+.cta-book {
+    border: 2px solid #cfae70;
+    color: #cfae70;
+    background: transparent;
+}
+
+/* Hiệu ứng bấm */
+.cta-btn:active {
+    transform: scale(0.97);
+}
+
+/* Mobile rất nhỏ */
+@media (max-width: 375px) {
+    .cta-btn {
+        font-size: 13px;
+        padding: 11px 12px;
+    }
+}
