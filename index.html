@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/gallery-card.css">
     <link rel="stylesheet" href="css/service.css">
     <link rel="stylesheet" href="css/pricing.css">
+    <link rel="stylesheet" href="css/sidebar.css">
 
 
 
@@ -19,21 +20,29 @@
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
 </head>
 <body>
-    <!-- Header -->
     <header class="app-header">
-        <div class="header-content container">
-            <div class="logo">
-                <div class="logo-icon"><i class="fas fa-crown"></i></div>
-                <div class="logo-text">Luxury<span>Move</span></div>
-            </div>
-            <div class="header-actions">
-                <a href="tel:0931243679" class="phone-btn">
-                    <i class="fas fa-phone-alt"></i>
-                    <span>0931.243.679</span>
-                </a>
-            </div>
+    <div class="header-content container">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-crown"></i></div>
+            <div class="logo-text">Luxury<span>Move</span></div>
         </div>
-    </header>
+        
+        <!-- ĐẢM BẢO PHẦN NÀY CÓ TRONG HEADER -->
+        <div class="header-actions">
+            <!-- Nút mở sidebar -->
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-chart-line"></i>
+                <span class="online-badge" id="onlineBadge">0</span>
+            </button>
+            
+            <!-- Nút điện thoại -->
+            <a href="tel:0931243679" class="phone-btn">
+                <i class="fas fa-phone-alt"></i>
+                <span>0931.243.679</span>
+            </a>
+        </div>
+    </div>
+</header>
 
     <!-- Gallery Section -->
     <section class="gallery-section" id="gallery">
@@ -222,7 +231,44 @@ Phan Rang Tháp Chàm
             </div>
         </div>
     </section>
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+<!-- Sidebar Container -->
+<aside class="sidebar" id="sidebar">
+    <!-- Sidebar Header -->
+    <div class="sidebar-header">
+        <div class="sidebar-header-content">
+            <div class="sidebar-logo">
+                <i class="fas fa-crown"></i>
+                <span>Luxury<span>Move</span></span>
+            </div>
+            <div class="sidebar-subtitle">Thống kê & Bảng giá</div>
+        </div>
+        <button class="sidebar-close" id="sidebarClose">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <!-- Sidebar Content (sẽ được render bằng JS) -->
+    <div class="sidebar-content" id="sidebarContent">
+        <div class="sidebar-loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Đang tải dữ liệu...</p>
+        </div>
+    </div>
+    
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+        <div class="sidebar-update-time">
+            <i class="far fa-clock"></i>
+            <span>Cập nhật: <span id="lastUpdateTime">--:--</span></span>
+        </div>
+        <button class="btn-refresh-stats" id="refreshStatsBtn">
+            <i class="fas fa-sync-alt"></i> Làm mới
+        </button>
+    </div>
+</aside>
     <!-- Footer -->
     <footer class="main-footer" id="contact">
         <div class="container">
@@ -334,5 +380,7 @@ Phan Rang Tháp Chàm
     <script src="js/gallery.js"></script>
     <script src="js/pricing.js"></script>
     <script src="js/chatbot.js"></script>
+    <script src="js/sidebar.js"></script>
+
 </body>
 </html>
