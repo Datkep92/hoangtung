@@ -20,27 +20,33 @@
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
 </head>
 <body>
-    <header class="app-header">
+    <!-- Header -->
+<header class="app-header">
     <div class="header-content container">
+        <!-- Menu Toggle (Bên trái) -->
+        <button class="menu-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Logo & Name (Giữa) -->
         <div class="logo">
             <div class="logo-icon"><i class="fas fa-crown"></i></div>
             <div class="logo-text">Luxury<span>Move</span></div>
         </div>
         
-        <!-- ĐẢM BẢO PHẦN NÀY CÓ TRONG HEADER -->
+        <!-- Header Actions (Bên phải) -->
         <div class="header-actions">
-            <!-- Nút mở sidebar -->
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <i class="fas fa-chart-line"></i>
-                <span class="online-badge" id="onlineBadge">0</span>
-            </button>
-            
-            <!-- Nút điện thoại -->
-            <a href="tel:0931243679" class="phone-btn">
-                <i class="fas fa-phone-alt"></i>
-                <span>0931.243.679</span>
-            </a>
-        </div>
+    <!-- Online Badge -->
+    <div class="online-indicator" id="onlineIndicator">
+        <i class="fas fa-user"></i>
+        <span class="online-count" id="onlineBadge">0</span>
+    </div>
+    
+    <!-- Call Button -->
+    <a href="tel:0931243679" class="call-btn">
+        <i class="fas fa-phone-alt"></i>
+    </a>
+</div>
     </div>
 </header>
 
@@ -50,8 +56,8 @@
             
                 <h1 class="hero-title">
     Dịch Vụ Xe Hợp Đồng
-<br> 
-Phan Rang Tháp Chàm
+    <br> 
+    <span class="city-name">Phan Rang Tháp Chàm</span>
     <br>
     <span class="text-champagne">Đưa Đón Sân Bay • Du Lịch</span>
 </h1>
