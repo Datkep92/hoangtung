@@ -463,6 +463,429 @@ function renderExperiencesUI() {
     });
 }
 
+// Thêm CSS cho nút đặt lịch
+const experienceButtonCSS = `
+    .exp-book-section {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(212, 175, 55, 0.15);
+    }
+    
+    .exp-book-btn, .exp-info-btn {
+        flex: 1;
+        padding: 12px 15px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: none;
+        text-align: center;
+        min-height: 44px;
+    }
+    
+    .exp-book-btn {
+        background: rgba(76, 175, 80, 0.1);
+        color: #4CAF50;
+        border: 2px solid rgba(76, 175, 80, 0.3);
+    }
+    
+    .exp-book-btn:hover {
+        background: rgba(76, 175, 80, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+    }
+    
+    .exp-book-btn:active {
+        transform: translateY(0);
+    }
+    
+    .exp-info-btn {
+        background: rgba(212, 175, 55, 0.1);
+        color: var(--champagne);
+        border: 2px solid rgba(212, 175, 55, 0.3);
+    }
+    
+    .exp-info-btn:hover {
+        background: rgba(212, 175, 55, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+    }
+    
+    .exp-info-btn:active {
+        transform: translateY(0);
+    }
+    
+    .exp-book-btn i, .exp-info-btn i {
+        font-size: 16px;
+    }
+    
+    .exp-book-btn span, .exp-info-btn span {
+        font-size: 13px;
+        line-height: 1.2;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .exp-book-section {
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .exp-book-btn, .exp-info-btn {
+            width: 100%;
+        }
+        
+        .exp-book-btn span, .exp-info-btn span {
+            font-size: 12px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .exp-book-btn, .exp-info-btn {
+            padding: 10px 12px;
+            min-height: 40px;
+        }
+        
+        .exp-book-btn i, .exp-info-btn i {
+            font-size: 14px;
+        }
+    }
+`;
+
+// Thêm CSS vào head nếu chưa có
+if (!document.getElementById('experienceButtonCSS')) {
+    const style = document.createElement('style');
+    style.id = 'experienceButtonCSS';
+    style.textContent = experienceButtonCSS;
+    document.head.appendChild(style);
+}
+
+// Function xử lý đặt lịch từ experience
+function quickBookExperience(experienceTitle) {
+    // Đóng modal bảng giá nếu đang mở
+    if (document.getElementById('fullPricingModal')) {
+        closeFullPricingPage();
+    }
+    
+    // Lưu experience đã chọn
+    const experienceData = {
+        title: experienceTitle,
+        type: 'experience',
+        timestamp: Date.now()
+    };
+    
+    sessionStorage.setItem('selectedService', JSON.stringify(experienceData));
+    
+    // Hiển thị toast thông báo
+    showQuickBookToast(experienceTitle);
+    
+    // Chuyển đến section booking
+    setTimeout(() => {
+        const bookingSection = document.getElementById('booking');
+        if (bookingSection) {
+            // Cuộn đến booking section
+            bookingSection.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+            
+            // Thêm hiệu ứng highlight
+            bookingSection.classList.add('highlight-booking');
+            
+            // Tự động điền vào form booking
+            setTimeout(() => {
+                // Điền vào service select
+                const serviceSelect = document.querySelector('.form-select[name="service"]');
+                if (serviceSelect) {
+                    serviceSelect.focus();
+                    
+                    // Tìm option phù hợp
+                    const options = Array.from(serviceSelect.options);
+                    const matchingOption = options.find(option => 
+                        option.text.toLowerCase().includes(experienceTitle.toLowerCase()) || 
+                        experienceTitle.toLowerCase().includes(option.text.toLowerCase())
+                    );
+                    
+                    if (matchingOption) {
+                        serviceSelect.value = matchingOption.value;
+                    } else {
+                        // Nếu không tìm thấy, điền vào text input nếu có
+                        const serviceInput = document.querySelector('.form-input[name="service"]');
+                        if (serviceInput) {
+                            serviceInput.value = experienceTitle;
+                            serviceInput.focus();
+                        }
+                    }
+                }
+                
+                // Xóa highlight sau 3 giây
+                setTimeout(() => {
+                    bookingSection.classList.remove('highlight-booking');
+                }, 3000);
+                
+            }, 500);
+        }
+    }, 800);
+}
+
+// Function hiển thị chi tiết experience (tùy chọn)
+function showExperienceInfo(experienceId) {
+    const experience = experiencesData.experiences[experienceId];
+    if (!experience) return;
+    
+    // Tạo modal hiển thị chi tiết
+    const modalHTML = `
+        <div class="experience-modal-overlay" id="experienceModal${experienceId}">
+            <div class="experience-modal-container">
+                <div class="experience-modal-header">
+                    <h3 class="modal-title">
+                        <i class="fas fa-star"></i>
+                        ${experience.title}
+                    </h3>
+                    <button class="modal-close-btn" onclick="closeExperienceModal('${experienceId}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="experience-modal-content">
+                    <div class="modal-image">
+                        <img src="${experience.image}" alt="${experience.title}" loading="lazy">
+                    </div>
+                    
+                    <div class="modal-benefits">
+                        <h4><i class="fas fa-check-circle"></i> Lợi ích</h4>
+                        <ul>
+                            ${(experience.benefits || []).map(benefit => `
+                                <li><i class="fas fa-check"></i> ${benefit}</li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="modal-description">
+                        <h4><i class="fas fa-info-circle"></i> Mô tả</h4>
+                        <p>${experience.description || 'Chưa có mô tả chi tiết.'}</p>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button class="modal-book-btn" onclick="quickBookExperience('${experience.title}')">
+                            <i class="fas fa-calendar-alt"></i>
+                            Đặt ngay ${experience.title}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Thêm modal vào body
+    const modalContainer = document.createElement('div');
+    modalContainer.innerHTML = modalHTML;
+    document.body.appendChild(modalContainer);
+    
+    // Thêm CSS nếu chưa có
+    if (!document.getElementById('experienceModalCSS')) {
+        const style = document.createElement('style');
+        style.id = 'experienceModalCSS';
+        style.textContent = `
+            .experience-modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                z-index: 99999;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+                animation: fadeIn 0.3s ease;
+                backdrop-filter: blur(10px);
+            }
+            
+            .experience-modal-container {
+                width: 100%;
+                max-width: 500px;
+                max-height: 90vh;
+                background: var(--card-black);
+                border-radius: 20px;
+                border: 2px solid rgba(212, 175, 55, 0.3);
+                overflow: hidden;
+                animation: slideUp 0.3s ease;
+            }
+            
+            .experience-modal-header {
+                padding: 20px;
+                background: rgba(20, 20, 20, 0.95);
+                border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .modal-title {
+                font-size: 20px;
+                color: var(--champagne);
+                margin: 0;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .modal-close-btn {
+                width: 36px;
+                height: 36px;
+                background: rgba(212, 175, 55, 0.1);
+                border: 1px solid rgba(212, 175, 55, 0.3);
+                border-radius: 10px;
+                color: var(--text-primary);
+                font-size: 16px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            }
+            
+            .modal-close-btn:hover {
+                background: rgba(212, 175, 55, 0.2);
+                transform: rotate(90deg);
+            }
+            
+            .experience-modal-content {
+                padding: 20px;
+                overflow-y: auto;
+                max-height: calc(90vh - 80px);
+            }
+            
+            .modal-image {
+                width: 100%;
+                height: 200px;
+                border-radius: 12px;
+                overflow: hidden;
+                margin-bottom: 20px;
+            }
+            
+            .modal-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            
+            .modal-benefits, .modal-description {
+                margin-bottom: 20px;
+            }
+            
+            .modal-benefits h4, .modal-description h4 {
+                font-size: 16px;
+                color: var(--text-primary);
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .modal-benefits ul {
+                list-style: none;
+                padding: 0;
+            }
+            
+            .modal-benefits li {
+                padding: 8px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: var(--text-secondary);
+            }
+            
+            .modal-benefits li:last-child {
+                border-bottom: none;
+            }
+            
+            .modal-description p {
+                color: var(--text-secondary);
+                line-height: 1.6;
+                margin: 0;
+            }
+            
+            .modal-actions {
+                text-align: center;
+                margin-top: 25px;
+            }
+            
+            .modal-book-btn {
+                padding: 14px 28px;
+                background: var(--gradient-gold);
+                border: none;
+                border-radius: 12px;
+                color: var(--primary-black);
+                font-weight: 700;
+                font-size: 15px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .modal-book-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            @keyframes slideUp {
+                from { transform: translateY(30px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            
+            @media (max-width: 768px) {
+                .experience-modal-container {
+                    max-width: 95%;
+                }
+                
+                .modal-image {
+                    height: 150px;
+                }
+                
+                .modal-book-btn {
+                    width: 100%;
+                    justify-content: center;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+function closeExperienceModal(experienceId) {
+    const modal = document.getElementById(`experienceModal${experienceId}`);
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Thêm event để đóng modal bằng ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        // Tìm tất cả experience modal và đóng
+        document.querySelectorAll('[id^="experienceModal"]').forEach(modal => {
+            modal.remove();
+        });
+    }
+});
 
 
 
@@ -798,3 +1221,155 @@ function getSampleBlogPosts() {
 }
 
 //
+// ===== ENHANCED FIREBASE STRUCTURE =====
+async function initializeFirebaseStructure() {
+    if (!database) return;
+    
+    try {
+        // Kiểm tra và tạo cấu trúc mới nếu chưa có
+        const statsRef = database.ref('statistics');
+        const snapshot = await statsRef.once('value');
+        
+        if (!snapshot.exists()) {
+            // Tạo cấu trúc mới
+            await statsRef.set({
+                config: {
+                    // Cài đặt cơ bản
+                    total_cars: 15,
+                    base_online: 15,
+                    base_bookings: 8,
+                    auto_update: true,
+                    last_reset: new Date().toISOString().split('T')[0],
+                    
+                    // Hệ số theo giờ (có thể điều chỉnh từ admin)
+                    hourly_multipliers: {
+                        "00-06": 0.2,  // 20% - Đêm khuya
+                        "06-09": 0.6,  // 60% - Sáng sớm
+                        "09-12": 0.9,  // 90% - Sáng
+                        "12-14": 1.0,  // 100% - Trưa
+                        "14-18": 1.2,  // 120% - Chiều
+                        "18-21": 1.5,  // 150% - Tối (cao điểm)
+                        "21-24": 0.8   // 80% - Tối muộn
+                    },
+                    
+                    // Hệ số cuối tuần
+                    weekend_boost: 1.3,  // +30% cuối tuần
+                    
+                    // Override thủ công (nếu có)
+                    manual_override: {
+                        online: null,
+                        bookings: null,
+                        cars: null
+                    }
+                },
+                
+                live: {
+                    // Sẽ được tính toán tự động
+                    current_online: 15,
+                    bookings_today: 8,
+                    available_cars: 10,
+                    is_peak_hour: false,
+                    updated_at: Date.now()
+                },
+                
+                // Logs cho admin
+                logs: {
+                    daily_resets: [],
+                    manual_updates: []
+                }
+            });
+            
+            console.log("✅ Created new Firebase statistics structure");
+        } else {
+            console.log("✅ Firebase statistics structure already exists");
+        }
+        
+        // Kiểm tra và tạo user_sessions nếu chưa có
+        const sessionsRef = database.ref('user_sessions');
+        const sessionsSnapshot = await sessionsRef.once('value');
+        if (!sessionsSnapshot.exists()) {
+            await sessionsRef.set({});
+        }
+        
+        // Kiểm tra và tạo booking_logs nếu chưa có
+        const bookingsRef = database.ref('booking_logs');
+        const bookingsSnapshot = await bookingsRef.once('value');
+        if (!bookingsSnapshot.exists()) {
+            await bookingsRef.set({});
+        }
+        
+    } catch (error) {
+        console.error("❌ Error initializing Firebase structure:", error);
+    }
+}
+
+// ===== BOOKING FORM SUBMIT WITH LOGGING =====
+async function handleBookingSubmit(formData) {
+    if (!database) {
+        alert(`✅ Đã gửi yêu cầu thành công!\n\n📞 Chúng tôi sẽ gọi lại số:\n${formData.phone}\n\n📋 Dịch vụ: ${formData.service}\n👤 Tên: ${formData.name}`);
+        return;
+    }
+    
+    try {
+        // Log booking to Firebase
+        const bookingId = 'booking_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+        
+        const bookingData = {
+            timestamp: Date.now(),
+            service: formData.service,
+            customer_name: formData.name,
+            customer_phone: formData.phone,
+            status: 'confirmed',
+            source: 'website',
+            ip_address: await getClientIP()
+        };
+        
+        await database.ref(`booking_logs/${bookingId}`).set(bookingData);
+        
+        // Increment booking counter
+        await database.ref('statistics/live/bookings_today').transaction(current => {
+            return (current || 0) + 1;
+        });
+        
+        // Show success message
+        alert(`✅ Đã gửi yêu cầu thành công!\n\n📞 Chúng tôi sẽ gọi lại số:\n${formData.phone}\n\n📋 Dịch vụ: ${formData.service}\n👤 Tên: ${formData.name}\n\n📊 Booking ID: ${bookingId.substr(0, 8)}`);
+        
+        // Reset form
+        document.getElementById('bookingForm').reset();
+        
+    } catch (error) {
+        console.error("❌ Error logging booking:", error);
+        // Fallback to simple alert
+        alert(`✅ Đã gửi yêu cầu thành công!\n\n📞 Chúng tôi sẽ gọi lại số:\n${formData.phone}\n\n📋 Dịch vụ: ${formData.service}\n👤 Tên: ${formData.name}`);
+    }
+}
+
+// Helper function to get client IP (simplified)
+async function getClientIP() {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+    } catch (error) {
+        return 'unknown';
+    }
+}
+
+// Update existing form submit handler
+if (document.getElementById('bookingForm')) {
+    document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const serviceType = document.getElementById('serviceType');
+        const customerName = document.getElementById('customerName').value;
+        const customerPhone = document.getElementById('customerPhone').value;
+        
+        const serviceName = serviceType.options[serviceType.selectedIndex].text;
+        
+        await handleBookingSubmit({
+            service: serviceName,
+            name: customerName,
+            phone: customerPhone
+        });
+    });
+}

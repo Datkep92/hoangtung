@@ -1407,3 +1407,132 @@ function getSampleBlogPosts() {
 
 //
 
+// ===== STATISTICS MANAGEMENT FUNCTIONS =====
+async function loadStatisticsConfig() {
+    if (!database) return null;
+    
+    try {
+        const snapshot = await database.ref('statistics/config').once('value');
+        return snapshot.val();
+    } catch (error) {
+        console.error("❌ Error loading statistics config:", error);
+        return null;
+    }
+}
+
+async function saveStatisticsConfig(config) {
+    if (!database) {
+        showStatus('Không thể kết nối Firebase', 'error');
+        return false;
+    }
+    
+    try {
+        await database.ref('statistics/config').set(config);
+        localStorage.setItem('luxurymove_stats_config', JSON.stringify(config));
+        
+        // Ghi log
+        await database.ref('statistics/logs/manual_updates').push({
+            timestamp: Date.now(),
+            action: 'config_update',
+            config: config
+        });
+        
+        showStatus('Đã lưu cấu hình thống kê', 'success');
+        return true;
+    } catch (error) {
+        console.error("❌ Error saving statistics config:", error);
+        showStatus('Lỗi khi lưu cấu hình', 'error');
+        return false;
+    }
+}
+
+async function updateStatisticsManually(data) {
+    if (!database) return false;
+    
+    try {
+        const updateData = {
+            ...data,
+            updated_at: Date.now(),
+            source: 'manual'
+        };
+        
+        await database.ref('statistics/live').update(updateData);
+        
+        // Ghi log
+        await database.ref('statistics/logs/manual_updates').push({
+            timestamp: Date.now(),
+            action: 'manual_override',
+            data: data
+        });
+        
+        showStatus('Đã cập nhật thống kê thủ công', 'success');
+        return true;
+    } catch (error) {
+        console.error("❌ Error updating statistics manually:", error);
+        showStatus('Lỗi khi cập nhật', 'error');
+        return false;
+    }
+}
+
+async function resetDailyStatistics() {
+    if (!database) return false;
+    
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Reset bookings
+        await database.ref('statistics/live/bookings_today').set(0);
+        
+        // Update last_reset date
+        await database.ref('statistics/config/last_reset').set(today);
+        
+        // Ghi log
+        await database.ref('statistics/logs/daily_resets').push({
+            timestamp: Date.now(),
+            date: today
+        });
+        
+        showStatus('Đã reset thống kê ngày mới', 'success');
+        return true;
+    } catch (error) {
+        console.error("❌ Error resetting daily statistics:", error);
+        showStatus('Lỗi khi reset', 'error');
+        return false;
+    }
+}
+
+// Hàm lấy dữ liệu thống kê thực
+async function getRealStatistics() {
+    if (!database) return null;
+    
+    try {
+        // Đếm user online thực (active trong 5 phút)
+        const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+        const sessionsSnapshot = await database.ref('user_sessions').once('value');
+        const sessions = sessionsSnapshot.val() || {};
+        
+        const realOnline = Object.values(sessions).filter(session => 
+            session.last_active > fiveMinutesAgo
+        ).length;
+        
+        // Đếm booking hôm nay
+        const today = new Date().toISOString().split('T')[0];
+        const bookingsSnapshot = await database.ref('booking_logs').once('value');
+        const bookings = bookingsSnapshot.val() || {};
+        
+        const realBookings = Object.values(bookings).filter(booking => {
+            const bookingDate = new Date(booking.timestamp).toISOString().split('T')[0];
+            return bookingDate === today && booking.status === 'confirmed';
+        }).length;
+        
+        return {
+            real_online: realOnline,
+            real_bookings: realBookings,
+            total_sessions: Object.keys(sessions).length,
+            total_bookings: Object.keys(bookings).length
+        };
+    } catch (error) {
+        console.error("❌ Error getting real statistics:", error);
+        return null;
+    }
+}
