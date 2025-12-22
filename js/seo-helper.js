@@ -31,7 +31,7 @@ class SEOHelper {
         let entries = '';
         
         Object.entries(posts).forEach(([postId, post]) => {
-            const url = `https://datkep92.github.io/hoangtung/blog.html?post=${postId}`;
+            const url = `https://htutransport.com/blog.html?post=${postId}`;
             const date = post.date || new Date().toISOString().split('T')[0];
             
             entries += `    <url>
@@ -60,7 +60,7 @@ class SEOHelper {
                     "@type": "ListItem",
                     "position": 1,
                     "name": "Trang chủ",
-                    "item": "https://datkep92.github.io/hoangtung/"
+                    "item": "https://htutransport.com/"
                 }
             ]
         };
@@ -70,7 +70,7 @@ class SEOHelper {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "Blog",
-                "item": "https://datkep92.github.io/hoangtung/blog.html"
+                "item": "https://htutransport.com/blog.html"
             });
             
             if (pageTitle) {
