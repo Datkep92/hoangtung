@@ -9,7 +9,7 @@ Disallow: /private/
 Disallow: /cgi-bin/
 
 # Sitemap Location
-Sitemap: https://datkep92.github.io/hoangtung/sitemap.xml
+Sitemap: https://htutransport.com/sitemap.xml
 
 # Crawl-delay for heavy bots
 User-agent: GPTBot
