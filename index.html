@@ -73,87 +73,52 @@
     
     <!-- Structured Data -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "LocalBusiness",
-                "@id": "https://htutransport.com/#localbusiness",
-                "name": "LuxuryMove - Dịch Vụ Xe Hợp Đồng Phan Rang Tháp Chàm",
-                "description": "Dịch vụ xe hợp đồng cao cấp tại Phan Rang Tháp Chàm, đưa đón sân bay Cam Ranh, xe du lịch 4-7-16 chỗ, đặt xe online 24/7",
-                "url": "https://htutransport.com/",
-                "telephone": "+84931243679",
-                "address": {
-                    "@type": "PostalAddress",
-                    "streetAddress": "Số 123 Đường Lê Hồng Phong",
-                    "addressLocality": "Phan Rang Tháp Chàm",
-                    "addressRegion": "Ninh Thuận",
-                    "postalCode": "590000",
-                    "addressCountry": "VN"
-                },
-                "geo": {
-                    "@type": "GeoCoordinates",
-                    "latitude": "11.5643",
-                    "longitude": "108.9886"
-                },
-                "openingHours": "Mo-Su 00:00-24:00",
-                "priceRange": "500000 - 5000000 VND",
-                "image": "https://htutransport.com/images/logo-seo.jpg",
-                "sameAs": [
-                    "https://facebook.com/luxurymovephanrang",
-                    "https://zalo.me/0931243679"
-                ],
-                "areaServed": {
-                    "@type": "GeoCircle",
-                    "geoMidpoint": {
-                        "@type": "GeoCoordinates",
-                        "latitude": "11.5643",
-                        "longitude": "108.9886"
-                    },
-                    "geoRadius": "150000"
-                },
-                "hasOfferCatalog": {
-                    "@type": "OfferCatalog",
-                    "name": "Dịch Vụ Xe Hợp Đồng",
-                    "itemListElement": [
-                        {
-                            "@type": "Offer",
-                            "itemOffered": {
-                                "@type": "Service",
-                                "name": "Đưa đón sân bay Cam Ranh"
-                            }
-                        },
-                        {
-                            "@type": "Offer",
-                            "itemOffered": {
-                                "@type": "Service",
-                                "name": "Xe du lịch Ninh Thuận"
-                            }
-                        }
-                    ]
-                }
-            },
-            {
-                "@type": "WebSite",
-                "@id": "https://htutransport.com/#website",
-                "url": "https://htutransport.com/",
-                "name": "LuxuryMove Phan Rang",
-                "description": "Dịch vụ xe hợp đồng cao cấp Phan Rang Tháp Chàm",
-                "publisher": {
-                    "@id": "https://htutransport.com/#localbusiness"
-                },
-                "potentialAction": [{
-                    "@type": "SearchAction",
-                    "target": {
-                        "@type": "EntryPoint",
-                        "urlTemplate": "https://htutransport.com/?s={search_term_string}"
-                    },
-                    "query-input": "required name=search_term_string"
-                }]
-            }
-        ]
-    }
-    </script>
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": "https://htutransport.com/#localbusiness",
+  "name": "LuxuryMove - Xe Hợp Đồng Phan Rang",
+  "image": "https://htutransport.com/images/logo-seo.jpg",
+  "description": "Dịch vụ xe hợp đồng cao cấp tại Phan Rang, đưa đón sân bay Cam Ranh, xe du lịch 4-7-16 chỗ.",
+  "url": "https://htutransport.com/",
+  "telephone": "+84931243679",
+  "priceRange": "500.000đ - 5.000.000đ",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Số 62 Hải Thượng Lãn Ông",
+    "addressLocality": "Phan Rang Tháp Chàm",
+    "addressRegion": "Ninh Thuận",
+    "postalCode": "590000",
+    "addressCountry": "VN"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "11.5643",
+    "longitude": "108.9886"
+  },
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+    ],
+    "opens": "00:00",
+    "closes": "23:59"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "reviewCount": "127",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+84931243679",
+    "contactType": "customer service",
+    "availableLanguage": ["Vietnamese", "English"]
+  }
+}
+</script>
 
     <!-- Fonts & CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
