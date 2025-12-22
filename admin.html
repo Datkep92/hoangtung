@@ -100,8 +100,11 @@
                 <i class="fas fa-newspaper"></i> Blog
             </button>
             <button class="tab-btn" onclick="showTab('statistics')">
-    <i class="fas fa-chart-bar"></i> Thống kê
-</button>
+                <i class="fas fa-chart-bar"></i> Thống kê
+            </button>
+            <button class="tab-btn" onclick="showTab('telegram')">
+                <i class="fab fa-telegram"></i> Telegram
+            </button>
         </div>
 
         <!-- Tab Contents -->
@@ -489,6 +492,92 @@
             <div class="logs-container" id="logsContainer">
                 <div class="loading-spinner"></div>
             </div>
+        </div>
+    </div>
+</div>
+<!-- Thêm tab content cho Telegram (đặt trước phần Status Bar) -->
+<div id="telegramTab" class="tab-content">
+    <div class="admin-header">
+        <h2 class="modal-title">Quản lý Telegram</h2>
+        <button class="btn btn-primary" onclick="openTelegramConfig()">
+            <i class="fas fa-plus"></i> Thêm cấu hình
+        </button>
+    </div>
+    
+    <div class="telegram-configs" id="telegramConfigs">
+        <div class="loading-spinner"></div>
+    </div>
+    
+    <div class="telegram-info">
+        <h3><i class="fas fa-info-circle"></i> Hướng dẫn sử dụng</h3>
+        <ul>
+            <li>Mỗi bot token có thể gửi thông báo đến nhiều chat ID</li>
+            <li>Bot token: Lấy từ <a href="https://t.me/BotFather" target="_blank">@BotFather</a></li>
+            <li>Chat ID: Sử dụng bot <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a> để lấy ID</li>
+            <li>Đánh dấu "Mặc định" để sử dụng cho trang chủ</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Modal Telegram Config -->
+<div id="telegramModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="telegramModalTitle">
+                <i class="fab fa-telegram"></i> Cấu hình Telegram
+            </h2>
+            <button class="modal-close" onclick="closeModal('telegramModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Tên cấu hình *</label>
+                <input type="text" id="telegramName" class="form-input" placeholder="Ví dụ: Booking Bot Chính">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Bot Token *</label>
+                <div class="input-with-action">
+                    <input type="password" id="telegramBotToken" class="form-input" 
+                           placeholder="8531709938:AAHx...">
+                    <button type="button" class="btn-icon" onclick="toggleTokenVisibility('telegramBotToken')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Chat IDs (mỗi ID một dòng) *</label>
+                <textarea id="telegramChatIds" class="form-input" rows="4" 
+                         placeholder="6372876364&#10;1234567890"></textarea>
+                <small>Mỗi Chat ID trên một dòng</small>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <input type="checkbox" id="telegramIsDefault" class="form-checkbox">
+                    Sử dụng làm cấu hình mặc định
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Trạng thái</label>
+                <div class="status-test" id="telegramTestStatus"></div>
+            </div>
+            
+            <input type="hidden" id="telegramConfigId">
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success" onclick="testTelegramConnection()">
+                <i class="fas fa-plug"></i> Kiểm tra kết nối
+            </button>
+            <button class="btn btn-primary" onclick="saveTelegramConfig()" style="flex: 1;">
+                <i class="fas fa-save"></i> Lưu
+            </button>
+            <button class="btn btn-danger" onclick="deleteTelegramConfig()" id="deleteTelegramBtn" style="display: none;">
+                <i class="fas fa-trash"></i> Xóa
+            </button>
         </div>
     </div>
 </div>
