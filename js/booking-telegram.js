@@ -223,16 +223,16 @@ class TelegramBooking {
     formatMessage(data) {
         return `<b>🚖 YÊU CẦU ĐẶT XE MỚI - LuxuryMove</b>
 
-<b>📋 Dịch vụ:</b> ${data.serviceType}
+
 <b>👤 Khách hàng:</b> ${data.customerName}
 <b>📞 Điện thoại:</b> <code>${data.customerPhone}</code>
-<b>📍 Đón tại:</b> ${data.pickupLocation}
-<b>🎯 Đến:</b> ${data.dropoffLocation}
+<b> Đón tại:</b> ${data.pickupLocation}
+<b> Đến:</b> ${data.dropoffLocation}
 ${data.customerNote ? `<b>📝 Ghi chú:</b> ${data.customerNote}` : ''}
 
 <b>🕐 Thời gian:</b> ${data.timestamp}
-<b>🌐 Trang:</b> ${data.pageUrl}
-<b>📱 User Agent:</b> ${data.userAgent}
+<b> Trang:</b> ${data.pageUrl}
+<b> User Agent:</b> ${data.userAgent}
 ${data.ip ? `<b>🌍 IP:</b> ${data.ip}` : ''}
 
 <u>🔥 VUI LÒNG LIÊN HỆ NGAY!</u>`;
@@ -263,7 +263,7 @@ ${data.ip ? `<b>🌍 IP:</b> ${data.ip}` : ''}
                         <i class="fas fa-phone"></i>
                         <strong>0567.033.888</strong>
                     </div>
-                    <p class="lux-note">Thông báo đã được gửi đến ${this.config.chatIds.length} quản trị viên qua Telegram</p>
+                    <p class="lux-note">Thông báo đã được gửi đến ${this.config.chatIds.length} quản trị viên</p>
                 </div>
                 <button class="btn-lux-close">Đóng</button>
             </div>
@@ -432,4 +432,5 @@ Promise.allSendPromises = function(promises, timeout = 10000) {
 document.addEventListener('DOMContentLoaded', () => {
     const telegramBooking = new TelegramBooking();
     window.telegramBooking = telegramBooking; // Cho phép debug
+
 });
