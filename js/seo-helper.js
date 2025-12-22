@@ -5,6 +5,33 @@ class SEOHelper {
             googleIndexing: 'https://indexing.googleapis.com/v3/urlNotifications:publish',
             bingSubmit: 'https://www.bing.com/webmaster/api.svc/json/SubmitUrl'
         };
+        
+        // Danh sách các file hợp lệ không cần .html
+        this.validFileExtensions = [
+            '.xml',
+            '.json',
+            '.pdf',
+            '.jpg',
+            '.jpeg',
+            '.png',
+            '.gif',
+            '.svg',
+            '.ico',
+            '.txt',
+            '.css',
+            '.js'
+        ];
+        
+        // Danh sách các URLs hợp lệ không cần kiểm tra
+        this.validSpecialUrls = [
+            '/sitemap.xml',
+            '/robots.txt',
+            '/favicon.ico',
+            '/manifest.json',
+            '/feed.xml',
+            '/atom.xml',
+            '/rss.xml'
+        ];
     }
 
     // Tự động thêm URL blog vào sitemap
@@ -92,76 +119,202 @@ class SEOHelper {
         console.log('✅ Added dynamic breadcrumb schema');
     }
 
-    // Tối ưu hình ảnh lazy loading
+    // Tối ưu hình ảnh lazy loading - SỬA LỖI
     optimizeImages() {
         let optimizedCount = 0;
+        let skippedCount = 0;
         
         document.querySelectorAll('img').forEach(img => {
+            // Skip các ảnh đã có lazy loading hoặc ảnh nhỏ
+            if (img.width < 50 || img.height < 50) {
+                skippedCount++;
+                return;
+            }
+            
             if (!img.hasAttribute('loading')) {
                 img.setAttribute('loading', 'lazy');
                 optimizedCount++;
             }
+            
             if (!img.hasAttribute('decoding')) {
                 img.setAttribute('decoding', 'async');
             }
             
-            // Thêm width và height nếu có data
-            if (!img.hasAttribute('width') && !img.hasAttribute('height')) {
-                const originalSrc = img.src;
-                const tempImg = new Image();
-                tempImg.onload = function() {
-                    img.setAttribute('width', this.width);
-                    img.setAttribute('height', this.height);
-                };
-                tempImg.src = originalSrc;
+            // Chỉ thêm width và height nếu ảnh đã load
+            if (img.complete && !img.hasAttribute('width') && !img.hasAttribute('height')) {
+                img.setAttribute('width', img.naturalWidth || '');
+                img.setAttribute('height', img.naturalHeight || '');
             }
             
-            // Thêm error handling
-            img.onerror = function() {
-                this.src = 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800';
-                console.warn('⚠️ Image failed to load, using fallback:', this.alt);
-            };
+            // Thêm error handling với fallback image
+            if (!img.hasAttribute('data-fallback-set')) {
+                img.setAttribute('data-fallback-set', 'true');
+                img.onerror = function() {
+                    if (!this.hasAttribute('data-fallback-used')) {
+                        this.setAttribute('data-fallback-used', 'true');
+                        this.src = 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80';
+                        console.warn('⚠️ Image failed to load, using fallback:', this.alt || 'Unnamed image');
+                    }
+                };
+            }
         });
         
-        console.log(`✅ Optimized ${optimizedCount} images with lazy loading`);
+        console.log(`✅ Optimized ${optimizedCount} images, skipped ${skippedCount} small images`);
+        return optimizedCount;
     }
 
-    // Thêm sự kiện tracking cho SEO
+    // Kiểm tra xem URL có phải là file hợp lệ không
+    isValidFileUrl(url) {
+        // Kiểm tra các URLs đặc biệt
+        if (this.validSpecialUrls.some(specialUrl => url.includes(specialUrl))) {
+            return true;
+        }
+        
+        // Kiểm tra extension hợp lệ
+        return this.validFileExtensions.some(ext => url.toLowerCase().endsWith(ext));
+    }
+
+    // Kiểm tra xem link có cần target="_blank" không
+    shouldHaveTargetBlank(href) {
+        try {
+            const url = new URL(href, window.location.origin);
+            return url.origin !== window.location.origin;
+        } catch {
+            return false;
+        }
+    }
+
+    // Kiểm tra và sửa broken links - SỬA LỖI
+    checkBrokenLinks() {
+        const links = document.querySelectorAll('a[href]');
+        let brokenCount = 0;
+        let fixedCount = 0;
+        
+        links.forEach(link => {
+            const href = link.getAttribute('href');
+            
+            // Bỏ qua các loại links đặc biệt
+            if (href.startsWith('#') || 
+                href.startsWith('javascript:') || 
+                href.startsWith('mailto:') || 
+                href.startsWith('tel:')) {
+                return;
+            }
+            
+            // Kiểm tra external links
+            if (this.shouldHaveTargetBlank(href)) {
+                if (!link.hasAttribute('rel')) {
+                    link.setAttribute('rel', 'noopener noreferrer');
+                    fixedCount++;
+                }
+                if (!link.hasAttribute('target')) {
+                    link.setAttribute('target', '_blank');
+                    fixedCount++;
+                }
+                return; // External links không kiểm tra broken
+            }
+            
+            // Kiểm tra internal links
+            try {
+                const url = new URL(href, window.location.origin);
+                
+                // Nếu là file hợp lệ (xml, pdf, etc.) thì không báo lỗi
+                if (this.isValidFileUrl(url.pathname)) {
+                    return;
+                }
+                
+                // Kiểm tra nếu link thiếu .html và không phải là thư mục
+                if (!url.pathname.includes('.html') && 
+                    !url.pathname.endsWith('/') && 
+                    !url.pathname.includes('?') &&
+                    !url.pathname.includes('#')) {
+                    
+                    console.warn('⚠️ Potential broken link:', {
+                        url: href,
+                        text: link.textContent.trim().substring(0, 50),
+                        element: link
+                    });
+                    brokenCount++;
+                }
+            } catch (error) {
+                // URL không hợp lệ
+                console.warn('⚠️ Invalid URL:', {
+                    url: href,
+                    text: link.textContent.trim().substring(0, 50),
+                    error: error.message
+                });
+                brokenCount++;
+            }
+        });
+        
+        if (brokenCount > 0) {
+            console.warn(`⚠️ Found ${brokenCount} potential broken links, fixed ${fixedCount} links`);
+        } else {
+            console.log(`✅ No broken links found, fixed ${fixedCount} links`);
+        }
+        
+        return { broken: brokenCount, fixed: fixedCount };
+    }
+
+    // Thêm sự kiện tracking cho SEO - CẢI THIỆN
     setupSEOTracking() {
-        // Track internal clicks
+        // Track internal clicks với debounce
+        let clickTimeout;
         document.addEventListener('click', (e) => {
-            const link = e.target.closest('a');
-            if (link && link.href && link.href.includes(window.location.origin)) {
-                this.trackEvent('internal_link_click', {
-                    url: link.href,
-                    text: link.textContent.trim().substring(0, 100),
+            clearTimeout(clickTimeout);
+            clickTimeout = setTimeout(() => {
+                const link = e.target.closest('a');
+                if (link && link.href && link.href.includes(window.location.origin)) {
+                    this.trackEvent('internal_link_click', {
+                        url: link.href,
+                        text: link.textContent.trim().substring(0, 100),
+                        timestamp: Date.now(),
+                        element: link.tagName
+                    });
+                }
+            }, 50);
+        });
+
+        // Track time on page
+        let timeStart = Date.now();
+        let pageLoadedTime = Date.now();
+        
+        // Report time khi rời trang
+        window.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                const timeSpent = Math.round((Date.now() - timeStart) / 1000);
+                const totalTime = Math.round((Date.now() - pageLoadedTime) / 1000);
+                
+                this.trackEvent('page_time_spent', {
+                    url: window.location.href,
+                    visible_seconds: timeSpent,
+                    total_seconds: totalTime,
                     timestamp: Date.now()
                 });
             }
         });
 
-        // Track time on page
-        let timeStart = Date.now();
-        window.addEventListener('beforeunload', () => {
-            const timeSpent = Math.round((Date.now() - timeStart) / 1000);
-            this.trackEvent('page_time_spent', {
-                url: window.location.href,
-                seconds: timeSpent,
-                timestamp: Date.now()
-            });
-        });
-
-        // Track scroll depth
+        // Track scroll depth - CẢI THIỆN
         let scrollDepth = {
             25: false,
             50: false,
             75: false,
-            100: false
+            90: false
         };
 
+        let scrollTimeout;
         const trackScroll = () => {
-            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercentage = scrollHeight > 0 ? Math.round((window.scrollY / scrollHeight) * 100) : 0;
+            const scrollHeight = Math.max(
+                document.body.scrollHeight,
+                document.documentElement.scrollHeight
+            ) - window.innerHeight;
+            
+            if (scrollHeight <= 0) return;
+            
+            const scrollPercentage = Math.min(
+                100,
+                Math.round((window.scrollY / scrollHeight) * 100)
+            );
             
             Object.keys(scrollDepth).forEach(depth => {
                 if (scrollPercentage >= parseInt(depth) && !scrollDepth[depth]) {
@@ -169,58 +322,89 @@ class SEOHelper {
                     this.trackEvent('scroll_depth', {
                         url: window.location.href,
                         depth: `${depth}%`,
+                        scrollY: window.scrollY,
+                        scrollHeight: scrollHeight,
                         timestamp: Date.now()
                     });
                 }
             });
         };
 
-        // Debounce scroll tracking
-        let scrollTimeout;
         window.addEventListener('scroll', () => {
             clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(trackScroll, 100);
+            scrollTimeout = setTimeout(trackScroll, 150);
+        }, { passive: true });
+
+        // Track form submissions
+        document.addEventListener('submit', (e) => {
+            const form = e.target;
+            if (form.tagName === 'FORM') {
+                this.trackEvent('form_submit', {
+                    form_id: form.id || 'unknown',
+                    form_name: form.name || 'unknown',
+                    url: window.location.href,
+                    timestamp: Date.now()
+                });
+            }
         });
 
         console.log('✅ SEO tracking initialized');
+        return true;
     }
 
     trackEvent(eventName, data) {
-        // Có thể gửi đến Google Analytics hoặc Firebase
+        // Gửi đến Google Analytics 4 nếu có
         if (typeof gtag !== 'undefined') {
             gtag('event', eventName, {
-                ...data,
-                page_location: window.location.href,
-                page_title: document.title
+                event_category: 'seo',
+                event_label: data.url || window.location.href,
+                value: data.value || 1,
+                ...data
             });
         }
         
         // Gửi đến Firebase nếu có
-        if (typeof database !== 'undefined' && database) {
-            const eventRef = database.ref(`seo_events/${Date.now()}`);
-            eventRef.set({
-                event: eventName,
-                ...data,
-                user_agent: navigator.userAgent.substring(0, 200),
-                referrer: document.referrer,
-                screen_resolution: `${window.screen.width}x${window.screen.height}`,
-                language: navigator.language
-            }).catch(err => console.error('Firebase tracking error:', err));
+        if (typeof firebase !== 'undefined' && firebase.database) {
+            try {
+                const database = firebase.database();
+                const eventRef = database.ref(`analytics/${Date.now()}`);
+                eventRef.set({
+                    event: eventName,
+                    ...data,
+                    user_agent: navigator.userAgent.substring(0, 200),
+                    referrer: document.referrer || 'direct',
+                    screen_resolution: `${window.screen.width}x${window.screen.height}`,
+                    viewport: `${window.innerWidth}x${window.innerHeight}`,
+                    language: navigator.language,
+                    timestamp: Date.now()
+                }).catch(err => console.debug('Firebase tracking skipped:', err.message));
+            } catch (err) {
+                // Firebase not configured, skip silently
+            }
         }
         
-        console.log(`📊 SEO Event: ${eventName}`, data);
+        // Console log cho development
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            console.log(`📊 SEO Event: ${eventName}`, data);
+        }
+        
+        return true;
     }
 
     // Thêm meta tags động cho mạng xã hội
     updateSocialMetaTags(data) {
+        const defaultImage = 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80';
+        
         const metaTags = {
-            'og:title': data.title || document.title,
+            'og:title': data.title || document.title || 'HTUTransport - Dịch vụ xe cao cấp',
             'og:description': data.description || document.querySelector('meta[name="description"]')?.content || '',
-            'og:image': data.image || document.querySelector('meta[property="og:image"]')?.content || '',
+            'og:image': data.image || defaultImage,
             'og:url': window.location.href,
-            'twitter:title': data.title || document.title,
+            'og:type': data.type || 'website',
+            'twitter:card': 'summary_large_image',
+            'twitter:title': data.title || document.title || 'HTUTransport - Dịch vụ xe cao cấp',
             'twitter:description': data.description || document.querySelector('meta[name="description"]')?.content || '',
-            'twitter:image': data.image || document.querySelector('meta[property="og:image"]')?.content || ''
+            'twitter:image': data.image || defaultImage
         };
 
         Object.entries(metaTags).forEach(([property, content]) => {
@@ -241,64 +425,90 @@ class SEOHelper {
             }
         });
         
-        console.log('✅ Updated social meta tags:', metaTags);
+        console.log('✅ Updated social meta tags');
+        return metaTags;
     }
 
     // Kiểm tra Core Web Vitals
     checkCoreWebVitals() {
-        // First Contentful Paint (FCP)
-        const fcpObserver = new PerformanceObserver((entryList) => {
-            for (const entry of entryList.getEntries()) {
-                console.log('🎨 FCP:', entry.startTime);
-                this.trackEvent('web_vital_fcp', {
-                    value: entry.startTime,
-                    url: window.location.href
-                });
-            }
-        });
-        fcpObserver.observe({ entryTypes: ['paint'] });
+        if (!('PerformanceObserver' in window)) {
+            console.log('⚠️ PerformanceObserver not supported');
+            return;
+        }
 
-        // Largest Contentful Paint (LCP)
-        const lcpObserver = new PerformanceObserver((entryList) => {
-            const entries = entryList.getEntries();
-            const lastEntry = entries[entries.length - 1];
-            console.log('📊 LCP:', lastEntry.startTime);
-            this.trackEvent('web_vital_lcp', {
-                value: lastEntry.startTime,
-                url: window.location.href,
-                element: lastEntry.element?.tagName || 'unknown'
-            });
-        });
-        lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
-
-        // Cumulative Layout Shift (CLS)
-        let clsValue = 0;
-        let clsEntries = [];
-        
-        const clsObserver = new PerformanceObserver((entryList) => {
-            for (const entry of entryList.getEntries()) {
-                if (!entry.hadRecentInput) {
-                    clsValue += entry.value;
-                    clsEntries.push(entry);
+        try {
+            // First Contentful Paint (FCP)
+            const fcpObserver = new PerformanceObserver((entryList) => {
+                for (const entry of entryList.getEntries()) {
+                    this.trackEvent('web_vital_fcp', {
+                        value: Math.round(entry.startTime),
+                        url: window.location.href,
+                        rating: this.getRating('fcp', entry.startTime)
+                    });
                 }
-            }
-            
-            if (clsEntries.length > 0) {
-                console.log('📐 CLS:', clsValue);
-                this.trackEvent('web_vital_cls', {
-                    value: clsValue,
-                    url: window.location.href,
-                    entries_count: clsEntries.length
-                });
-            }
-        });
-        clsObserver.observe({ entryTypes: ['layout-shift'] });
+            });
+            fcpObserver.observe({ entryTypes: ['paint'] });
 
-        console.log('✅ Core Web Vitals monitoring initialized');
+            // Largest Contentful Paint (LCP)
+            const lcpObserver = new PerformanceObserver((entryList) => {
+                const entries = entryList.getEntries();
+                const lastEntry = entries[entries.length - 1];
+                if (lastEntry) {
+                    this.trackEvent('web_vital_lcp', {
+                        value: Math.round(lastEntry.startTime),
+                        url: window.location.href,
+                        element: lastEntry.element?.tagName || 'unknown',
+                        rating: this.getRating('lcp', lastEntry.startTime)
+                    });
+                }
+            });
+            lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+
+            // Cumulative Layout Shift (CLS)
+            let clsValue = 0;
+            const clsObserver = new PerformanceObserver((entryList) => {
+                for (const entry of entryList.getEntries()) {
+                    if (!entry.hadRecentInput) {
+                        clsValue += entry.value;
+                    }
+                }
+                
+                this.trackEvent('web_vital_cls', {
+                    value: Math.round(clsValue * 1000) / 1000, // 3 decimal places
+                    url: window.location.href,
+                    rating: this.getRating('cls', clsValue)
+                });
+            });
+            clsObserver.observe({ entryTypes: ['layout-shift'] });
+
+            console.log('✅ Core Web Vitals monitoring initialized');
+        } catch (error) {
+            console.error('❌ Error initializing Core Web Vitals:', error);
+        }
+    }
+
+    // Đánh giá Web Vitals
+    getRating(metric, value) {
+        const thresholds = {
+            'fcp': { good: 1000, needsImprovement: 3000 },
+            'lcp': { good: 2500, needsImprovement: 4000 },
+            'cls': { good: 0.1, needsImprovement: 0.25 }
+        };
+        
+        const threshold = thresholds[metric];
+        if (!threshold) return 'unknown';
+        
+        if (value <= threshold.good) return 'good';
+        if (value <= threshold.needsImprovement) return 'needs-improvement';
+        return 'poor';
     }
 
     // Thêm canonical URL động
     addCanonicalUrl(url) {
+        if (!url) {
+            url = window.location.href.split('?')[0].split('#')[0];
+        }
+        
         let canonical = document.querySelector('link[rel="canonical"]');
         if (!canonical) {
             canonical = document.createElement('link');
@@ -308,43 +518,71 @@ class SEOHelper {
         canonical.href = url;
         
         console.log('✅ Added canonical URL:', url);
+        return url;
     }
 
-    // Kiểm tra và sửa broken links
-    checkBrokenLinks() {
-        const links = document.querySelectorAll('a[href]');
-        let brokenCount = 0;
-        
-        links.forEach(link => {
-            const href = link.getAttribute('href');
-            
-            // Kiểm tra internal links
-            if (href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) {
-                return;
-            }
-            
-            // Kiểm tra external links có target="_blank"
-            if (href.includes('://') && !href.includes(window.location.hostname)) {
-                if (!link.hasAttribute('rel')) {
-                    link.setAttribute('rel', 'noopener noreferrer');
-                }
-                if (!link.hasAttribute('target')) {
-                    link.setAttribute('target', '_blank');
-                }
-            }
-            
-            // Kiểm tra internal links missing .html
-            if (href.startsWith('/') || (!href.includes('://') && !href.includes('.html') && !href.includes('#'))) {
-                console.warn('⚠️ Potential broken link:', href, 'in', link);
-                brokenCount++;
-            }
-        });
-        
-        if (brokenCount > 0) {
-            console.warn(`⚠️ Found ${brokenCount} potential broken links`);
+    // Kiểm tra và cải thiện SEO on-page
+    checkOnPageSEO() {
+        const checks = {
+            title: { passed: false, message: '' },
+            description: { passed: false, message: '' },
+            headings: { passed: false, message: '' },
+            images: { passed: false, message: '' },
+            links: { passed: false, message: '' }
+        };
+
+        // Kiểm tra title
+        const title = document.title;
+        if (title && title.length > 10 && title.length < 60) {
+            checks.title.passed = true;
+            checks.title.message = `Title length: ${title.length} characters`;
         } else {
-            console.log('✅ No broken links found');
+            checks.title.message = `Title should be 10-60 characters, current: ${title.length}`;
         }
+
+        // Kiểm tra meta description
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc && metaDesc.content) {
+            const descLength = metaDesc.content.length;
+            if (descLength > 120 && descLength < 160) {
+                checks.description.passed = true;
+                checks.description.message = `Description length: ${descLength} characters`;
+            } else {
+                checks.description.message = `Description should be 120-160 characters, current: ${descLength}`;
+            }
+        } else {
+            checks.description.message = 'Meta description not found';
+        }
+
+        // Kiểm tra headings
+        const h1 = document.querySelectorAll('h1').length;
+        const h2 = document.querySelectorAll('h2').length;
+        if (h1 === 1) {
+            checks.headings.passed = true;
+            checks.headings.message = `Headings: H1=${h1}, H2=${h2}`;
+        } else {
+            checks.headings.message = `Should have exactly 1 H1, found: ${h1}`;
+        }
+
+        // Kiểm tra images
+        const images = document.querySelectorAll('img');
+        const imagesWithAlt = Array.from(images).filter(img => img.alt).length;
+        if (images.length === 0 || imagesWithAlt === images.length) {
+            checks.images.passed = true;
+            checks.images.message = `Images: ${images.length} total, ${imagesWithAlt} with alt`;
+        } else {
+            checks.images.message = `${images.length - imagesWithAlt} images missing alt text`;
+        }
+
+        // Log kết quả
+        console.group('🔍 On-Page SEO Check');
+        Object.entries(checks).forEach(([check, data]) => {
+            const icon = data.passed ? '✅' : '⚠️';
+            console.log(`${icon} ${check}: ${data.message}`);
+        });
+        console.groupEnd();
+
+        return checks;
     }
 }
 
@@ -354,30 +592,59 @@ let seoHelper = new SEOHelper();
 // Export
 window.SEOHelper = seoHelper;
 
-// Auto-initialize khi DOM ready
+// Auto-initialize khi DOM ready - CẢI THIỆN
 document.addEventListener('DOMContentLoaded', function() {
-    // Chờ 1 giây để các scripts khác load
+    // Chờ 500ms để các scripts khác load
     setTimeout(() => {
         if (window.SEOHelper) {
-            // Chỉ chạy trên các trang chính
-            if (!window.location.pathname.includes('admin') && 
-                !window.location.pathname.includes('test')) {
+            // Chỉ chạy trên các trang chính, không phải admin
+            const path = window.location.pathname;
+            const isAdminPage = path.includes('admin') || path.includes('test');
+            
+            if (!isAdminPage) {
+                console.group('🚀 SEO Helper Initializing');
                 
-                window.SEOHelper.optimizeImages();
+                // Tối ưu hình ảnh
+                const optimized = window.SEOHelper.optimizeImages();
+                
+                // Setup tracking
                 window.SEOHelper.setupSEOTracking();
-                window.SEOHelper.checkCoreWebVitals();
-                window.SEOHelper.checkBrokenLinks();
                 
-                // Kiểm tra các trang đặc biệt
-                if (window.location.pathname.includes('blog.html')) {
+                // Kiểm tra Core Web Vitals
+                window.SEOHelper.checkCoreWebVitals();
+                
+                // Kiểm tra broken links
+                const linkResults = window.SEOHelper.checkBrokenLinks();
+                
+                // Kiểm tra On-Page SEO
+                const seoResults = window.SEOHelper.checkOnPageSEO();
+                
+                // Xử lý canonical URL cho các trang đặc biệt
+                if (path.includes('blog.html')) {
                     const urlParams = new URLSearchParams(window.location.search);
                     const postId = urlParams.get('post');
                     if (postId) {
-                        // Đảm bảo canonical URL đúng
-                        window.SEOHelper.addCanonicalUrl(window.location.href.split('?')[0] + `?post=${postId}`);
+                        window.SEOHelper.addCanonicalUrl(window.location.href);
+                    } else {
+                        window.SEOHelper.addCanonicalUrl(window.location.origin + '/blog.html');
                     }
                 }
+                
+                console.groupEnd();
+                
+                // Summary log
+                console.log(`🎯 SEO Summary: ${optimized} images optimized, ${linkResults.fixed} links fixed`);
             }
         }
-    }, 1000);
+    }, 500);
 });
+
+// Cung cấp global function để gọi thủ công nếu cần
+window.runSEOAnalysis = function() {
+    if (window.SEOHelper) {
+        console.group('🔍 Manual SEO Analysis');
+        window.SEOHelper.checkOnPageSEO();
+        window.SEOHelper.checkBrokenLinks();
+        console.groupEnd();
+    }
+};

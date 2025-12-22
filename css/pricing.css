@@ -663,27 +663,38 @@
     transform: translateY(-3px);
 }
 
-/* Responsive */
+/* ===== PRICING PREVIEW – MOBILE GRID 2 COLUMNS ===== */
 @media (max-width: 768px) {
     .pricing-preview-grid {
+        display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+        gap: 12px;
     }
-    
-    .pricing-preview-footer {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .btn-view-all-pricing,
-    .btn-quick-call {
-        width: 100%;
-        justify-content: center;
-    }
-}
 
-@media (max-width: 480px) {
-    .pricing-preview-grid {
-        grid-template-columns: 1fr;
+    .pricing-preview-card {
+        padding: 14px;
+    }
+
+    .preview-item-title {
+        font-size: 14px;
+        min-height: 38px;
+    }
+
+    .preview-item-desc {
+        font-size: 12px;
+        min-height: 34px;
+    }
+
+    .preview-price-current .price-amount {
+        font-size: 16px;
+    }
+
+    .preview-mini-buttons {
+        gap: 6px;
+    }
+
+    .preview-mini-buttons button {
+        font-size: 11px;
+        padding: 6px 8px;
     }
 }

@@ -1513,16 +1513,3 @@ a {
         bottom: -2px;
     }
 }
-/* ===== CTA BUTTONS FIX ===== */
-.hero-cta {
-    display: flex !important;
-    gap: 20px !important;
-    justify-content: center !important;
-    margin: 30px auto 40px !important;
-    padding: 0 20px !important;
-    position: relative !important;
-    z-index: 100 !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-

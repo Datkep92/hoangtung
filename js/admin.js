@@ -233,27 +233,7 @@ function logoutAdmin() {
     window.location.reload();
 }
 
-// ===== DATA LOADING =====
-async function loadAllData() {
-    try {
-        const [services, experiences, gallery, blog] = await Promise.allSettled([
-            fetchFromFirebase('services'),
-            fetchFromFirebase('experiences'),
-            fetchFromFirebase('gallery'),
-            fetchFromFirebase('blog')
-        ]);
-        
-        dataStore.services = services.value || { services: {} };
-        dataStore.experiences = experiences.value || { experiences: getDefaultExperiences() };
-        dataStore.gallery = gallery.value || { featured: getDefaultGallery() };
-        dataStore.blog = blog.value || { posts: getSampleBlogPosts() };
-        
-        renderAllTabs();
-        showStatus('Đã tải dữ liệu từ Firebase', 'success');
-    } catch (error) {
-        showStatus('Lỗi tải dữ liệu: ' + error.message, 'error');
-    }
-}
+
 
 function renderAllTabs() {
     renderServices();
@@ -1330,25 +1310,7 @@ function closeEditor() {
     currentEditingId = null;
 }
 
-function showTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    
-    const tabElement = document.getElementById(`${tabName}Tab`);
-    const tabButton = document.querySelector(`button[onclick*="showTab('${tabName}')"]`);
-    
-    if (!tabElement) return;
-    
-    tabElement.classList.add('active');
-    if (tabButton) tabButton.classList.add('active');
-    
-    switch(tabName) {
-        case 'services': renderServices(); break;
-        case 'experiences': renderExperiences(); break;
-        case 'gallery': renderGallery(); break;
-        case 'blog': renderBlog(); break;
-    }
-}
+
 
 function showStatus(message, type = 'success') {
     const statusBar = document.getElementById('statusBar');
@@ -1534,5 +1496,331 @@ async function getRealStatistics() {
     } catch (error) {
         console.error("❌ Error getting real statistics:", error);
         return null;
+    }
+}
+
+//
+// ===== TELEGRAM MANAGEMENT FUNCTIONS =====
+let telegramConfigs = {};
+
+async function loadTelegramConfigs() {
+    try {
+        const configs = await fetchFromFirebase('telegram_configs');
+        telegramConfigs = configs || { configs: {}, default: null };
+        renderTelegramConfigs();
+    } catch (error) {
+        console.error("Error loading Telegram configs:", error);
+        telegramConfigs = { configs: {}, default: null };
+    }
+}
+
+function renderTelegramConfigs() {
+    const container = document.getElementById('telegramConfigs');
+    const configs = telegramConfigs.configs || {};
+    
+    if (Object.keys(configs).length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fab fa-telegram fa-3x" style="color: #0088cc; margin-bottom: 20px;"></i>
+                <h3>Chưa có cấu hình Telegram</h3>
+                <p>Thêm cấu hình để nhận thông báo đặt xe tự động</p>
+                <button class="btn btn-primary" onclick="openTelegramConfig()">
+                    <i class="fas fa-plus"></i> Thêm cấu hình đầu tiên
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '<div class="telegram-grid">';
+    
+    Object.entries(configs).forEach(([id, config]) => {
+        const chatIds = config.chatIds || [];
+        const isDefault = telegramConfigs.default === id;
+        
+        html += `
+            <div class="telegram-card ${isDefault ? 'default-card' : ''}" onclick="openTelegramConfig('${id}')">
+                <div class="telegram-card-header">
+                    <div class="telegram-card-title">
+                        <i class="fab fa-telegram" style="color: #0088cc;"></i>
+                        <h3>${config.name || 'Chưa đặt tên'}</h3>
+                        ${isDefault ? '<span class="default-badge">Mặc định</span>' : ''}
+                    </div>
+                    <div class="telegram-card-actions">
+                        <button class="action-btn" onclick="openTelegramConfig('${id}'); event.stopPropagation();">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn" onclick="deleteTelegramConfig('${id}'); event.stopPropagation();">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="telegram-card-body">
+                    <div class="telegram-info-row">
+                        <label>Bot Token:</label>
+                        <code class="token-preview">${config.botToken ? config.botToken.substring(0, 15) + '...' : 'Chưa có'}</code>
+                    </div>
+                    
+                    <div class="telegram-info-row">
+                        <label>Số Chat IDs:</label>
+                        <span class="badge">${chatIds.length}</span>
+                    </div>
+                    
+                    <div class="telegram-info-row">
+                        <label>Trạng thái:</label>
+                        <span class="status-indicator ${config.lastTest?.success ? 'success' : 'warning'}">
+                            ${config.lastTest ? (config.lastTest.success ? '✓ Hoạt động' : '✗ Lỗi') : 'Chưa kiểm tra'}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="telegram-card-footer">
+                    <small>Cập nhật: ${config.updated_at ? new Date(config.updated_at).toLocaleDateString('vi-VN') : 'Chưa cập nhật'}</small>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function openTelegramConfig(id = null) {
+    const modal = document.getElementById('telegramModal');
+    const title = document.getElementById('telegramModalTitle');
+    const deleteBtn = document.getElementById('deleteTelegramBtn');
+    
+    if (id && telegramConfigs.configs?.[id]) {
+        // Edit mode
+        const config = telegramConfigs.configs[id];
+        title.textContent = 'Chỉnh sửa cấu hình Telegram';
+        deleteBtn.style.display = 'block';
+        
+        document.getElementById('telegramConfigId').value = id;
+        document.getElementById('telegramName').value = config.name || '';
+        document.getElementById('telegramBotToken').value = config.botToken || '';
+        document.getElementById('telegramChatIds').value = (config.chatIds || []).join('\n');
+        document.getElementById('telegramIsDefault').checked = telegramConfigs.default === id;
+        
+        // Update test status
+        const testStatus = document.getElementById('telegramTestStatus');
+        if (config.lastTest) {
+            testStatus.innerHTML = config.lastTest.success ? 
+                '<span class="status-success"><i class="fas fa-check-circle"></i> Đã kiểm tra thành công</span>' :
+                `<span class="status-error"><i class="fas fa-times-circle"></i> Lỗi: ${config.lastTest.error || 'Không xác định'}</span>`;
+        }
+    } else {
+        // Add mode
+        title.textContent = 'Thêm cấu hình Telegram mới';
+        deleteBtn.style.display = 'none';
+        
+        document.getElementById('telegramConfigId').value = '';
+        document.getElementById('telegramName').value = '';
+        document.getElementById('telegramBotToken').value = '';
+        document.getElementById('telegramChatIds').value = '';
+        document.getElementById('telegramIsDefault').checked = false;
+        document.getElementById('telegramTestStatus').innerHTML = '';
+    }
+    
+    showModal('telegramModal');
+}
+
+async function saveTelegramConfig() {
+    const id = document.getElementById('telegramConfigId').value || 'telegram_' + Date.now();
+    const name = document.getElementById('telegramName').value.trim();
+    const botToken = document.getElementById('telegramBotToken').value.trim();
+    const chatIdsText = document.getElementById('telegramChatIds').value.trim();
+    const isDefault = document.getElementById('telegramIsDefault').checked;
+    
+    // Validation
+    if (!name || !botToken || !chatIdsText) {
+        showStatus('Vui lòng điền đầy đủ thông tin', 'error');
+        return;
+    }
+    
+    const chatIds = chatIdsText.split('\n')
+        .map(id => id.trim())
+        .filter(id => id.length > 0 && /^\d+$/.test(id));
+    
+    if (chatIds.length === 0) {
+        showStatus('Vui lòng nhập ít nhất một Chat ID hợp lệ', 'error');
+        return;
+    }
+    
+    const config = {
+        name,
+        botToken,
+        chatIds,
+        updated_at: new Date().toISOString()
+    };
+    
+    // Initialize if not exists
+    if (!telegramConfigs.configs) {
+        telegramConfigs.configs = {};
+    }
+    
+    // Save config
+    telegramConfigs.configs[id] = config;
+    
+    // Update default config
+    if (isDefault) {
+        telegramConfigs.default = id;
+    } else if (telegramConfigs.default === id) {
+        telegramConfigs.default = null;
+    }
+    
+    // Save to Firebase
+    await saveToFirebase('telegram_configs', telegramConfigs);
+    
+    showStatus(`Đã lưu cấu hình Telegram: ${name}`, 'success');
+    closeModal('telegramModal');
+    renderTelegramConfigs();
+}
+
+async function deleteTelegramConfig(id = null) {
+    if (!id) id = document.getElementById('telegramConfigId').value;
+    
+    if (!id || !confirm('Bạn có chắc muốn xóa cấu hình này?')) {
+        return;
+    }
+    
+    if (telegramConfigs.configs?.[id]) {
+        delete telegramConfigs.configs[id];
+        
+        // Remove from default if it was default
+        if (telegramConfigs.default === id) {
+            telegramConfigs.default = null;
+        }
+        
+        // Save to Firebase
+        await saveToFirebase('telegram_configs', telegramConfigs);
+        
+        showStatus('Đã xóa cấu hình Telegram', 'success');
+        closeModal('telegramModal');
+        renderTelegramConfigs();
+    }
+}
+
+async function testTelegramConnection() {
+    const botToken = document.getElementById('telegramBotToken').value.trim();
+    const chatIdsText = document.getElementById('telegramChatIds').value.trim();
+    
+    if (!botToken || !chatIdsText) {
+        showStatus('Vui lòng nhập Bot Token và Chat IDs', 'error');
+        return;
+    }
+    
+    const chatIds = chatIdsText.split('\n')
+        .map(id => id.trim())
+        .filter(id => id.length > 0);
+    
+    if (chatIds.length === 0) {
+        showStatus('Vui lòng nhập ít nhất một Chat ID', 'error');
+        return;
+    }
+    
+    const testStatus = document.getElementById('telegramTestStatus');
+    testStatus.innerHTML = '<div class="loading-spinner small"></div> Đang kiểm tra...';
+    
+    try {
+        // Test with first chat ID
+        const testChatId = chatIds[0];
+        const testMessage = {
+            chat_id: testChatId,
+            text: '✅ LuxuryMove - Kiểm tra kết nối thành công!\nThời gian: ' + new Date().toLocaleString('vi-VN'),
+            parse_mode: 'HTML'
+        };
+        
+        const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(testMessage)
+        });
+        
+        const result = await response.json();
+        
+        if (result.ok) {
+            testStatus.innerHTML = '<span class="status-success"><i class="fas fa-check-circle"></i> Kết nối thành công! Đã gửi tin nhắn kiểm tra</span>';
+            
+            // Update last test status
+            const configId = document.getElementById('telegramConfigId').value;
+            if (configId && telegramConfigs.configs?.[configId]) {
+                telegramConfigs.configs[configId].lastTest = {
+                    success: true,
+                    timestamp: Date.now()
+                };
+                await saveToFirebase('telegram_configs', telegramConfigs);
+            }
+            
+            showStatus('Kiểm tra kết nối Telegram thành công', 'success');
+        } else {
+            throw new Error(result.description || 'Lỗi không xác định');
+        }
+    } catch (error) {
+        console.error('Telegram test error:', error);
+        testStatus.innerHTML = `<span class="status-error"><i class="fas fa-times-circle"></i> Lỗi: ${error.message}</span>`;
+        showStatus('Kiểm tra kết nối thất bại', 'error');
+    }
+}
+
+function toggleTokenVisibility(inputId) {
+    const input = document.getElementById(inputId);
+    const button = input.nextElementSibling;
+    const icon = button.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fas fa-eye-slash';
+    } else {
+        input.type = 'password';
+        icon.className = 'fas fa-eye';
+    }
+}
+
+// Update showTab function
+function showTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    
+    const tabElement = document.getElementById(`${tabName}Tab`);
+    const tabButton = document.querySelector(`button[onclick*="showTab('${tabName}')"]`);
+    
+    if (!tabElement) return;
+    
+    tabElement.classList.add('active');
+    if (tabButton) tabButton.classList.add('active');
+    
+    switch(tabName) {
+        case 'services': renderServices(); break;
+        case 'experiences': renderExperiences(); break;
+        case 'gallery': renderGallery(); break;
+        case 'blog': renderBlog(); break;
+        case 'telegram': loadTelegramConfigs(); break;
+        case 'statistics': /* Xử lý statistics */ break;
+    }
+}
+
+// Cập nhật hàm loadAllData
+async function loadAllData() {
+    try {
+        const [services, experiences, gallery, blog, telegram] = await Promise.allSettled([
+            fetchFromFirebase('services'),
+            fetchFromFirebase('experiences'),
+            fetchFromFirebase('gallery'),
+            fetchFromFirebase('blog'),
+            fetchFromFirebase('telegram_configs')
+        ]);
+        
+        dataStore.services = services.value || { services: {} };
+        dataStore.experiences = experiences.value || { experiences: getDefaultExperiences() };
+        dataStore.gallery = gallery.value || { featured: getDefaultGallery() };
+        dataStore.blog = blog.value || { posts: getSampleBlogPosts() };
+        telegramConfigs = telegram.value || { configs: {}, default: null };
+        
+        renderAllTabs();
+        showStatus('Đã tải dữ liệu từ Firebase', 'success');
+    } catch (error) {
+        showStatus('Lỗi tải dữ liệu: ' + error.message, 'error');
     }
 }

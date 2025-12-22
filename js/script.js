@@ -78,7 +78,7 @@ async function fetchBlogFromFirebase() {
         
         if (data) {
             console.log("✅ Loaded blog from Firebase:", Object.keys(data.posts || {}).length, "posts");
-            localStorage.setItem('luxurymove_blog', JSON.stringify(data));
+            localStorage.setItem('HTUTransport_blog', JSON.stringify(data));
             return data;
         }
         return null;
@@ -97,7 +97,7 @@ async function loadBlogForHomepage() {
         
         if (!blog || !blog.posts) {
             // Fallback to localStorage
-            const localData = localStorage.getItem('luxurymove_blog');
+            const localData = localStorage.getItem('HTUTransport_blog');
             if (localData) {
                 blog = JSON.parse(localData);
                 console.log("📂 Loaded blog from localStorage:", Object.keys(blog.posts || {}).length);
@@ -240,10 +240,10 @@ async function loadAllData() {
         ]);
         
         // Xử lý services
-        servicesData = services.value || JSON.parse(localStorage.getItem('luxurymove_services')) || { services: {} };
+        servicesData = services.value || JSON.parse(localStorage.getItem('HTUTransport_services')) || { services: {} };
         
         // Xử lý experiences
-        experiencesData = experiences.value || JSON.parse(localStorage.getItem('luxurymove_experiences')) || { experiences: getDefaultExperiences() };
+        experiencesData = experiences.value || JSON.parse(localStorage.getItem('HTUTransport_experiences')) || { experiences: getDefaultExperiences() };
         
         // Xử lý gallery - chỉ gọi nếu có gallery.js
         if (typeof window.renderGallery === 'function' && gallery.value) {
@@ -255,7 +255,7 @@ async function loadAllData() {
         if (blog.status === 'fulfilled' && blog.value) {
             homepageBlogData = blog.value;
         } else {
-            const localBlog = localStorage.getItem('luxurymove_blog');
+            const localBlog = localStorage.getItem('HTUTransport_blog');
             homepageBlogData = localBlog ? JSON.parse(localBlog) : { posts: getSampleBlogPosts() };
         }
         
@@ -285,7 +285,7 @@ function setupBlogFirebaseListener() {
         
         if (data) {
             homepageBlogData.posts = data; // SỬ DỤNG homepageBlogData
-            localStorage.setItem('luxurymove_blog', JSON.stringify({ posts: data }));
+            localStorage.setItem('HTUTransport_blog', JSON.stringify({ posts: data }));
             renderBlogRow();
         }
     });
@@ -319,7 +319,7 @@ async function initApp() {
             return;
         }
         
-        console.log("🚀 LuxuryMove Website Initializing...");
+        console.log("🚀 HTUTransport Website Initializing...");
         
         // Initialize Firebase
         if (!firebase.apps.length) {
@@ -379,7 +379,7 @@ async function fetchFromFirebase(path) {
         const snapshot = await database.ref(path).once('value');
         const data = snapshot.val();
         if (data) {
-            localStorage.setItem(`luxurymove_${path}`, JSON.stringify(data));
+            localStorage.setItem(`HTUTransport_${path}`, JSON.stringify(data));
         }
         return data;
     } catch (error) {
@@ -390,7 +390,7 @@ async function fetchFromFirebase(path) {
 
 function loadFromLocalStorage(path) {
     try {
-        const data = localStorage.getItem(`luxurymove_${path}`);
+        const data = localStorage.getItem(`HTUTransport_${path}`);
         return data ? JSON.parse(data) : null;
     } catch (error) {
         console.error(`LocalStorage load error (${path}):`, error);
@@ -1043,7 +1043,7 @@ function showServiceDetail(serviceId) {
         contentHTML += `
             <div class="detail-price-item">
                 <span class="price-label">Liên hệ để có giá tốt nhất</span>
-                <span class="price-value">0931.243.679</span>
+                <span class="price-value">0567.033.888</span>
             </div>
         `;
     }
@@ -1055,8 +1055,8 @@ function showServiceDetail(serviceId) {
                 <button class="btn-book-now" onclick="bookThisService('${serviceId}')">
                     <i class="fas fa-calendar-alt"></i> Đặt dịch vụ ngay
                 </button>
-                <button class="btn-call-now" onclick="window.location.href='tel:0931243679'">
-                    <i class="fas fa-phone-alt"></i> Gọi ngay: 0931.243.679
+                <button class="btn-call-now" onclick="window.location.href='tel:0567033888'">
+                    <i class="fas fa-phone-alt"></i> Gọi ngay: 0567.033.888
                 </button>
             </div>
         </div>
@@ -1160,22 +1160,30 @@ function setupEventListeners() {
         });
     }
     
-    // Form đặt xe
+    document.addEventListener('DOMContentLoaded', () => {
     const bookingForm = document.getElementById('bookingForm');
-    if (bookingForm) {
-        bookingForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const serviceType = document.getElementById('serviceType');
-            const customerName = document.getElementById('customerName').value;
-            const customerPhone = document.getElementById('customerPhone').value;
-            
-            const serviceName = serviceType.options[serviceType.selectedIndex].text;
-            alert(`✅ Đã gửi yêu cầu thành công!\n\n📞 Chúng tôi sẽ gọi lại số:\n${customerPhone}\n\n📋 Dịch vụ: ${serviceName}\n👤 Tên: ${customerName}\n\n⏳ Thời gian: Trong 3 phút`);
-            
-            bookingForm.reset();
-        });
+    const serviceType = document.getElementById('serviceType');
+    const customerNameInput = document.getElementById('customerName');
+    const customerPhoneInput = document.getElementById('customerPhone');
+
+    if (!bookingForm || !serviceType || !customerNameInput || !customerPhoneInput) {
+        console.error('Form hoặc các trường chưa tồn tại');
+        return;
     }
+
+    bookingForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const customerName = customerNameInput.value.trim();
+        const customerPhone = customerPhoneInput.value.trim();
+        const serviceName = serviceType.options[serviceType.selectedIndex]?.text || 'Chưa chọn dịch vụ';
+
+        alert(`✅ Đã gửi yêu cầu thành công!\n\n📞 Chúng tôi sẽ gọi lại số:\n${customerPhone}\n\n📋 Dịch vụ: ${serviceName}\n👤 Tên: ${customerName}\n\n⏳ Thời gian: Trong 3 phút`);
+
+        bookingForm.reset();
+    });
+});
+
 }
 
 function setupMobileTouch() {
@@ -1240,7 +1248,7 @@ function getSampleBlogPosts() {
     return {
         'post1': {
             title: 'Kinh Nghiệm Du Lịch Nha Trang 2024',
-            author: 'LuxuryMove Team',
+            author: 'HTUTransport Team',
             date: '2024-12-15',
             category: 'travel',
             image: 'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800',
@@ -1387,20 +1395,3 @@ async function getClientIP() {
 }
 
 // Update existing form submit handler
-if (document.getElementById('bookingForm')) {
-    document.getElementById('bookingForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const serviceType = document.getElementById('serviceType');
-        const customerName = document.getElementById('customerName').value;
-        const customerPhone = document.getElementById('customerPhone').value;
-        
-        const serviceName = serviceType.options[serviceType.selectedIndex].text;
-        
-        await handleBookingSubmit({
-            service: serviceName,
-            name: customerName,
-            phone: customerPhone
-        });
-    });
-}

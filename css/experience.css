@@ -55,11 +55,6 @@
     min-width: 0; /* Important for flexbox wrapping */
 }
 
-.experience-card:hover {
-    transform: translateY(-8px);
-    border-color: var(--champagne);
-    box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2);
-}
 
 .exp-header-top {
     position: relative;
@@ -192,61 +187,63 @@
         padding: 15px 0 30px;
     }
     
-    /* MOBILE VERSION - HORIZONTAL SCROLL */
-    .user-experience-row {
-        display: flex;
-        flex-wrap: nowrap;
-        gap: 12px;
-        padding: 0 12px;
-        overflow-x: auto;
-        scroll-behavior: smooth;
-        justify-content: flex-start;
-        max-width: 100%;
-        margin: 0;
-    }
-    
-    .experience-card {
-        flex: 0 0 85vw;
-        max-width: 320px;
-        min-width: 280px;
-        width: 85vw;
-    }
-    
-    .exp-img-box {
-        height: 150px;
-    }
-    
-    .exp-title {
-        font-size: 18px;
-        bottom: 15px;
-        left: 15px;
-        right: 15px;
-    }
-    
-    .exp-content {
-        padding: 15px;
-    }
-    
-    .benefit-item {
-        padding: 8px;
-        margin-bottom: 10px;
-        gap: 8px;
-    }
-    
-    .benefit-item span {
-        font-size: 13px;
-    }
-    
-    .exp-desc {
-        font-size: 13px;
-    }
-    
-    .scroll-hint {
-        font-size: 13px;
-        margin-top: 20px;
-        display: flex;
-    }
+/* MOBILE VERSION - HORIZONTAL SCROLL (COMPACT) */
+.user-experience-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;                 /* giảm khoảng cách */
+    padding: 0 8px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    justify-content: flex-start;
+    max-width: 100%;
+    margin: 0;
 }
+
+.experience-card {
+    flex: 0 0 78vw;           /* thu nhỏ chiều ngang */
+    max-width: 280px;
+    min-width: 240px;
+    width: 78vw;
+}
+
+.exp-img-box {
+    height: 120px;            /* giảm chiều cao ảnh */
+}
+
+.exp-title {
+    font-size: 15px;          /* chữ nhỏ hơn */
+    bottom: 10px;
+    left: 12px;
+    right: 12px;
+}
+
+.exp-content {
+    padding: 10px;            /* thu padding */
+}
+
+.benefit-item {
+    padding: 6px;
+    margin-bottom: 6px;
+    gap: 6px;
+}
+
+.benefit-item span {
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.exp-desc {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.scroll-hint {
+    font-size: 12px;
+    margin-top: 12px;
+    display: flex;
+}
+
 
 /* ===== TABLET STYLES ===== */
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -438,12 +435,15 @@
 /* Chỉ giảm khoảng cách trên */
 .hero-section {
     padding-top: 20px !important;
+        background: rgba(0, 0, 0, 0.9);
+
 }
 
 @media (max-width: 767px) {
     .hero-section {
         padding-top: 10px !important;
         padding-bottom: 10px !important;
+    background: rgba(0, 0, 0, 0.9);
 
     }
 }
@@ -525,4 +525,5 @@
         padding-bottom: 10px !important;
 
     }
+}
 }

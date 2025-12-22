@@ -524,9 +524,9 @@ class SidebarManager {
                     <a href="#booking" class="btn btn-primary" style="width: 100%; text-align: center; padding: 12px;" onclick="window.sidebarManager.closeSidebar()">
                         <i class="fas fa-calendar-alt"></i> Đặt xe ngay
                     </a>
-                    
-                    <a href="tel:0931243679" class="btn btn-outline" style="width: 100%; text-align: center; padding: 12px;">
-                        <i class="fas fa-phone-alt"></i> Gọi: 0931.243.679
+
+                    <a href="tel:0567033888" class="btn btn-outline" style="width: 100%; text-align: center; padding: 12px;">
+                        <i class="fas fa-phone-alt"></i> Gọi: 0567.033.888
                     </a>
                 </div>
             </div>
@@ -575,7 +575,7 @@ class SidebarManager {
                 
                 if (index < routes.length) {
                     const route = routes[index];
-                    alert(`📌 Tuyến đường: ${route.from} → ${route.to}\n💵 Giá: ${route.price}\n\n📞 Liên hệ đặt xe: 0931.243.679`);
+                    alert(`📌 Tuyến đường: ${route.from} → ${route.to}\n💵 Giá: ${route.price}\n\n📞 Liên hệ đặt xe: 0567.033.888`);
                 }
             });
         });
@@ -586,7 +586,7 @@ class SidebarManager {
             item.addEventListener('click', () => {
                 const carName = item.querySelector('.car-name').textContent;
                 const status = item.classList.contains('available') ? 'Sẵn sàng' : 'Đã đặt';
-                alert(`🚗 ${carName}\n📊 Trạng thái: ${status}\n\n📞 Liên hệ đặt xe: 0931.243.679`);
+                alert(`🚗 ${carName}\n📊 Trạng thái: ${status}\n\n📞 Liên hệ đặt xe: 0567.033.888`);
             });
         });
     }

@@ -1,9 +1,9 @@
-// chatbot-pro.js - LuxuryMove Professional Chatbot
-class LuxuryMoveProChatbot {
+// chatbot-pro.js - HTUTransport Professional Chatbot
+class HTUTransportProChatbot {
     constructor() {
         this.messages = [];
-        this.userPhone = localStorage.getItem('luxurymove_user_phone') || '';
-        this.userName = localStorage.getItem('luxurymove_user_name') || '';
+        this.userPhone = localStorage.getItem('HTUTransport_user_phone') || '';
+        this.userName = localStorage.getItem('HTUTransport_user_name') || '';
         this.conversationStage = 'welcome'; // welcome, asking, collecting, closing
         this.chatOpen = false;
         this.servicesData = null;
@@ -106,7 +106,7 @@ checkElements() {
 // Sửa hàm init để check elements
 init() {
     // Load services data
-    this.loadServicesData();
+    //this.loadServicesData();
     
     // Create UI
     this.createProfessionalUI();
@@ -118,7 +118,7 @@ init() {
             
             // Auto welcome after 3 seconds
             setTimeout(() => {
-                if (!localStorage.getItem('luxurymove_chat_welcomed')) {
+                if (!localStorage.getItem('HTUTransport_chat_welcomed')) {
                     this.showProfessionalWelcome();
                 }
             }, 3000);
@@ -173,10 +173,10 @@ init() {
                         </p>
                     </div>
                     <div class="chatbot-pro-actions">
-                        <button class="chat-action-btn" title="Gọi điện" onclick="window.location.href='tel:0931243679'">
+                        <button class="chat-action-btn" title="Gọi điện" onclick="window.location.href='tel:0567033888'">
                             <i class="fas fa-phone"></i>
                         </button>
-                        <button class="chat-action-btn" title="Zalo" onclick="window.open('https://zalo.me/0931243679')">
+                        <button class="chat-action-btn" title="Zalo" onclick="window.open('https://zalo.me/0567033888')">
                             <i class="fab fa-facebook-messenger"></i>
                         </button>
                         <button class="chat-action-btn" title="Đóng" onclick="chatbotPro.toggleChat()">
@@ -237,7 +237,7 @@ init() {
     }
 
     showProfessionalWelcome() {
-        localStorage.setItem('luxurymove_chat_welcomed', 'true');
+        localStorage.setItem('HTUTransport_chat_welcomed', 'true');
         
         this.addMessage('bot', `
             <div class="welcome-message">
@@ -245,7 +245,7 @@ init() {
                     <i class="fas fa-crown welcome-icon"></i>
                     <h3>Xin chào Quý khách!</h3>
                 </div>
-                <p>Tôi là <strong>Trợ lý ảo LuxuryMove</strong> - được huấn luyện để hỗ trợ bạn 24/7.</p>
+                <p>Tôi là <strong>Trợ lý ảo HTUTransport</strong> - được huấn luyện để hỗ trợ bạn 24/7.</p>
                 <div class="welcome-features">
                     <div class="feature-item">
                         <i class="fas fa-check-circle"></i>
@@ -502,7 +502,7 @@ init() {
                 <ul class="commitment-list">
                     <li>📞 Gọi lại trong <strong>3 phút</strong></li>
                     <li>💰 Báo giá <strong>cạnh tranh nhất</strong></li>
-                    <li>👔 Tư vấn bởi <strong>chuyên viên LuxuryMove</strong></li>
+                    <li>👔 Tư vấn bởi <strong>chuyên viên HTUTransport</strong></li>
                     <li>⏰ Hỗ trợ <strong>24/7</strong></li>
                 </ul>
                 
@@ -511,11 +511,11 @@ init() {
                         <i class="fas fa-mobile-alt"></i>
                         <span>Để lại số điện thoại</span>
                     </button>
-                    <button class="contact-option-btn secondary" onclick="window.location.href='tel:0931243679'">
+                    <button class="contact-option-btn secondary" onclick="window.location.href='tel:0567033888'">
                         <i class="fas fa-phone"></i>
-                        <span>Gọi ngay: 0931.243.679</span>
+                        <span>Gọi ngay: 0567.033.888</span>
                     </button>
-                    <button class="contact-option-btn secondary" onclick="window.open('https://zalo.me/0931243679')">
+                    <button class="contact-option-btn secondary" onclick="window.open('https://zalo.me/0567033888')">
                         <i class="fab fa-facebook-messenger"></i>
                         <span>Nhắn tin Zalo</span>
                     </button>
@@ -535,7 +535,7 @@ init() {
                 
                 <div class="form-group">
                     <label for="proPhoneInput"><i class="fas fa-mobile-alt"></i> Số điện thoại *</label>
-                    <input type="tel" id="proPhoneInput" placeholder="0931.243.679" 
+                    <input type="tel" id="proPhoneInput" placeholder="0567.033.888" 
                            pattern="[0-9]{10,11}" maxlength="11">
                 </div>
                 
@@ -598,8 +598,8 @@ init() {
         // Save user info
         this.userPhone = phone;
         this.userName = name;
-        localStorage.setItem('luxurymove_user_phone', phone);
-        if (name) localStorage.setItem('luxurymove_user_name', name);
+        localStorage.setItem('HTUTransport_user_phone', phone);
+        if (name) localStorage.setItem('HTUTransport_user_name', name);
         
         // Remove form
         const form = document.querySelector('.phone-form-container');
@@ -613,7 +613,7 @@ init() {
                     <h4>✅ Đã ghi nhận thông tin</h4>
                 </div>
                 <p><strong>Cảm ơn ${name || 'Quý khách'}!</strong></p>
-                <p>Chuyên viên LuxuryMove sẽ liên hệ qua số:</p>
+                <p>Chuyên viên HTUTransport sẽ liên hệ qua số:</p>
                 <div class="contact-highlight">
                     <i class="fas fa-phone"></i>
                     <span class="phone-number">${phone}</span>
@@ -650,10 +650,10 @@ init() {
             <div class="cancel-message">
                 <p>Không sao cả! Bạn có thể liên hệ bất cứ khi nào:</p>
                 <div class="contact-options-inline">
-                    <button onclick="window.location.href='tel:0931243679'" class="inline-btn">
+                    <button onclick="window.location.href='tel:0567033888'" class="inline-btn">
                         <i class="fas fa-phone"></i> Gọi ngay
                     </button>
-                    <button onclick="window.open('https://zalo.me/0931243679')" class="inline-btn">
+                    <button onclick="window.open('https://zalo.me/0567033888')" class="inline-btn">
                         <i class="fab fa-facebook-messenger"></i> Zalo
                     </button>
                 </div>
@@ -703,7 +703,7 @@ init() {
                     <li>🚗 Loại xe yêu cầu</li>
                     <li>📍 Lộ trình di chuyển</li>
                 </ul>
-                <p><strong>Quy trình đặt xe LuxuryMove:</strong></p>
+                <p><strong>Quy trình đặt xe HTUTransport:</strong></p>
                 <ol class="booking-process">
                     <li>Tư vấn dịch vụ phù hợp</li>
                     <li>Xác nhận lộ trình chi tiết</li>
@@ -735,10 +735,10 @@ init() {
                         </div>
                         <div class="channel-info">
                             <h5>Gọi điện trực tiếp</h5>
-                            <p class="channel-detail">0931.243.679</p>
+                            <p class="channel-detail">0567.033.888</p>
                             <p class="channel-note">Phản hồi ngay lập tức</p>
                         </div>
-                        <button class="channel-action" onclick="window.location.href='tel:0931243679'">
+                        <button class="channel-action" onclick="window.location.href='tel:0567033888'">
                             Gọi ngay
                         </button>
                     </div>
@@ -749,10 +749,10 @@ init() {
                         </div>
                         <div class="channel-info">
                             <h5>Zalo Official</h5>
-                            <p class="channel-detail">0931.243.679</p>
+                            <p class="channel-detail">0567.033.888</p>
                             <p class="channel-note">Nhắn tin miễn phí</p>
                         </div>
-                        <button class="channel-action" onclick="window.open('https://zalo.me/0931243679')">
+                        <button class="channel-action" onclick="window.open('https://zalo.me/0567033888')">
                             Mở Zalo
                         </button>
                     </div>
@@ -763,10 +763,10 @@ init() {
                         </div>
                         <div class="channel-info">
                             <h5>Email chuyên nghiệp</h5>
-                            <p class="channel-detail">contact@luxurymove.vn</p>
+                            <p class="channel-detail">contact@HTUTransport.vn</p>
                             <p class="channel-note">Phản hồi trong 1h</p>
                         </div>
-                        <button class="channel-action" onclick="window.location.href='mailto:contact@luxurymove.vn'">
+                        <button class="channel-action" onclick="window.location.href='mailto:contact@HTUTransport.vn'">
                             Gửi Email
                         </button>
                     </div>
@@ -790,9 +790,9 @@ init() {
                 <p>Rất vui được phục vụ Quý khách! ❤️</p>
                 <p>Nếu cần hỗ trợ thêm, chúng tôi luôn sẵn sàng:</p>
                 <div class="thank-you-contacts">
-                    <p><strong>📞 Hotline:</strong> 0931.243.679</p>
-                    <p><strong>💬 Zalo:</strong> 0931.243.679</p>
-                    <p><strong>📧 Email:</strong> contact@luxurymove.vn</p>
+                    <p><strong>📞 Hotline:</strong> 0567.033.888</p>
+                    <p><strong>💬 Zalo:</strong> 0567.033.888</p>
+                    <p><strong>📧 Email:</strong> contact@HTUTransport.vn</p>
                 </div>
                 <p class="closing-note">Chúc Quý khách một ngày tốt lành! 🚗💨</p>
             </div>
@@ -839,11 +839,11 @@ init() {
             lastUpdated: new Date().toISOString()
         };
         
-        localStorage.setItem('luxurymove_conversation_history', JSON.stringify(history));
+        localStorage.setItem('HTUTransport_conversation_history', JSON.stringify(history));
     }
 
     loadConversationHistory() {
-        const saved = localStorage.getItem('luxurymove_conversation_history');
+        const saved = localStorage.getItem('HTUTransport_conversation_history');
         if (saved && this.messages.length === 0) {
             try {
                 const history = JSON.parse(saved);
@@ -888,7 +888,7 @@ createSparkles() {
 }
 
 // Initialize chatbot
-const chatbotPro = new LuxuryMoveProChatbot();
+const chatbotPro = new HTUTransportProChatbot();
 
 // Start when page loads
 if (document.readyState === 'loading') {

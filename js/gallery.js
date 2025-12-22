@@ -50,14 +50,14 @@ async function loadGalleryData() {
         
         // Fallback to localStorage
         if (!data) {
-            const localData = localStorage.getItem('luxurymove_gallery');
+            const localData = localStorage.getItem('HTUTransport_gallery');
             data = localData ? JSON.parse(localData) : null;
         }
         
         galleryData = data || { featured: getDefaultGallery() };
         
         // Lưu vào localStorage để dùng sau
-        localStorage.setItem('luxurymove_gallery', JSON.stringify(galleryData));
+        localStorage.setItem('HTUTransport_gallery', JSON.stringify(galleryData));
         
         // Render gallery
         renderGallery();
@@ -70,7 +70,7 @@ async function loadGalleryData() {
 
 function loadGalleryFromLocalStorage() {
     try {
-        const localData = localStorage.getItem('luxurymove_gallery');
+        const localData = localStorage.getItem('HTUTransport_gallery');
         galleryData = localData ? JSON.parse(localData) : { featured: getDefaultGallery() };
         renderGallery();
     } catch (error) {

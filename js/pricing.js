@@ -77,41 +77,44 @@ function renderPricingTable() {
             <div class="empty-pricing">
                 <i class="fas fa-tags"></i>
                 <p>Chưa có bảng giá</p>
-                <small>Vui lòng liên hệ: 0931.243.679</small>
+                <small>Vui lòng liên hệ: 0567.033.888</small>
             </div>
         `;
         return;
     }
     
-    // Gộp tất cả items
-    let allItems = [
-        ...prices.map(item => ({...item, source: 'pricing'})),
-        ...services
-    ];
-    
-    // Sắp xếp theo order và lấy 5 mục mới nhất
-    allItems.sort((a, b) => (b.order || 0) - (a.order || 0));
-    const latestItems = allItems.slice(0, 5);
-    const totalItems = allItems.length;
+    // CHỈ lấy bảng giá tùy chỉnh (pricing), không lấy dịch vụ
+let allItems = prices.map(item => ({
+    ...item,
+    source: 'pricing'
+}));
+
+// Sắp xếp theo order và lấy 6 mục mới nhất
+allItems.sort((a, b) => (b.order || 0) - (a.order || 0));
+
+const latestItems = allItems.slice(0, 6);
+const totalItems = allItems.length;
+
     
     let html = `
-        <div class="pricing-preview">
-            <div class="pricing-header">
-                <div class="header-top">
-                    <h2 class="pricing-title">
-                        <i class="fas fa-tags"></i>
-                        Bảng Giá Mới Nhất
-                    </h2>
-                </div>
-                
-                <div class="pricing-note">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Giá mang tính chất tham khảo - thực tế phụ thuộc vào thời gian, địa điểm, loại xe, vui lòng liên hệ để được tư vấn rõ ràng nhất</span>
-                </div>
+    <div class="pricing-preview">
+        <div class="pricing-header">
+            <div class="header-top">
+                <h2 class="pricing-title">
+                    <i class="fas fa-tags"></i>
+                    Bảng Giá Mới Nhất
+                </h2>
+
+                <span style="display:block; width:100%; margin-top:6px;">
+                    Giá mang tính chất tham khảo – thực tế phụ thuộc vào thời gian, 
+                    địa điểm, loại xe, vui lòng liên hệ để được tư vấn rõ ràng nhất
+                </span>
             </div>
-            
-            <div class="pricing-preview-grid">
-    `;
+        </div>
+
+        <div class="pricing-preview-grid">
+`;
+
     
     // Render 5 items mới nhất
     latestItems.forEach((item, index) => {
@@ -157,7 +160,7 @@ function renderPricingTable() {
                     
                     <!-- Thêm nút nhỏ liên hệ và đặt xe -->
                     <div class="preview-mini-buttons">
-                        <button class="mini-call-btn" onclick="window.location.href='tel:0931243679'" title="Gọi ngay">
+                        <button class="mini-call-btn" onclick="window.location.href='tel:0567033888'" title="Gọi ngay">
                             <i class="fas fa-phone-alt"></i>
                             <span>Gọi ngay</span>
                         </button>
@@ -189,7 +192,7 @@ function renderPricingTable() {
                     Xem Toàn Bộ Bảng Giá
                 </button>
                 
-                <button class="btn-quick-call" onclick="window.location.href='tel:0931243679'">
+                <button class="btn-quick-call" onclick="window.location.href='tel:0567033888'">
                     <i class="fas fa-phone-alt"></i>
                     Gọi Ngay Để Đặt Xe
                 </button>
@@ -466,7 +469,7 @@ function showPricingDetailPopup(title, price, description) {
                     </div>
                     
                     <div class="detail-actions">
-                        <button class="detail-call-btn" onclick="window.location.href='tel:0931243679'">
+                        <button class="detail-call-btn" onclick="window.location.href='tel:0567033888'">
                             <i class="fas fa-phone-alt"></i>
                             Gọi tư vấn
                         </button>
@@ -645,7 +648,7 @@ function toggleViewMore() {
 
 // Request quote function
 function requestQuote(title, price) {
-    const phoneNumber = '0931243679';
+    const phoneNumber = '0567033888';
     const message = `Xin chào, tôi muốn nhận báo giá cho: ${title} ${price ? `(Giá tham khảo: ${price})` : ''}`;
     const whatsappUrl = `https://wa.me/84${phoneNumber.substring(1)}?text=${encodeURIComponent(message)}`;
     const zaloUrl = `https://zalo.me/${phoneNumber}`;
@@ -767,14 +770,23 @@ async function initPricing() {
 
 function createFullPricingModal() {
     const { prices = [], services = [] } = pricingData;
-    const lastUpdated = pricingData.last_updated ? new Date(pricingData.last_updated).toLocaleDateString('vi-VN') : 'Chưa cập nhật';
-    
-    // Gộp và sắp xếp tất cả items
-    let allItems = [
-        ...prices.map(item => ({...item, source: 'pricing'})),
-        ...services
-    ];
-    allItems.sort((a, b) => (b.order || 0) - (a.order || 0));
+const lastUpdated = pricingData.last_updated
+    ? new Date(pricingData.last_updated).toLocaleDateString('vi-VN')
+    : 'Chưa cập nhật';
+
+// 1️⃣ Sắp xếp GIÁ TÙY CHỈNH trước
+const sortedPrices = prices
+    .map(item => ({ ...item, source: 'pricing' }))
+    .sort((a, b) => (b.order || 0) - (a.order || 0));
+
+// 2️⃣ Sắp xếp GIÁ DỊCH VỤ sau
+const sortedServices = services
+    .map(item => ({ ...item, source: 'service' }))
+    .sort((a, b) => (b.order || 0) - (a.order || 0));
+
+// 3️⃣ Gộp: pricing → service
+const allItems = [...sortedPrices, ...sortedServices];
+
     
     let html = `
         <div class="full-pricing-overlay" id="fullPricingModal">
@@ -914,14 +926,14 @@ function createFullPricingModal() {
                 <!-- Footer với icon -->
                 <div class="full-pricing-footer-mini">
                     <div class="footer-actions">
-                        <button class="footer-btn call-btn" onclick="window.location.href='tel:0931243679'" title="Gọi điện">
+                        <button class="footer-btn call-btn" onclick="window.location.href='tel:0567033888'" title="Gọi điện">
                             <div class="btn-icon">
                                 <i class="fas fa-phone"></i>
                             </div>
                             <span class="btn-label">Gọi</span>
                         </button>
                         
-                        <button class="footer-btn zalo-btn" onclick="window.open('https://zalo.me/0931243679', '_blank')" title="Nhắn tin Zalo">
+                        <button class="footer-btn zalo-btn" onclick="window.open('https://zalo.me/0567033888', '_blank')" title="Nhắn tin Zalo">
                             <div class="btn-icon">
                                 <i class="fab fa-zalo"></i>
                             </div>
