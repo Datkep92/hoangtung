@@ -225,13 +225,6 @@ function showBlogError() {
     `;
 }
 
-function openBlogPostFromHomepage(postId) {
-    // Save postId to localStorage to open in blog.html
-    localStorage.setItem('luxurymove_open_post', postId);
-    
-    // Redirect to blog.html
-    window.location.href = 'blog.html';
-}
 
 // ===== UPDATE INITIALIZATION =====
 async function loadAllData() {
@@ -299,8 +292,33 @@ function setupBlogFirebaseListener() {
 }
 
 // ===== INITIALIZATION =====
+function openBlogPostFromHomepage(postId) {
+    const post = homepageBlogData.posts[postId];
+    if (!post) return;
+    
+    // Kiểm tra nếu đã ở trang blog
+    if (window.location.pathname.includes('blog.html')) {
+        // Sử dụng router của blog nếu có
+        if (typeof blogRouter !== 'undefined') {
+            blogRouter.navigateToPost(postId, post.title);
+            return;
+        }
+    }
+    
+    // Nếu không ở trang blog, chuyển đến trang blog với tham số post
+    window.location.href = `blog.html?post=${postId}`;
+}
+
+// ... phần giữa giữ nguyên ...
+
 async function initApp() {
     try {
+        // Kiểm tra nếu là trang bài viết đơn thì không khởi tạo
+        if (window.location.pathname.includes('post-')) {
+            console.log("📄 Single post page, skipping homepage initialization");
+            return;
+        }
+        
         console.log("🚀 LuxuryMove Website Initializing...");
         
         // Initialize Firebase
@@ -309,13 +327,18 @@ async function initApp() {
         }
         database = firebase.database();
         
+        // Initialize SEO Helper sitemap
+        if (window.SEOHelper && homepageBlogData && homepageBlogData.posts) {
+            window.SEOHelper.updateSitemapWithBlogPosts(homepageBlogData.posts);
+        }
+        
         // Load all data
         await loadAllData();
         
         // Setup event listeners
         setupEventListeners();
         setupMobileTouch();
-        setupHorizontalScroll(); // GỌI HÀM NÀY
+        setupHorizontalScroll();
         
         // Setup blog Firebase listener for real-time updates
         setupBlogFirebaseListener();
@@ -327,10 +350,18 @@ async function initApp() {
         // Load from localStorage as fallback
         loadFromLocalStorage();
         renderBlogRow();
-        setupHorizontalScroll(); // VẪN GỌI KHI CÓ LỖI
+        setupHorizontalScroll();
     }
 }
 
+// Thêm hàm xử lý nếu đang ở trang bài viết đơn
+function checkForSinglePost() {
+    if (window.location.pathname.includes('post-')) {
+        // Đây là trang bài viết đơn, không chạy các hàm khác
+        return true;
+    }
+    return false;
+}
 // ===== CÁC HÀM CÒN LẠI GIỮ NGUYÊN =====
 // ... (các hàm fetchFromFirebase, loadFromLocalStorage, renderUI, 
 // renderExperiencesUI, setupEventListeners, setupMobileTouch,
