@@ -219,8 +219,8 @@ a {
     min-height: 100vh;
     padding: 140px 16px 80px;
     background: 
-        linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.9)),
-        url('images/bg-hero.jpg') center/cover no-repeat;
+        linear-gradient(rgba(10, 10, 10, 0.92), rgba(20, 20, 20, 0.95)),
+        url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -359,12 +359,11 @@ a {
 }
 
 
-/* ===== BENEFITS SECTION ===== */
 .benefits-section {
     padding: 80px 16px;
     background: 
         linear-gradient(rgba(10, 10, 10, 0.92), rgba(20, 20, 20, 0.95)),
-        url('images/bg-benefits.jpg') center/cover no-repeat;
+        url('https://source.unsplash.com/1920x1080/?spa,wellness,relaxation') center/cover no-repeat;
     position: relative;
 }
 
