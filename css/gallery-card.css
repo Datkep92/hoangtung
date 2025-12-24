@@ -1,4 +1,6 @@
 
+
+
 /* Gallery Section */
 .gallery-section {
     padding: 80px 0;
@@ -444,4 +446,245 @@ button:not(.goog-te-*):not(.VIpgJd-*) {
     display: inline-block !important;
     visibility: visible !important;
     opacity: 1 !important;
+}
+
+/* ===== GALLERY CSS ===== */
+.gallery-container {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 16px 8px 24px;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold-primary) transparent;
+    
+    /* Quan trọng: Cho phép scroll trên mobile */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+}
+
+.gallery-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.gallery-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+
+.gallery-container::-webkit-scrollbar-thumb {
+    background: var(--gold-primary);
+    border-radius: 10px;
+}
+
+/* Gallery Card Styles */
+.gallery-card {
+    flex: 0 0 auto;
+    width: 280px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    display: flex;
+    flex-direction: column;
+    
+    /* Quan trọng: Cho phép scroll touch bên trong */
+    touch-action: pan-y;
+}
+
+.gallery-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+/* Image Container */
+.gallery-image-container {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    
+    /* Quan trọng: Cho phép touch events truyền qua image */
+    touch-action: pan-y;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.gallery-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    
+    /* Quan trọng: Image không chặn touch events */
+    pointer-events: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: pan-y;
+}
+
+.gallery-card:hover .gallery-image {
+    transform: scale(1.05);
+}
+
+.gallery-category-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(212, 175, 55, 0.95);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+}
+
+/* Gallery Info */
+.gallery-info {
+    padding: 16px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    
+    /* Cho phép touch trong phần info */
+    touch-action: pan-y;
+}
+
+.gallery-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.gallery-description {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+.gallery-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: auto;
+}
+
+.gallery-tag {
+    font-size: 11px;
+    color: var(--gold-primary);
+    background: rgba(212, 175, 55, 0.1);
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+/* Scroll Hint */
+.gallery-scroll-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-top: 8px;
+    opacity: 0.8;
+    animation: pulse 2s infinite;
+}
+
+.gallery-scroll-hint i {
+    color: var(--gold-primary);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .gallery-card {
+        width: 260px;
+    }
+    
+    .gallery-image-container {
+        height: 160px;
+    }
+    
+    .gallery-container {
+        padding-left: 16px;
+        padding-right: 16px;
+        gap: 12px;
+    }
+    
+    /* Quan trọng: Mobile touch optimization */
+    .gallery-container {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+    }
+    
+    .gallery-image-container,
+    .gallery-image,
+    .gallery-card,
+    .gallery-info {
+        touch-action: pan-y;
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-card {
+        width: 240px;
+    }
+    
+    .gallery-image-container {
+        height: 150px;
+    }
+}
+
+/* Thêm class cho touch events */
+.gallery-touch-scroll {
+    touch-action: pan-y pinch-zoom;
+}
+
+.gallery-touch-scroll img {
+    pointer-events: none;
+}
+
+/* Fix for iOS Safari */
+@supports (-webkit-touch-callout: none) {
+    .gallery-container {
+        /* iOS momentum scrolling */
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .gallery-image-container {
+        /* Prevent iOS image selection */
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+    }
+    
+    .gallery-image {
+        /* Prevent iOS image drag */
+        -webkit-user-drag: none;
+    }
 }
