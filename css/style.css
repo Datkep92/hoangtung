@@ -1643,3 +1643,11 @@ a {
     display: flex;
     align-items: center;       /* canh giữa nội dung theo chiều dọc */
 }
+
+/* Đảm bảo các container scroll ngang không bị ảnh hưởng */
+.user-experience-row,
+.blog-horizontal-row,
+.gallery-grid {
+    position: relative !important;
+    z-index: 10 !important;
+}
