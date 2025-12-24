@@ -1,4 +1,4 @@
-// ===== SIDEBAR MODULE =====
+// ===== SIDEBAR MODULE - FIXED VERSION =====
 
 class SidebarManager {
     constructor() {
@@ -7,15 +7,21 @@ class SidebarManager {
         this.updateInterval = null;
         this.userSessionId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         this.lastUpdateTime = null;
+        this.pricingData = { prices: [], services: [] };
+        this.lastStats = null;
         
         // Bind methods
         this.init = this.init.bind(this);
         this.toggleSidebar = this.toggleSidebar.bind(this);
         this.closeSidebar = this.closeSidebar.bind(this);
+        this.openSidebar = this.openSidebar.bind(this);
         this.renderSidebarContent = this.renderSidebarContent.bind(this);
         this.updateStatistics = this.updateStatistics.bind(this);
         this.registerUserSession = this.registerUserSession.bind(this);
         this.calculateSmartStatistics = this.calculateSmartStatistics.bind(this);
+        this.loadPricingData = this.loadPricingData.bind(this);
+        this.renderPricingInSidebar = this.renderPricingInSidebar.bind(this);
+        this.setupInteractiveElements = this.setupInteractiveElements.bind(this);
     }
     
     async init() {
@@ -27,11 +33,17 @@ class SidebarManager {
         // Register user session
         await this.registerUserSession();
         
+        // Load pricing data
+        await this.loadPricingData();
+        
         // Setup DOM elements
         this.setupDOMElements();
         
         // Setup event listeners
         this.setupEventListeners();
+        
+        // Load saved theme and font size
+        this.loadSavedPreferences();
         
         // Start statistics updates
         this.startStatisticsUpdates();
@@ -40,6 +52,167 @@ class SidebarManager {
         await this.updateStatistics();
         
         console.log("✅ Sidebar Manager initialized");
+    }
+    
+    async loadPricingData() {
+        try {
+            if (!database) {
+                console.warn("Database not available for pricing data");
+                return;
+            }
+            
+            const pricingSnapshot = await database.ref('pricing').once('value');
+            const pricing = pricingSnapshot.val();
+            
+            const servicesSnapshot = await database.ref('services').once('value');
+            const services = servicesSnapshot.val();
+            
+            this.pricingData = {
+                prices: pricing?.prices || this.getDefaultPricing(),
+                services: this.extractServicesPricing(services),
+                last_updated: new Date().toISOString()
+            };
+            
+        } catch (error) {
+            console.error("❌ Error loading pricing data for sidebar:", error);
+            this.pricingData = {
+                prices: this.getDefaultPricing(),
+                services: [],
+                last_updated: new Date().toISOString()
+            };
+        }
+    }
+    
+    getDefaultPricing() {
+        return [
+            {
+                id: 'price1',
+                category: 'Sân Bay Cam Ranh',
+                title: 'Phan Rang ⇄ Sân Bay Cam Ranh',
+                description: 'Đưa đón tận nơi, hỗ trợ hành lý',
+                current_price: '500.000 VND',
+                note: 'Giá cho xe 4-7 chỗ',
+                order: 1
+            },
+            {
+                id: 'price2',
+                category: 'Tour Du Lịch',
+                title: 'Du lịch Vĩnh Hy',
+                description: 'Tour trọn gói nguyên ngày',
+                current_price: '1.200.000 VND',
+                note: 'Bao gồm xe, tài xế, nước uống',
+                order: 2
+            },
+            {
+                id: 'price3',
+                category: 'Liên Tỉnh',
+                title: 'Ninh Thuận ⇄ Đà Lạt (2 chiều)',
+                description: 'Đón tại nhà, trả tận nơi',
+                current_price: '800.000 VND',
+                note: 'Xe 4 chỗ tiêu chuẩn',
+                order: 3
+            }
+        ];
+    }
+    
+    extractServicesPricing(servicesData) {
+        const servicesPricing = [];
+        
+        if (servicesData && servicesData.services) {
+            Object.entries(servicesData.services).forEach(([id, service]) => {
+                if (service.pricing && service.pricing.length > 0) {
+                    const priceItem = service.pricing[0];
+                    
+                    servicesPricing.push({
+                        id: `service_${id}`,
+                        source: 'service',
+                        service_id: id,
+                        category: 'Dịch Vụ',
+                        title: service.title,
+                        description: service.description?.substring(0, 80) + '...' || '',
+                        current_price: priceItem.price,
+                        custom_price: service.custom_price || null,
+                        original_price: service.original_price || null,
+                        note: priceItem.label ? `(${priceItem.label})` : '',
+                        order: parseInt(service.order || 999)
+                    });
+                }
+            });
+            
+            servicesPricing.sort((a, b) => a.order - b.order);
+        }
+        
+        return servicesPricing;
+    }
+    
+    renderPricingInSidebar() {
+        const { prices = [], services = [] } = this.pricingData;
+        
+        let allItems = prices.map(item => ({
+            ...item,
+            source: 'pricing'
+        }));
+        
+        const serviceItems = services.map(item => ({
+            ...item,
+            source: 'service'
+        }));
+        
+        allItems = [...allItems, ...serviceItems];
+        allItems.sort((a, b) => (a.order || 999) - (b.order || 999));
+        const topItems = allItems.slice(0, 3);
+        
+        if (topItems.length === 0) {
+            return `
+                <div class="quick-route-item">
+                    <div class="route-header">
+                        <div class="route-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="route-title">Đang tải bảng giá...</div>
+                    </div>
+                    <div class="route-details">
+                        <span class="route-price">
+                            <i class="fas fa-tag"></i> Vui lòng chờ
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        let html = '';
+        
+        topItems.forEach((item, index) => {
+            const isService = item.source === 'service';
+            const hasDiscount = item.original_price && item.current_price;
+            const priceValue = item.custom_price || item.current_price || 'Liên hệ';
+            
+            html += `
+                <div class="quick-route-item pricing-item" data-item-id="${item.id}" data-item-type="${item.source}" data-item-title="${item.title}" data-item-price="${priceValue}">
+                    <div class="route-header">
+                        <div class="route-icon">
+                            <i class="fas ${isService ? 'fa-car' : 'fa-map-marker-alt'}"></i>
+                        </div>
+                        <div class="route-title">${item.title}</div>
+                    </div>
+                    <div class="route-details">
+                        <span class="route-distance">
+                            <i class="fas fa-tags"></i> ${item.category || 'Bảng giá'}
+                        </span>
+                        <span class="route-price">
+                            <i class="fas fa-tag"></i> ${priceValue}
+                        </span>
+                    </div>
+                    ${item.description ? `
+                        <div class="route-description">
+                            ${item.description.substring(0, 60)}${item.description.length > 60 ? '...' : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        });
+        
+        return html;
     }
     
     setupDOMElements() {
@@ -84,6 +257,22 @@ class SidebarManager {
         });
     }
     
+    loadSavedPreferences() {
+        // Load saved theme
+        const savedTheme = localStorage.getItem('luxurymove_theme');
+        if (savedTheme) {
+            document.body.setAttribute('data-theme', savedTheme);
+        }
+        
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('luxurymove_fontsize');
+        if (savedFontSize) {
+            document.documentElement.style.fontSize = 
+                savedFontSize === 'small' ? '14px' : 
+                savedFontSize === 'large' ? '18px' : '16px';
+        }
+    }
+    
     toggleSidebar() {
         if (this.isOpen) {
             this.closeSidebar();
@@ -92,14 +281,17 @@ class SidebarManager {
         }
     }
     
-    openSidebar() {
+    async openSidebar() {
         this.isOpen = true;
         this.sidebar.classList.add('active');
         this.sidebarOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
         
-        // Update statistics when opening
-        this.updateStatistics();
+        // Load fresh pricing data khi mở sidebar
+        await this.loadPricingData();
+        
+        // Update statistics khi mở
+        await this.updateStatistics();
     }
     
     closeSidebar() {
@@ -113,7 +305,6 @@ class SidebarManager {
         if (!database) return;
         
         try {
-            // Initialize statistics structure if not exists
             const statsRef = database.ref('statistics');
             const snapshot = await statsRef.once('value');
             
@@ -164,7 +355,6 @@ class SidebarManager {
             
             await database.ref(`user_sessions/${this.userSessionId}`).set(sessionData);
             
-            // Update session activity every minute
             setInterval(async () => {
                 if (database) {
                     await database.ref(`user_sessions/${this.userSessionId}/last_active`).set(Date.now());
@@ -177,12 +367,10 @@ class SidebarManager {
     }
     
     startStatisticsUpdates() {
-        // Clear existing interval
         if (this.updateInterval) {
             clearInterval(this.updateInterval);
         }
         
-        // Update every 30 seconds
         this.updateInterval = setInterval(() => {
             this.updateStatistics();
         }, 30000);
@@ -195,7 +383,6 @@ class SidebarManager {
                 return;
             }
             
-            // Get statistics config
             const configSnapshot = await database.ref('statistics/config').once('value');
             const config = configSnapshot.val();
             
@@ -204,13 +391,10 @@ class SidebarManager {
                 return;
             }
             
-            // Calculate smart statistics
             const calculatedStats = this.calculateSmartStatistics(config);
             
-            // Get real data
             const realData = await this.getRealStatistics();
             
-            // Merge data (prefer real data when available)
             const finalStats = {
                 current_online: realData?.real_online > 0 ? realData.real_online : calculatedStats.online,
                 bookings_today: realData?.real_bookings > 0 ? realData.real_bookings : calculatedStats.bookings,
@@ -219,7 +403,8 @@ class SidebarManager {
                 updated_at: Date.now()
             };
             
-            // Check for manual overrides
+            this.lastStats = finalStats;
+            
             if (config.manual_override) {
                 if (config.manual_override.online !== null) {
                     finalStats.current_online = config.manual_override.online;
@@ -232,15 +417,12 @@ class SidebarManager {
                 }
             }
             
-            // Save to Firebase if auto_update is enabled or forced
             if (config.auto_update || forceRefresh) {
                 await database.ref('statistics/live').set(finalStats);
             }
             
-            // Update UI
             this.updateUI(finalStats);
             
-            // Update last update time
             this.lastUpdateTime = new Date();
             if (this.lastUpdateTimeEl) {
                 const timeStr = this.lastUpdateTime.toLocaleTimeString('vi-VN', {
@@ -250,7 +432,6 @@ class SidebarManager {
                 this.lastUpdateTimeEl.textContent = timeStr;
             }
             
-            // Update online badge
             if (this.onlineBadge) {
                 this.onlineBadge.textContent = finalStats.current_online;
             }
@@ -264,9 +445,8 @@ class SidebarManager {
     calculateSmartStatistics(config) {
         const now = new Date();
         const hour = now.getHours();
-        const isWeekend = [0, 6].includes(now.getDay()); // 0=Sunday, 6=Saturday
+        const isWeekend = [0, 6].includes(now.getDay());
         
-        // Determine hour multiplier
         let hourMultiplier = 1.0;
         if (hour >= 0 && hour < 6) hourMultiplier = config.hourly_multipliers["00-06"] || 0.2;
         else if (hour >= 6 && hour < 9) hourMultiplier = config.hourly_multipliers["06-09"] || 0.6;
@@ -276,16 +456,14 @@ class SidebarManager {
         else if (hour >= 18 && hour < 21) hourMultiplier = config.hourly_multipliers["18-21"] || 1.5;
         else hourMultiplier = config.hourly_multipliers["21-24"] || 0.8;
         
-        // Apply weekend boost
         if (isWeekend) {
             hourMultiplier *= (config.weekend_boost || 1.3);
         }
         
-        // Calculate with random variation
-        const randomFactor = 0.9 + Math.random() * 0.2; // 0.9 - 1.1
+        const randomFactor = 0.9 + Math.random() * 0.2;
         const online = Math.round(config.base_online * hourMultiplier * randomFactor);
         
-        const bookingRandomFactor = 0.8 + Math.random() * 0.4; // 0.8 - 1.2
+        const bookingRandomFactor = 0.8 + Math.random() * 0.4;
         const bookings = Math.round(config.base_bookings * hourMultiplier * bookingRandomFactor);
         
         const availableCars = Math.max(1, config.total_cars - Math.floor(bookings * 0.6));
@@ -302,7 +480,6 @@ class SidebarManager {
         if (!database) return null;
         
         try {
-            // Count real online users (active in last 5 minutes)
             const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
             const sessionsSnapshot = await database.ref('user_sessions').once('value');
             const sessions = sessionsSnapshot.val() || {};
@@ -311,7 +488,6 @@ class SidebarManager {
                 session.last_active > fiveMinutesAgo
             ).length;
             
-            // Count today's bookings
             const today = new Date().toISOString().split('T')[0];
             const bookingsSnapshot = await database.ref('booking_logs').once('value');
             const bookings = bookingsSnapshot.val() || {};
@@ -337,10 +513,8 @@ class SidebarManager {
     updateUI(stats) {
         if (!this.sidebarContent) return;
         
-        // Render sidebar content
         this.sidebarContent.innerHTML = this.renderSidebarContent(stats);
         
-        // Setup interactive elements
         this.setupInteractiveElements();
     }
     
@@ -391,59 +565,20 @@ class SidebarManager {
                 </div>
             </div>
             
-            <!-- Quick Routes -->
+            <!-- Bảng Giá -->
             <div class="stats-section">
-                <h4><i class="fas fa-route"></i> TUYẾN PHỔ BIẾN</h4>
-                
-                <div class="quick-route-item">
-                    <div class="route-header">
-                        <div class="route-icon">
-                            <i class="fas fa-plane"></i>
-                        </div>
-                        <div class="route-title">Sân bay Cam Ranh → Nha Trang</div>
-                    </div>
-                    <div class="route-details">
-                        <span class="route-distance">
-                            <i class="fas fa-road"></i> 40km • 50 phút
-                        </span>
-                        <span class="route-price">
-                            <i class="fas fa-tag"></i> 450.000đ
-                        </span>
-                    </div>
+                <h4><i class="fas fa-file-invoice-dollar"></i> BẢNG GIÁ MỚI NHẤT</h4>
+                <div class="pricing-update-info">
+                    <small><i class="fas fa-sync-alt"></i> Cập nhật khi mở sidebar</small>
                 </div>
                 
-                <div class="quick-route-item">
-                    <div class="route-header">
-                        <div class="route-icon">
-                            <i class="fas fa-umbrella-beach"></i>
-                        </div>
-                        <div class="route-title">Bãi biển → Vinpearl Land</div>
-                    </div>
-                    <div class="route-details">
-                        <span class="route-distance">
-                            <i class="fas fa-road"></i> 8km • 15 phút
-                        </span>
-                        <span class="route-price">
-                            <i class="fas fa-tag"></i> 150.000đ
-                        </span>
-                    </div>
-                </div>
+                ${this.renderPricingInSidebar()}
                 
-                <div class="quick-route-item">
-                    <div class="route-header">
-                        <div class="route-icon">
-                            <i class="fas fa-hotel"></i>
-                        </div>
-                        <div class="route-title">KS 5* → Sân bay</div>
-                    </div>
-                    <div class="route-details">
-                        <span class="route-distance">
-                            <i class="fas fa-road"></i> 15km • 25 phút
-                        </span>
-                        <span class="route-price">
-                            <i class="fas fa-tag"></i> 300.000đ
-                        </span>
-                    </div>
+                <div style="margin-top: 10px; text-align: center;">
+                    <button class="btn-view-all-pricing-sidebar" id="viewAllPricingBtn">
+                        <i class="fas fa-list-alt"></i>
+                        Xem Toàn Bộ Bảng Giá
+                    </button>
                 </div>
             </div>
             
@@ -491,14 +626,14 @@ class SidebarManager {
                 <h4><i class="fas fa-cog"></i> CÀI ĐẶT HIỂN THỊ</h4>
                 
                 <div class="view-settings">
-                    <div class="setting-item active" data-theme="dark">
+                    <div class="setting-item ${document.body.getAttribute('data-theme') === 'light' ? '' : 'active'}" data-theme="dark">
                         <div class="setting-icon">
                             <i class="fas fa-moon"></i>
                         </div>
                         <div class="setting-label">Chế độ tối</div>
                     </div>
                     
-                    <div class="setting-item" data-theme="light">
+                    <div class="setting-item ${document.body.getAttribute('data-theme') === 'light' ? 'active' : ''}" data-theme="light">
                         <div class="setting-icon">
                             <i class="fas fa-sun"></i>
                         </div>
@@ -509,9 +644,9 @@ class SidebarManager {
                 <div style="margin-top: 20px;">
                     <div class="setting-label" style="margin-bottom: 10px; text-align: center;">Cỡ chữ</div>
                     <div class="font-size-controls">
-                        <button class="font-size-btn" data-size="small">S</button>
-                        <button class="font-size-btn active" data-size="medium">M</button>
-                        <button class="font-size-btn" data-size="large">L</button>
+                        <button class="font-size-btn ${document.documentElement.style.fontSize === '14px' ? 'active' : ''}" data-size="small">S</button>
+                        <button class="font-size-btn ${(!document.documentElement.style.fontSize || document.documentElement.style.fontSize === '16px') ? 'active' : ''}" data-size="medium">M</button>
+                        <button class="font-size-btn ${document.documentElement.style.fontSize === '18px' ? 'active' : ''}" data-size="large">L</button>
                     </div>
                 </div>
             </div>
@@ -521,9 +656,9 @@ class SidebarManager {
                 <h4><i class="fas fa-bolt"></i> HÀNH ĐỘNG NHANH</h4>
                 
                 <div style="display: grid; gap: 10px; margin-top: 15px;">
-                    <a href="#booking" class="btn btn-primary" style="width: 100%; text-align: center; padding: 12px;" onclick="window.sidebarManager.closeSidebar()">
+                    <button class="btn btn-primary" id="sidebarBookNowBtn" style="width: 100%; text-align: center; padding: 12px;">
                         <i class="fas fa-calendar-alt"></i> Đặt xe ngay
-                    </a>
+                    </button>
 
                     <a href="tel:0567033888" class="btn btn-outline" style="width: 100%; text-align: center; padding: 12px;">
                         <i class="fas fa-phone-alt"></i> Gọi: 0567.033.888
@@ -544,6 +679,9 @@ class SidebarManager {
                 const theme = item.dataset.theme;
                 document.body.setAttribute('data-theme', theme);
                 localStorage.setItem('luxurymove_theme', theme);
+                
+                // Update active state in UI
+                this.updateUI(this.lastStats);
             });
         });
         
@@ -562,21 +700,15 @@ class SidebarManager {
             });
         });
         
-        // Quick route click handlers
-        const routeItems = this.sidebarContent.querySelectorAll('.quick-route-item');
-        routeItems.forEach((item, index) => {
+        // Pricing item click handlers
+        const pricingItems = this.sidebarContent.querySelectorAll('.pricing-item');
+        pricingItems.forEach(item => {
             item.style.cursor = 'pointer';
             item.addEventListener('click', () => {
-                const routes = [
-                    { from: 'Sân bay Cam Ranh', to: 'Nha Trang', price: '450.000đ' },
-                    { from: 'Bãi biển', to: 'Vinpearl Land', price: '150.000đ' },
-                    { from: 'KS 5*', to: 'Sân bay', price: '300.000đ' }
-                ];
+                const title = item.dataset.itemTitle;
+                const price = item.dataset.itemPrice;
                 
-                if (index < routes.length) {
-                    const route = routes[index];
-                    alert(`📌 Tuyến đường: ${route.from} → ${route.to}\n💵 Giá: ${route.price}\n\n📞 Liên hệ đặt xe: 0567.033.888`);
-                }
+                this.handlePricingClick(title, price);
             });
         });
         
@@ -586,9 +718,69 @@ class SidebarManager {
             item.addEventListener('click', () => {
                 const carName = item.querySelector('.car-name').textContent;
                 const status = item.classList.contains('available') ? 'Sẵn sàng' : 'Đã đặt';
-                alert(`🚗 ${carName}\n📊 Trạng thái: ${status}\n\n📞 Liên hệ đặt xe: 0567.033.888`);
+                this.showAlert(`🚗 ${carName}\n📊 Trạng thái: ${status}\n\n📞 Liên hệ đặt xe: 0567.033.888`);
             });
         });
+        
+        // View all pricing button
+        const viewAllBtn = this.sidebarContent.querySelector('#viewAllPricingBtn');
+        if (viewAllBtn) {
+            viewAllBtn.addEventListener('click', () => {
+                this.closeSidebar();
+                setTimeout(() => {
+                    if (typeof openFullPricingPage === 'function') {
+                        openFullPricingPage();
+                    } else {
+                        console.warn("openFullPricingPage function not found");
+                    }
+                }, 300);
+            });
+        }
+        
+        // Book now button in sidebar - FIXED
+        const bookNowBtn = this.sidebarContent.querySelector('#sidebarBookNowBtn');
+        if (bookNowBtn) {
+            bookNowBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Đóng sidebar
+                this.closeSidebar();
+                
+                // Scroll đến booking section sau khi sidebar đóng
+                setTimeout(() => {
+                    const bookingSection = document.getElementById('booking');
+                    if (bookingSection) {
+                        bookingSection.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        
+                        // Thêm hiệu ứng highlight
+                        bookingSection.classList.add('highlight-booking');
+                        setTimeout(() => {
+                            bookingSection.classList.remove('highlight-booking');
+                        }, 3000);
+                    }
+                }, 300);
+            });
+        }
+    }
+    
+    handlePricingClick(title, price) {
+        this.closeSidebar();
+        
+        setTimeout(() => {
+            // Sử dụng hàm quickBookPricing nếu có
+            if (typeof window.quickBookPricing === 'function') {
+                window.quickBookPricing(title, price);
+            } else {
+                this.showAlert(`📌 ${title}\n💵 Giá: ${price}\n\n📞 Liên hệ đặt xe: 0567.033.888`);
+            }
+        }, 300);
+    }
+    
+    showAlert(message) {
+        alert(message);
     }
     
     showErrorMessage(message) {
@@ -600,31 +792,247 @@ class SidebarManager {
                     </div>
                     <h4>Lỗi tải dữ liệu</h4>
                     <p>${message}</p>
-                    <button class="btn btn-secondary" onclick="window.sidebarManager.updateStatistics(true)" style="margin-top: 15px;">
+                    <button class="btn btn-secondary" id="retryButton" style="margin-top: 15px;">
                         <i class="fas fa-redo"></i> Thử lại
                     </button>
                 </div>
             `;
+            
+            // Thêm event listener cho nút thử lại
+            const retryBtn = this.sidebarContent.querySelector('#retryButton');
+            if (retryBtn) {
+                retryBtn.addEventListener('click', () => {
+                    this.updateStatistics(true);
+                });
+            }
         }
     }
     
-    // Public method to manually refresh
     refresh() {
         this.updateStatistics(true);
+    }
+    
+    refreshPricing() {
+        this.loadPricingData();
+        if (this.lastStats) {
+            this.updateUI(this.lastStats);
+        }
     }
 }
 
 // Initialize sidebar manager when DOM is ready
-let sidebarManager = null;
-
 document.addEventListener('DOMContentLoaded', () => {
-    sidebarManager = new SidebarManager();
+    window.sidebarManager = new SidebarManager();
     
     // Initialize after a short delay to ensure Firebase is ready
     setTimeout(() => {
-        sidebarManager.init();
+        window.sidebarManager.init();
     }, 1000);
 });
 
-// Make it globally available
-window.sidebarManager = sidebarManager;
+// Thêm CSS cho sidebar
+const sidebarCSS = `
+    .stats-section .pricing-update-info {
+        margin-bottom: 12px;
+        text-align: right;
+        opacity: 0.7;
+        font-size: 11px;
+    }
+    
+    .pricing-item {
+        border-left: 3px solid var(--champagne);
+        background: rgba(212, 175, 55, 0.03);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .pricing-item:hover {
+        background: rgba(212, 175, 55, 0.08);
+        transform: translateX(5px);
+    }
+    
+    .pricing-item .route-header {
+        align-items: flex-start;
+    }
+    
+    .pricing-item .route-icon {
+        background: rgba(212, 175, 55, 0.1);
+        color: var(--champagne);
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    
+    .pricing-item .route-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        line-height: 1.3;
+        flex: 1;
+    }
+    
+    .pricing-item .route-description {
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px dashed rgba(255, 255, 255, 0.1);
+        font-size: 12px;
+        color: var(--text-tertiary);
+        line-height: 1.4;
+    }
+    
+    .pricing-item .route-details {
+        margin-top: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .pricing-item .route-distance {
+        font-size: 12px;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .pricing-item .route-price {
+        font-weight: 700;
+        color: var(--champagne);
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .btn-view-all-pricing-sidebar {
+        width: 100%;
+        padding: 10px 15px;
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-radius: 8px;
+        color: var(--champagne);
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .btn-view-all-pricing-sidebar:hover {
+        background: rgba(212, 175, 55, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+    }
+    
+    .setting-item.active {
+        background: rgba(212, 175, 55, 0.1);
+        border-color: var(--champagne);
+    }
+    
+    .font-size-btn.active {
+        background: var(--champagne);
+        color: var(--primary-black);
+    }
+    
+    .highlight-booking {
+        animation: highlightPulse 2s ease;
+        position: relative;
+    }
+    
+    @keyframes highlightPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.01); }
+        100% { transform: scale(1); }
+    }
+    
+    .sidebar-error {
+        text-align: center;
+        padding: 30px 20px;
+    }
+    
+    .error-icon {
+        font-size: 48px;
+        color: #ff6b6b;
+        margin-bottom: 20px;
+    }
+    
+    .sidebar-error h4 {
+        color: var(--text-primary);
+        margin-bottom: 10px;
+    }
+    
+    .sidebar-error p {
+        color: var(--text-secondary);
+        margin-bottom: 20px;
+    }
+    
+    [data-theme="light"] {
+        --primary-black: #ffffff;
+        --text-primary: #1a1a1a;
+        --text-secondary: #666666;
+        --text-tertiary: #999999;
+    }
+    
+    [data-theme="light"] .sidebar,
+    [data-theme="light"] .stats-section {
+        background: #f8f9fa;
+        color: #1a1a1a;
+    }
+    
+    [data-theme="light"] .stats-section h4 {
+        color: #1a1a1a;
+        border-bottom-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    [data-theme="light"] .stat-label,
+    [data-theme="light"] .stat-sub {
+        color: #666666;
+    }
+    
+    [data-theme="light"] .pricing-item {
+        background: rgba(212, 175, 55, 0.05);
+        border-left-color: var(--champagne);
+    }
+    
+    [data-theme="light"] .pricing-item:hover {
+        background: rgba(212, 175, 55, 0.1);
+    }
+    
+    [data-theme="light"] .btn-view-all-pricing-sidebar {
+        background: rgba(212, 175, 55, 0.1);
+        color: #b8941b;
+        border-color: rgba(212, 175, 55, 0.3);
+    }
+    
+    [data-theme="light"] .car-item {
+        background: rgba(0, 0, 0, 0.03);
+    }
+`;
+
+// Thêm CSS vào head
+if (!document.getElementById('sidebarCustomCSS')) {
+    const style = document.createElement('style');
+    style.id = 'sidebarCustomCSS';
+    style.textContent = sidebarCSS;
+    document.head.appendChild(style);
+}
+
+// Global fallback để tránh lỗi
+window.safeCloseSidebar = function() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (sidebar) sidebar.classList.remove('active');
+    if (overlay) overlay.classList.remove('active');
+    document.body.style.overflow = '';
+    
+    return false;
+};
