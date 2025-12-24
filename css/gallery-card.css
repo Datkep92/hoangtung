@@ -224,3 +224,224 @@
         padding-bottom: 20px !important;
     }
 }
+
+
+/* ===== FIX GOOGLE TRANSLATE ISSUES ===== */
+
+/* 1. Bảo vệ gallery container khỏi Google Translate */
+.gallery-container {
+    transform-style: preserve-3d !important;
+    will-change: transform !important;
+    position: relative !important;
+    z-index: 10 !important;
+    pointer-events: auto !important;
+}
+
+/* 2. Bảo vệ pricing cards và buttons */
+.pricing-preview-card,
+.full-pricing-item,
+.preview-mini-buttons button,
+.pricing-preview-footer,
+.item-action-buttons button {
+    pointer-events: auto !important;
+    transform-style: preserve-3d !important;
+    isolation: isolate !important;
+}
+
+/* 3. Sửa lỗi click events bị vô hiệu hóa */
+body *:not(.goog-te-*):not(.VIpgJd-*) {
+    pointer-events: auto !important;
+}
+
+/* 4. Bảo vệ gallery scroll functionality */
+.gallery-container {
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
+    touch-action: pan-x !important;
+}
+
+/* 5. Reset các thuộc tính Google Translate có thể làm hỏng */
+.gallery-card,
+.pricing-preview-card {
+    transform: none !important;
+    position: relative !important;
+    z-index: auto !important;
+}
+
+/* 6. Đảm bảo buttons vẫn click được */
+button:not(.goog-te-*):not(.VIpgJd-*),
+[onclick]:not(.goog-te-*):not(.VIpgJd-*) {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+
+/* 7. Sửa lỗi gallery image bị biến đổi */
+.gallery-image {
+    transform: none !important;
+    backface-visibility: visible !important;
+}
+
+/* 8. Bảo vệ event listeners */
+[class*="gallery-"]:not(.goog-te-*),
+[class*="pricing-"]:not(.goog-te-*),
+[class*="btn-"]:not(.goog-te-*) {
+    pointer-events: auto !important;
+}
+
+/* 9. Override Google Translate inline styles */
+.gallery-container[style*="transform"],
+.gallery-container[style*="translate"] {
+    transform: none !important;
+}
+
+/* 10. Fix cho touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .gallery-container {
+        -webkit-overflow-scrolling: touch !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+    }
+    
+    .gallery-card {
+        scroll-snap-align: start !important;
+    }
+}
+
+/* 11. Đảm bảo các element không bị Google Translate wrap */
+.gallery-card > *,
+.pricing-preview-card > * {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* 12. Bảo vệ CSS transforms trong gallery */
+.gallery-container:hover .gallery-card {
+    transform: translateY(-5px) !important;
+}
+
+/* 13. Fix z-index conflicts */
+.gallery-container,
+.pricing-preview-grid {
+    z-index: 50 !important;
+    position: relative !important;
+}
+
+/* 14. Đảm bảo hover effects vẫn hoạt động */
+.gallery-card:hover {
+    transform: translateY(-5px) scale(1.02) !important;
+}
+
+/* 15. Bảo vệ overflow scrolling */
+.gallery-container::-webkit-scrollbar {
+    display: block !important;
+    height: 6px !important;
+}
+
+.gallery-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.gallery-container::-webkit-scrollbar-thumb {
+    background: var(--champagne) !important;
+    border-radius: 3px !important;
+}
+/* ===== FIX GOOGLE TRANSLATE BUTTON CLICK ISSUES ===== */
+
+/* 1. Bảo vệ nút view all pricing và các nút quan trọng */
+.btn-view-all-pricing,
+.btn-quick-call,
+.btn-quick-book,
+.btn-service-detail,
+.btn-quick-book-full {
+    position: relative !important;
+    z-index: 9999 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    transform: none !important;
+}
+
+/* 2. Override Google Translate wrapper styles */
+.goog-te-menu-value,
+.goog-te-menu2,
+.VIpgJd-ZVi9od-ORHb,
+.VIpgJd-ZVi9od-ORHb-OEVmcd {
+    pointer-events: none !important;
+}
+
+/* 3. Đảm bảo button container không bị wrap */
+.pricing-preview-footer,
+.pricing-header,
+.pricing-preview-card {
+    position: relative !important;
+    z-index: 100 !important;
+}
+
+/* 4. Fix cụ thể cho btn-view-all-pricing */
+.btn-view-all-pricing {
+    display: inline-block !important;
+    background: var(--gradient-gold) !important;
+    color: var(--primary-black) !important;
+    padding: 12px 24px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    text-decoration: none !important;
+    border: none !important;
+    margin: 10px 5px !important;
+    min-height: 44px !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+}
+
+/* 5. Reset hover effects */
+.btn-view-all-pricing:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3) !important;
+    background: linear-gradient(135deg, #d4af37, #f7ef8a) !important;
+}
+
+/* 6. Fix cho button trong pricing cards */
+.preview-mini-buttons {
+    position: relative !important;
+    z-index: 999 !important;
+}
+
+.preview-mini-buttons button {
+    position: relative !important;
+    z-index: 1000 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+/* 7. Bảo vệ onclick attributes */
+[onclick*="openFullPricingPage"],
+[onclick*="quickBook"],
+[onclick*="window.location"] {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+/* 8. Fix Google Translate iframe overlay */
+.goog-te-banner-frame,
+.goog-te-menu-frame {
+    z-index: 1 !important;
+    pointer-events: none !important;
+}
+
+/* 9. Bảo vệ button text khỏi bị translate wrap */
+.btn-view-all-pricing i,
+.btn-view-all-pricing span {
+    position: relative !important;
+    z-index: 10001 !important;
+    pointer-events: none !important;
+}
+
+/* 10. Force button display */
+button:not(.goog-te-*):not(.VIpgJd-*) {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}

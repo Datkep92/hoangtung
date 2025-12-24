@@ -1,4 +1,3 @@
-
 // ===== FIREBASE CONFIG =====
 const firebaseConfig = {
     apiKey: "AIzaSyCeYPoizbE-Op79186r7pmndGpJ-JfESAk",
@@ -11,64 +10,70 @@ const firebaseConfig = {
     measurementId: "G-FWHFP1W032"
 };
 
-// Biến toàn cục - SỬA TÊN BIẾN BLOG
+// Biến toàn cục
 let servicesData = { services: {} };
 let experiencesData = { experiences: {} };
-let homepageBlogData = { posts: {} }; // ĐỔI TÊN THÀNH homepageBlogData
+let homepageBlogData = { posts: {} };
 let database = null;
+let horizontalScrollSetup = false; // ⭐ THÊM BIẾN NÀY
 
-// ===== HORIZONTAL SCROLL FUNCTIONS =====
+// ===== HORIZONTAL SCROLL FUNCTIONS - OPTIMIZED =====
 function setupHorizontalScroll() {
+    if (horizontalScrollSetup) {
+        return; // ⭐ CHỈ CHẠY 1 LẦN
+    }
+    horizontalScrollSetup = true;
+    
     console.log('Setting up horizontal scroll...');
     
-    const experienceRow = document.querySelector('.user-experience-row');
-    const blogRow = document.querySelector('.blog-horizontal-row');
-    const galleryGrid = document.querySelector('.gallery-grid');
+    const containers = [
+        '.user-experience-row',
+        '.blog-horizontal-row', 
+        '.gallery-grid'
+    ];
     
-    if (experienceRow) {
-        fixScrollContainer(experienceRow);
-    }
-    if (blogRow) {
-        fixScrollContainer(blogRow);
-    }
-    if (galleryGrid) {
-        fixScrollContainer(galleryGrid);
-    }
+    containers.forEach(selector => {
+        const container = document.querySelector(selector);
+        if (container) {
+            fixScrollContainer(container);
+        }
+    });
 }
 
 function fixScrollContainer(container) {
     if (!container) return;
     
-    // Đảm bảo có đúng CSS
-    container.style.display = 'flex';
-    container.style.flexWrap = 'nowrap';
-    container.style.overflowX = 'auto';
-    container.style.scrollBehavior = 'smooth';
-    container.style.WebkitOverflowScrolling = 'touch';
-    container.style.scrollbarWidth = 'none';
-    container.style.msOverflowStyle = 'none';
+    // Optimized CSS setup
+    Object.assign(container.style, {
+        display: 'flex',
+        flexWrap: 'nowrap',
+        overflowX: 'auto',
+        scrollBehavior: 'smooth',
+        WebkitOverflowScrolling: 'touch',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+    });
     
-    // Kiểm tra và fix các items bên trong
-    const items = container.children;
-    for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        item.style.flexShrink = '0';
-        item.style.flexGrow = '0';
-        
-        // Đặt width cố định nếu chưa có
-        if (!item.style.width) {
-            if (container.classList.contains('user-experience-row')) {
-                item.style.width = '280px';
-            } else if (container.classList.contains('blog-horizontal-row')) {
-                item.style.width = '320px';
-            } else if (container.classList.contains('gallery-grid')) {
-                item.style.width = '300px';
-            }
-        }
-    }
+    // Set fixed widths for items
+    const widthMap = {
+        'user-experience-row': '280px',
+        'blog-horizontal-row': '320px',
+        'gallery-grid': '300px'
+    };
+    
+    const className = Array.from(container.classList).find(cls => cls in widthMap);
+    const defaultWidth = widthMap[className] || '300px';
+    
+    Array.from(container.children).forEach(item => {
+        Object.assign(item.style, {
+            flexShrink: '0',
+            flexGrow: '0',
+            width: item.style.width || defaultWidth
+        });
+    });
 }
 
-// ===== BLOG FUNCTIONS FOR HOMEPAGE =====
+// ===== BLOG FUNCTIONS - OPTIMIZED =====
 async function fetchBlogFromFirebase() {
     if (!database) return null;
     
@@ -76,8 +81,8 @@ async function fetchBlogFromFirebase() {
         const snapshot = await database.ref('blog').once('value');
         const data = snapshot.val();
         
-        if (data) {
-            console.log("✅ Loaded blog from Firebase:", Object.keys(data.posts || {}).length, "posts");
+        if (data && data.posts) {
+            console.log("✅ Loaded blog from Firebase:", Object.keys(data.posts).length, "posts");
             localStorage.setItem('HTUTransport_blog', JSON.stringify(data));
             return data;
         }
@@ -108,12 +113,11 @@ async function loadBlogForHomepage() {
             }
         }
         
-        homepageBlogData = blog; // SỬ DỤNG homepageBlogData
+        homepageBlogData = blog;
         renderBlogRow();
         
     } catch (error) {
         console.error("❌ Error loading blog for homepage:", error);
-        // Show error state
         showBlogError();
     }
 }
@@ -125,14 +129,14 @@ function renderBlogRow() {
         return;
     }
     
-    const posts = homepageBlogData.posts || {}; // SỬ DỤNG homepageBlogData
+    const posts = homepageBlogData.posts || {};
     
     if (Object.keys(posts).length === 0) {
         blogRow.innerHTML = `
-            <div class="empty-blog" style="min-width: 300px; text-align: center; padding: 40px; color: var(--text-tertiary);">
-                <i class="fas fa-newspaper" style="font-size: 32px; margin-bottom: 15px; display: block;"></i>
+            <div class="empty-blog">
+                <i class="fas fa-newspaper"></i>
                 <p>Chưa có bài viết nào</p>
-                <a href="blog.html" class="btn btn-outline" style="margin-top: 15px; font-size: 14px; padding: 8px 16px;">
+                <a href="blog.html" class="btn btn-outline">
                     <i class="fas fa-plus"></i> Đăng bài viết
                 </a>
             </div>
@@ -140,22 +144,13 @@ function renderBlogRow() {
         return;
     }
     
-    // Get latest posts sorted by date
+    // Get latest 6 posts sorted by date
     const latestPosts = Object.entries(posts)
-        .sort((a, b) => {
-            const dateA = new Date(a[1].date || '2000-01-01');
-            const dateB = new Date(b[1].date || '2000-01-01');
-            return dateB - dateA;
-        })
+        .sort((a, b) => new Date(b[1].date || 0) - new Date(a[1].date || 0))
         .slice(0, 6);
     
     if (latestPosts.length === 0) {
-        blogRow.innerHTML = `
-            <div class="empty-blog">
-                <i class="fas fa-newspaper"></i>
-                <p>Chưa có bài viết nào</p>
-            </div>
-        `;
+        blogRow.innerHTML = '<div class="empty-blog">Chưa có bài viết nào</div>';
         return;
     }
     
@@ -163,6 +158,7 @@ function renderBlogRow() {
     latestPosts.forEach(([id, post]) => {
         const date = new Date(post.date || new Date()).toLocaleDateString('vi-VN');
         const categoryName = getCategoryName(post.category);
+        const tags = post.tags || [];
         
         html += `
             <div class="blog-horizontal-card" onclick="openBlogPostFromHomepage('${id}')">
@@ -170,7 +166,7 @@ function renderBlogRow() {
                     <img src="${post.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800'}" 
                          alt="${post.title}" 
                          loading="lazy"
-                         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800'">
+                         onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800'">
                     <span class="blog-card-category">${categoryName}</span>
                 </div>
                 <div class="blog-card-content">
@@ -185,12 +181,10 @@ function renderBlogRow() {
                     <h3 class="blog-card-title">${post.title || 'Bài viết mới'}</h3>
                     <p class="blog-card-excerpt">${post.excerpt || 'Đang cập nhật nội dung...'}</p>
                     
-                    ${post.tags && post.tags.length > 0 ? `
+                    ${tags.length > 0 ? `
                         <div class="blog-card-tags">
-                            ${post.tags.slice(0, 2).map(tag => `
-                                <span class="blog-card-tag">#${tag}</span>
-                            `).join('')}
-                            ${post.tags.length > 2 ? `<span class="blog-card-tag">+${post.tags.length - 2}</span>` : ''}
+                            ${tags.slice(0, 2).map(tag => `<span class="blog-card-tag">#${tag}</span>`).join('')}
+                            ${tags.length > 2 ? `<span class="blog-card-tag">+${tags.length - 2}</span>` : ''}
                         </div>
                     ` : ''}
                     
@@ -204,11 +198,159 @@ function renderBlogRow() {
     
     blogRow.innerHTML = html;
     
-    // Setup horizontal scroll after rendering
+    // Setup horizontal scroll once
     setTimeout(() => {
-        setupHorizontalScroll();
+        if (!horizontalScrollSetup) {
+            setupHorizontalScroll();
+        }
     }, 100);
 }
+
+// ===== SITEMAP FUNCTION =====
+function updateBlogSitemap() {
+    if (window.SEOHelper && homepageBlogData?.posts && Object.keys(homepageBlogData.posts).length > 0) {
+        console.log('📝 Updating sitemap with blog posts:', Object.keys(homepageBlogData.posts).length);
+        window.SEOHelper.updateSitemapWithBlogPosts(homepageBlogData.posts);
+    }
+}
+
+// ===== DATA LOADING - OPTIMIZED =====
+async function loadAllData() {
+    console.log("🔄 Loading all data...");
+    
+    try {
+        const [services, experiences, gallery, blog] = await Promise.allSettled([
+            fetchFromFirebase('services'),
+            fetchFromFirebase('experiences'),
+            fetchFromFirebase('gallery'),
+            fetchBlogFromFirebase()
+        ]);
+        
+        // Process services
+        servicesData = services.value || JSON.parse(localStorage.getItem('HTUTransport_services')) || { services: {} };
+        
+        // Process experiences
+        experiencesData = experiences.value || JSON.parse(localStorage.getItem('HTUTransport_experiences')) || { experiences: getDefaultExperiences() };
+        
+        // Process gallery
+        if (typeof window.renderGallery === 'function' && gallery.value) {
+            window.galleryData = gallery.value;
+            window.renderGallery();
+        }
+        
+        // Process blog
+        let blogData = null;
+        if (blog.status === 'fulfilled' && blog.value) {
+            blogData = blog.value;
+        } else {
+            const localBlog = localStorage.getItem('HTUTransport_blog');
+            blogData = localBlog ? JSON.parse(localBlog) : { posts: getSampleBlogPosts() };
+        }
+        
+        homepageBlogData = blogData;
+        updateBlogSitemap();
+        
+        // Render UI
+        renderUI();
+        renderExperiencesUI();
+        renderBlogRow();
+        
+        console.log("✅ All data loaded successfully");
+        
+    } catch (error) {
+        console.error("❌ Error loading data:", error);
+        loadFromLocalStorage();
+        renderBlogRow();
+        updateBlogSitemap();
+    }
+}
+
+// ===== INITIALIZATION - CLEAN =====
+async function initApp() {
+    try {
+        if (window.location.pathname.includes('post-')) {
+            console.log("📄 Single post page, skipping homepage initialization");
+            return;
+        }
+        
+        console.log("🚀 HTUTransport Website Initializing...");
+        
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        database = firebase.database();
+        
+        // Load all data
+        await loadAllData();
+        
+        // Setup horizontal scroll once
+        if (!horizontalScrollSetup) {
+            setupHorizontalScroll();
+        }
+        
+        // Setup event listeners
+        setupEventListeners();
+        setupMobileTouch();
+        setupBlogFirebaseListener();
+        
+        console.log("✅ Website initialized successfully");
+        
+    } catch (error) {
+        console.error("❌ Lỗi khởi tạo:", error);
+        loadFromLocalStorage();
+        renderBlogRow();
+        if (!horizontalScrollSetup) {
+            setupHorizontalScroll();
+        }
+        updateBlogSitemap();
+    }
+}
+
+// ===== FIREBASE LISTENER =====
+function setupBlogFirebaseListener() {
+    if (!database) return;
+    
+    database.ref('blog/posts').on('value', (snapshot) => {
+        console.log("🔄 Blog data updated from Firebase");
+        const data = snapshot.val();
+        
+        if (data) {
+            homepageBlogData.posts = data;
+            localStorage.setItem('HTUTransport_blog', JSON.stringify({ posts: data }));
+            renderBlogRow();
+            updateBlogSitemap();
+        }
+    });
+}
+
+// ===== OPEN BLOG POST =====
+function openBlogPostFromHomepage(postId) {
+    const post = homepageBlogData.posts[postId];
+    if (!post) return;
+    
+    if (window.location.pathname.includes('blog.html')) {
+        if (typeof blogRouter !== 'undefined') {
+            blogRouter.navigateToPost(postId, post.title);
+            return;
+        }
+    }
+    
+    window.location.href = `blog.html?post=${postId}`;
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', initApp);
+
+// ===== CÁC HÀM CÒN LẠI GIỮ NGUYÊN =====
+// ... (các hàm fetchFromFirebase, loadFromLocalStorage, renderUI, 
+// renderExperiencesUI, setupEventListeners, setupMobileTouch,
+// getDefaultExperiences, getSampleBlogPosts, getCategoryName,
+// showServiceDetail, bookThisService, changeDetailImage,
+// showQuickBookToast, quickBookExperience, showExperienceInfo,
+// closeExperienceModal, handleBookingSubmit, getClientIP,
+// initializeFirebaseStructure vẫn giữ nguyên) ...
+
 
 function showBlogError() {
     const blogRow = document.getElementById('blogRow');
@@ -226,134 +368,9 @@ function showBlogError() {
 }
 
 
-// ===== UPDATE INITIALIZATION =====
-async function loadAllData() {
-    console.log("🔄 Loading all data...");
-    
-    try {
-        // Load services, experiences, gallery, and blog in parallel
-        const [services, experiences, gallery, blog] = await Promise.allSettled([
-            fetchFromFirebase('services'),
-            fetchFromFirebase('experiences'),
-            fetchFromFirebase('gallery'),
-            fetchBlogFromFirebase()
-        ]);
-        
-        // Xử lý services
-        servicesData = services.value || JSON.parse(localStorage.getItem('HTUTransport_services')) || { services: {} };
-        
-        // Xử lý experiences
-        experiencesData = experiences.value || JSON.parse(localStorage.getItem('HTUTransport_experiences')) || { experiences: getDefaultExperiences() };
-        
-        // Xử lý gallery - chỉ gọi nếu có gallery.js
-        if (typeof window.renderGallery === 'function' && gallery.value) {
-            window.galleryData = gallery.value;
-            window.renderGallery();
-        }
-        
-        // Xử lý blog - SỬ DỤNG homepageBlogData
-        if (blog.status === 'fulfilled' && blog.value) {
-            homepageBlogData = blog.value;
-        } else {
-            const localBlog = localStorage.getItem('HTUTransport_blog');
-            homepageBlogData = localBlog ? JSON.parse(localBlog) : { posts: getSampleBlogPosts() };
-        }
-        
-        // Render UI
-        renderUI();
-        renderExperiencesUI();
-        renderBlogRow();
-        
-        console.log("✅ All data loaded successfully");
-        
-    } catch (error) {
-        console.error("❌ Error loading data:", error);
-        // Fallback to localStorage
-        loadFromLocalStorage();
-        renderBlogRow();
-    }
-}
 
-// ===== FIREBASE LISTENER FOR BLOG UPDATES =====
-function setupBlogFirebaseListener() {
-    if (!database) return;
-    
-    // Listen for blog updates in real-time
-    database.ref('blog/posts').on('value', (snapshot) => {
-        console.log("🔄 Blog data updated from Firebase");
-        const data = snapshot.val();
-        
-        if (data) {
-            homepageBlogData.posts = data; // SỬ DỤNG homepageBlogData
-            localStorage.setItem('HTUTransport_blog', JSON.stringify({ posts: data }));
-            renderBlogRow();
-        }
-    });
-}
 
-// ===== INITIALIZATION =====
-function openBlogPostFromHomepage(postId) {
-    const post = homepageBlogData.posts[postId];
-    if (!post) return;
-    
-    // Kiểm tra nếu đã ở trang blog
-    if (window.location.pathname.includes('blog.html')) {
-        // Sử dụng router của blog nếu có
-        if (typeof blogRouter !== 'undefined') {
-            blogRouter.navigateToPost(postId, post.title);
-            return;
-        }
-    }
-    
-    // Nếu không ở trang blog, chuyển đến trang blog với tham số post
-    window.location.href = `blog.html?post=${postId}`;
-}
-
-// ... phần giữa giữ nguyên ...
-
-async function initApp() {
-    try {
-        // Kiểm tra nếu là trang bài viết đơn thì không khởi tạo
-        if (window.location.pathname.includes('post-')) {
-            console.log("📄 Single post page, skipping homepage initialization");
-            return;
-        }
-        
-        console.log("🚀 HTUTransport Website Initializing...");
-        
-        // Initialize Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        database = firebase.database();
-        
-        // Initialize SEO Helper sitemap
-        if (window.SEOHelper && homepageBlogData && homepageBlogData.posts) {
-            window.SEOHelper.updateSitemapWithBlogPosts(homepageBlogData.posts);
-        }
-        
-        // Load all data
-        await loadAllData();
-        
-        // Setup event listeners
-        setupEventListeners();
-        setupMobileTouch();
-        setupHorizontalScroll();
-        
-        // Setup blog Firebase listener for real-time updates
-        setupBlogFirebaseListener();
-        
-        console.log("✅ Website initialized successfully");
-        
-    } catch (error) {
-        console.error("❌ Lỗi khởi tạo:", error);
-        // Load from localStorage as fallback
-        loadFromLocalStorage();
-        renderBlogRow();
-        setupHorizontalScroll();
-    }
-}
-
+// Gọi hàm này trong loadAllData() sau khi blog được load
 // Thêm hàm xử lý nếu đang ở trang bài viết đơn
 function checkForSinglePost() {
     if (window.location.pathname.includes('post-')) {
@@ -589,7 +606,46 @@ const experienceButtonCSS = `
         }
     }
 `;
+// Thêm sau phần CSS cho experienceButtonCSS
+const highlightBookingCSS = `
+    .highlight-booking {
+        animation: highlight-pulse 2s ease-in-out;
+        position: relative;
+    }
+    
+    .highlight-booking::before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        right: -5px;
+        bottom: -5px;
+        border: 2px solid var(--champagne);
+        border-radius: 15px;
+        animation: border-pulse 2s ease-in-out;
+        z-index: -1;
+    }
+    
+    @keyframes highlight-pulse {
+        0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+        70% { box-shadow: 0 0 0 20px rgba(212, 175, 55, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+    }
+    
+    @keyframes border-pulse {
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(1.05); }
+        100% { opacity: 0; transform: scale(1.1); }
+    }
+`;
 
+// Thêm vào head nếu chưa có
+if (!document.getElementById('highlightBookingCSS')) {
+    const style = document.createElement('style');
+    style.id = 'highlightBookingCSS';
+    style.textContent = highlightBookingCSS;
+    document.head.appendChild(style);
+}
 // Thêm CSS vào head nếu chưa có
 if (!document.getElementById('experienceButtonCSS')) {
     const style = document.createElement('style');
@@ -597,7 +653,102 @@ if (!document.getElementById('experienceButtonCSS')) {
     style.textContent = experienceButtonCSS;
     document.head.appendChild(style);
 }
-
+function showQuickBookToast(experienceTitle) {
+    // Tạo toast element nếu chưa có
+    if (!document.getElementById('quickBookToast')) {
+        const toastHTML = `
+            <div id="quickBookToast" class="quick-book-toast">
+                <i class="fas fa-calendar-check"></i>
+                <span class="toast-text">Đã chọn: <strong>${experienceTitle}</strong></span>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', toastHTML);
+        
+        // Tự động xóa sau 3 giây
+        setTimeout(() => {
+            const toast = document.getElementById('quickBookToast');
+            if (toast) {
+                toast.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 3000);
+        
+        // Thêm CSS nếu chưa có
+        if (!document.getElementById('toastCSS')) {
+    const style = document.createElement('style');
+    style.id = 'toastCSS';
+    style.textContent = `
+                .quick-book-toast {
+                    position: fixed;
+                    bottom: 100px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: linear-gradient(135deg, var(--card-black), #1a1a1a);
+                    border: 1px solid rgba(212, 175, 55, 0.3);
+                    border-radius: 12px;
+                    padding: 12px 20px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    z-index: 10000;
+                    animation: slideIn 0.3s ease forwards;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+                }
+                
+                .quick-book-toast i.fa-calendar-check {
+                    color: #4CAF50;
+                    font-size: 18px;
+                }
+                
+                .toast-text {
+                    color: var(--text-primary);
+                    font-size: 14px;
+                }
+                
+                .toast-close {
+                    background: transparent;
+                    border: none;
+                    color: var(--text-tertiary);
+                    cursor: pointer;
+                    padding: 5px;
+                    border-radius: 5px;
+                    transition: all 0.2s ease;
+                }
+                
+                .toast-close:hover {
+                    background: rgba(255, 255, 255, 0.1);
+                    color: var(--text-primary);
+                }
+                
+                @keyframes slideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateX(-50%) translateY(30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(-50%) translateY(0);
+                    }
+                }
+                
+                @keyframes slideOut {
+                    from {
+                        opacity: 1;
+                        transform: translateX(-50%) translateY(0);
+                    }
+                    to {
+                        opacity: 0;
+                        transform: translateX(-50%) translateY(30px);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+}
 // Function xử lý đặt lịch từ experience
 function quickBookExperience(experienceTitle) {
     // Đóng modal bảng giá nếu đang mở

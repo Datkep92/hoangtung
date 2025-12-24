@@ -101,7 +101,6 @@ const totalItems = allItems.length;
         <div class="pricing-header">
             <div class="header-top">
                 <h2 class="pricing-title">
-                    <i class="fas fa-tags"></i>
                     Bảng Giá Mới Nhất
                 </h2>
 
@@ -168,10 +167,7 @@ const totalItems = allItems.length;
                             <i class="fas fa-car"></i>
                             <span>Đặt xe</span>
                         </button>
-                        <button class="mini-info-btn" onclick="showPricingDetails('${item.title}', '${priceValue}', '${item.description || ''}')" title="Chi tiết">
-                            <i class="fas fa-info-circle"></i>
-                            <span>Chi tiết</span>
-                        </button>
+                       
                     </div>
                 </div>
             </div>
@@ -182,20 +178,12 @@ const totalItems = allItems.length;
             </div>
             
             <div class="pricing-preview-footer">
-                <div class="preview-stats">
-                    <i class="fas fa-database"></i>
-                    <span>Tổng cộng: <strong>${totalItems}</strong> dịch vụ có giá</span>
-                </div>
-                
                 <button class="btn-view-all-pricing" onclick="openFullPricingPage()">
                     <i class="fas fa-list-alt"></i>
                     Xem Toàn Bộ Bảng Giá
                 </button>
                 
-                <button class="btn-quick-call" onclick="window.location.href='tel:0567033888'">
-                    <i class="fas fa-phone-alt"></i>
-                    Gọi Ngay Để Đặt Xe
-                </button>
+                
             </div>
         </div>
     `;

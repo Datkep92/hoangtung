@@ -140,7 +140,7 @@ function renderGallery() {
         
         // Add click event to open full view
         card.addEventListener('click', function() {
-            openGalleryDetail(item);
+            console.log('bổ sung sau');
         });
         
         galleryDiv.appendChild(card);

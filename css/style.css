@@ -482,10 +482,7 @@ a {
 /* ===== QUICK BOOKING ===== */
 .quick-booking {
     padding: 80px 16px;
-    background: 
-        linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.92)),
-        url('images/bg-booking.jpg') center/cover no-repeat;
-    position: relative;
+   
 }
 
 .quick-booking::before {
@@ -611,11 +608,7 @@ a {
 /* ===== FOOTER ===== */
 .main-footer {
     padding: 80px 16px 40px;
-    background: 
-        linear-gradient(rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.98)),
-        url('images/bg-footer.jpg') center/cover no-repeat;
-    border-top: 1px solid rgba(212, 175, 55, 0.2);
-    position: relative;
+    
 }
 
 .main-footer::before {
@@ -1644,32 +1637,10 @@ a {
     align-items: center;       /* canh giữa nội dung theo chiều dọc */
 }
 
-/* Đảm bảo các phần tử scroll không bị ảnh hưởng bởi Google Translate */
+/* Đảm bảo các container scroll ngang không bị ảnh hưởng */
 .user-experience-row,
 .blog-horizontal-row,
-.gallery-grid,
-.services-grid,
-.gallery-section {
-    transform: none !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
+.gallery-grid {
     position: relative !important;
     z-index: 10 !important;
 }
-
-/* Ngăn Google Translate wrapper can thiệp */
-.goog-te-banner-frame,
-.goog-te-menu-frame {
-    z-index: 9999 !important;
-}
-
-/* Đảm bảo Google Translate không làm hỏng layout */
-body > .skiptranslate {
-    display: none !important;
-}
-
-/* Đảm bảo các phần tử scroll không bị dịch */
-.notranslate {
-    transform: none !important;
-}
-

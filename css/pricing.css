@@ -13,7 +13,7 @@
     right: 0;
     width: 300px;
     height: 300px;
-    background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.1) 0%, transparent 70%);
     z-index: 0;
 }
 
@@ -51,7 +51,6 @@
 .pricing-title i {
     font-size: 36px;
     background: var(--gradient-gold);
-    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -96,9 +95,9 @@
 
 /* Pricing Card */
 .pricing-card {
-    background: rgba(30, 30, 30, 0.8);
+    background: rgba(0, 0, 0, 0.8);
     border-radius: 20px;
-    border: 2px solid rgba(212, 175, 55, 0.15);
+    border: 2px solid rgba(0, 0, 0, 0.15);
     overflow: hidden;
     transition: all 0.4s ease;
     display: flex;
@@ -110,7 +109,7 @@
 
 .pricing-card:hover {
     transform: translateY(-10px);
-    border-color: rgba(212, 175, 55, 0.4);
+    border-color: rgba(0, 0, 0, 0.4);
     box-shadow: 0 20px 40px rgba(212, 175, 55, 0.2);
 }
 
@@ -149,13 +148,13 @@
 }
 
 .service-badge {
-    background: rgba(212, 175, 55, 0.1);
+    background: rgba(0, 0, 0, 0.1);
     color: var(--champagne);
     border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 .route-badge {
-    background: rgba(122, 107, 5, 0.1);
+    background: rgba(0, 0, 0, 0.1);
     color: #f2ecbc;
     border: 1px solid rgba(33, 150, 243, 0.3);
 }
@@ -593,16 +592,18 @@
 
 .pricing-preview-footer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center;     /* căn giữa ngang */
+    align-items: center;         /* căn giữa dọc */
     flex-wrap: wrap;
-    gap: 20px;
-    padding: 25px;
+    gap: 16px;
+    padding: 20px;
     background: rgba(212, 175, 55, 0.05);
-    border-radius: 16px;
+    border-radius: 14px;
     border: 1px solid rgba(212, 175, 55, 0.1);
-    margin-top: 30px;
+    margin: 30px auto 0;         /* block nằm giữa */
+    text-align: center;
 }
+
 
 .preview-stats {
     display: flex;
@@ -696,5 +697,69 @@
     .preview-mini-buttons button {
         font-size: 11px;
         padding: 6px 8px;
+    }
+}
+#pricingSection {
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+}
+@media (max-width: 768px) {
+    #pricingSection {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+/* ===== PRICING PREVIEW ===== */
+.pricing-preview {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header */
+.pricing-header {
+    margin-bottom: 20px;
+}
+
+.header-top {
+    text-align: center;
+}
+
+.pricing-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--champagne);
+    margin-bottom: 8px;
+}
+
+.pricing-header span {
+    display: block;
+    max-width: 720px;
+    margin: 0 auto;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+/* Grid */
+.pricing-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+@media (max-width: 768px) {
+    .pricing-title {
+        font-size: 22px;
+    }
+
+    .pricing-header span {
+        font-size: 13px;
+        padding: 0 10px;
+    }
+
+    .pricing-preview-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
     }
 }

@@ -13,8 +13,9 @@
     <!-- End Google Tag Manager -->
     
     <!-- Primary Meta Tags -->
-    <title>Dịch Vụ Xe Hợp Đồng Phan Rang Tháp Chàm - Hà Tùng | Đưa Đón Sân Bay Cam Ranh & Du Lịch 24/7</title>
-    <meta name="description" content="✅ Dịch vụ xe hợp đồng Phan Rang Tháp Chàm Ninh Thuận. Đưa đón sân bay Cam Ranh, xe du lịch 4-7-16 chỗ, tài xế 5 sao, giá tốt nhất. Gọi ngay 0567.033.888 - Phục vụ 24/7.">
+    <title>Xe Hợp Đồng Phan Rang -Khánh Hòa - Đưa Đón Sân Bay</title>
+
+    <meta name="description" content="✅ Dịch vụ xe hợp đồng Phan Rang Tháp Chàm. Đưa đón sân bay Cam Ranh 24/7, xe du lịch 4-7-16 chỗ, tài xế 5 sao. Gọi 0567.033.888 - Giá tốt nhất.">
     
     <!-- Keywords -->
     <meta name="keywords" content="xe hợp đồng phan rang, đưa đón sân bay cam ranh, dịch vụ xe phan rang, taxi sân bay nha trang, thuê xe du lịch ninh thuận, xe 7 chỗ phan rang, đặt xe online 24/7, HTU Transport, xe hợp đồng phan rang">
@@ -62,7 +63,7 @@
     <meta property="al:ios:app_name" content="Hà Tùng">
     <meta property="al:android:url" content="Hà Tùng://app">
     <meta property="al:android:app_name" content="Hà Tùng">
-    <meta property="al:android:package" content="com.Hà Tùng.app">
+    <meta property="al:android:package" content="com.Hatung.app">
     <meta property="al:web:url" content="https://htutransport.com/">
     
     <!-- Pinterest -->
@@ -124,7 +125,18 @@
     "telephone": "+84931243679",
     "contactType": "customer service",
     "availableLanguage": ["Vietnamese", "English"]
+  },
+  {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "HTUTransport - Dịch vụ xe hợp đồng Phan Rang",
+  "url": "https://htutransport.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://htutransport.com/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
   }
+
 }
 </script>
 
@@ -266,7 +278,12 @@
                 <div class="service-intro">
                     <h2 class="visually-hidden">Giới thiệu dịch vụ</h2>
                     <p><strong>Hà Tùng Transport</strong> - Đơn vị cung cấp dịch vụ xe hợp đồng hàng đầu tại khu vực Phan Rang Tháp Chàm, Ninh Thuận. Chuyên đưa đón sân bay Cam Ranh - Liên Khương, xe du lịch 4-7-16 chỗ, phục vụ 24/7 với đội ngũ tài xế chuyên nghiệp, xe đời mới.</p>
-                    
+                    <!-- Trong service-intro, thêm: -->
+<p>Xem chi tiết: 
+    <a href="#services">dịch vụ xe hợp đồng</a> | 
+    <a href="#pricing">bảng giá ưu đãi</a> | 
+    <a href="#booking">đặt xe trực tuyến</a>
+</p>
                     <h3>Dịch vụ chính:</h3>
                     <ul aria-label="Danh sách dịch vụ">
                         <li><strong>Đưa đón sân bay Cam Ranh - Liên Khương:</strong> Phục vụ tất cả các chuyến bay, đón tận nơi</li>
@@ -537,7 +554,7 @@
                         <p><i class="fas fa-phone-alt" aria-hidden="true"></i> <strong><a href="tel:0567033888" itemprop="telephone">0567.033.888</a></strong></p>
                         <p><i class="fas fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="addressLocality">TP. Nha Trang</span>, <span itemprop="addressRegion">Khánh Hòa</span></p>
                         <p><i class="fas fa-clock" aria-hidden="true"></i> Hoạt động 24/7</p>
-                        <p><i class="fas fa-envelope" aria-hidden="true"></i> <a href="mailto:contact@Hà Tùng.vn" itemprop="email">contact@Hà Tùng.vn</a></p>
+                        <p><i class="fas fa-envelope" aria-hidden="true"></i> <a href="mailto:cskh@htutransport.vn" itemprop="email">cskh@htutransport.com</a></p>
                     </div>
                 </div>
                 
@@ -641,45 +658,32 @@
 
     
     <script>
-        // Khởi tạo SEO Helper khi DOM ready
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.SEOHelper) {
-                // Tối ưu hình ảnh
-                window.SEOHelper.optimizeImages();
-                
-                // Setup tracking
-                window.SEOHelper.setupSEOTracking();
-                
-                // Thêm breadcrumb động nếu là trang blog
-                if (window.location.pathname.includes('blog.html')) {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const postId = urlParams.get('post');
-                    if (postId) {
-                        // Lấy title từ blog data
-                        if (window.homepageBlogData && window.homepageBlogData.posts[postId]) {
-                            const postTitle = window.homepageBlogData.posts[postId].title;
-                            window.SEOHelper.addDynamicBreadcrumb('blog_post', postTitle);
-                        }
-                    } else {
-                        window.SEOHelper.addDynamicBreadcrumb('blog');
-                    }
-                }
-            }
-            
-            // Preload critical images
-            const criticalImages = [
-                'images/logo-seo.jpg',
-                'images/og-image.jpg'
-            ];
-            
-            criticalImages.forEach(src => {
-                const link = document.createElement('link');
-                link.rel = 'preload';
-                link.as = 'image';
-                link.href = src;
-                document.head.appendChild(link);
-            });
+        // Thay thế phần preload trong index.html bằng code này
+document.addEventListener('DOMContentLoaded', function() {
+    // Chỉ preload khi user tương tác hoặc sau khi load
+    const preloadImages = () => {
+        const images = [
+            'https://raw.githubusercontent.com/Datkep92/hoangtung/main/images/htu_vuong512notext.jpg'
+        ];
+        
+        images.forEach(src => {
+            const img = new Image();
+            img.src = src;
         });
+    };
+    
+    // Preload sau 1 giây hoặc khi user scroll
+    setTimeout(preloadImages, 1000);
+    
+    // Hoặc preload khi user bắt đầu scroll
+    let hasScrolled = false;
+    window.addEventListener('scroll', () => {
+        if (!hasScrolled) {
+            preloadImages();
+            hasScrolled = true;
+        }
+    }, { once: true });
+});
     </script>
     
     <style>

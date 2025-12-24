@@ -1,500 +1,397 @@
-// js/contact-buttons-luxury.js
-class LuxuryContactButtons {
+// ===== CHATBOT OPTIMIZED - JS TỐI ƯU HIỆU NĂNG =====
+class OptimizedContactButtons {
     constructor() {
         this.phoneNumber = '0567033888';
         this.zaloLink = 'https://zalo.me/0567033888';
         this.whatsappLink = `https://wa.me/840567033888?text=${encodeURIComponent('Xin chào HTUTransport! Tôi muốn tư vấn về dịch vụ xe.')}`;
         
-        // Stats tracking
+        // Performance detection
+        this.isMobile = this.detectMobile();
+        this.isLowPerformance = this.detectLowPerformance();
+        
+        // Stats (lightweight)
         this.stats = {
             phone: this.getStat('phone'),
             zalo: this.getStat('zalo'),
-            whatsapp: this.getStat('whatsapp'),
-            lastInteraction: Date.now()
-        };
-        
-        // Sound effects
-        this.sounds = {
-            click: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=='), // Silent fallback
-            hover: null
+            whatsapp: this.getStat('whatsapp')
         };
     }
-
-    init() {
-        this.createLuxuryButtons();
-        this.setupEventListeners();
-        this.createSparkles();
-        this.startAmbientAnimation();
-        
-        console.log('💎 Luxury Contact Buttons initialized');
+    
+    // ===== DETECTION METHODS =====
+    detectMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
-
-    createLuxuryButtons() {
+    
+    detectLowPerformance() {
+        // Detect low-end devices
+        const concurrency = navigator.hardwareConcurrency || 4;
+        const memory = navigator.deviceMemory || 4;
+        const isSlowCPU = concurrency <= 4;
+        const isLowRAM = memory < 4;
+        
+        return this.isMobile && (isSlowCPU || isLowRAM);
+    }
+    
+    shouldSkipAnimations() {
+        // Kiểm tra các điều kiện tắt animation
+        return this.isLowPerformance || 
+               window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+               !document.hasFocus(); // Tab không active
+    }
+    
+    // ===== INITIALIZATION =====
+    async init() {
+        // Chờ trang load xong
+        if (document.readyState !== 'complete') {
+            await new Promise(resolve => {
+                if (document.readyState === 'complete') resolve();
+                else window.addEventListener('load', resolve, { once: true });
+            });
+        }
+        
+        // Đợi thêm 500ms để tránh ảnh hưởng đến page load
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        this.createOptimizedButtons();
+        this.setupOptimizedEvents();
+        this.observePerformance();
+        
+        console.log('🚀 Optimized Contact Buttons initialized');
+    }
+    
+    // ===== CREATE BUTTONS =====
+    createOptimizedButtons() {
         const buttonsHTML = `
-            <div class="contact-buttons-luxury" id="luxuryContactButtons">
-                <!-- Nút Gọi Điện Vàng -->
-                <button class="luxury-contact-btn phone-btn-gold" id="luxuryPhoneBtn" 
-                        aria-label="Gọi điện cho HTUTransport">
-                    <div class="melt-effect"></div>
-                    <i class="fas fa-phone-alt"></i>
-                    <span class="luxury-tooltip">Gọi ngay: ${this.formatPhoneNumber(this.phoneNumber)}</span>
-                    <span class="luxury-badge" id="phoneLuxuryBadge">${this.stats.phone > 0 ? this.stats.phone : ''}</span>
+            <div class="contact-buttons-optimized" id="optimizedContactButtons">
+                <!-- Nút Gọi Điện -->
+                <button class="optimized-btn phone-btn-opt" id="optPhoneBtn" 
+                        aria-label="Gọi điện cho HTUTransport"
+                        data-performance="light">
+                    <i class="fas fa-phone-alt" aria-hidden="true"></i>
+                    <span class="optimized-tooltip">Gọi ngay: ${this.formatPhone(this.phoneNumber)}</span>
+                    ${this.stats.phone > 0 ? `<span class="optimized-badge" id="optPhoneBadge">${this.stats.phone}</span>` : ''}
                 </button>
                 
-                <!-- Nút Zalo Xanh Dương -->
-                <button class="luxury-contact-btn zalo-btn-blue" id="luxuryZaloBtn"
-                        aria-label="Nhắn tin Zalo cho HTUTransport">
-                    <div class="wave-effect"></div>
-                    <i class="fab fa-facebook-messenger"></i>
-                    <span class="luxury-tooltip">Zalo: ${this.formatPhoneNumber(this.phoneNumber)}</span>
-                    <span class="luxury-badge" id="zaloLuxuryBadge">${this.stats.zalo > 0 ? this.stats.zalo : ''}</span>
+                <!-- Nút Zalo -->
+                <button class="optimized-btn zalo-btn-opt" id="optZaloBtn"
+                        aria-label="Nhắn tin Zalo cho HTUTransport"
+                        data-performance="light">
+                    <i class="fab fa-facebook-messenger" aria-hidden="true"></i>
+                    <span class="optimized-tooltip">Zalo: ${this.formatPhone(this.phoneNumber)}</span>
+                    ${this.stats.zalo > 0 ? `<span class="optimized-badge" id="optZaloBadge">${this.stats.zalo}</span>` : ''}
                 </button>
                 
-                <!-- Nút WhatsApp Xanh Lá -->
-                <button class="luxury-contact-btn whatsapp-btn-green" id="luxuryWhatsappBtn"
-                        aria-label="Chat WhatsApp với HTUTransport">
-                    <div class="leaf-effect"></div>
-                    <i class="fab fa-whatsapp"></i>
-                    <span class="luxury-tooltip">WhatsApp: ${this.formatPhoneNumber(this.phoneNumber)}</span>
-                    <span class="luxury-badge" id="whatsappLuxuryBadge">${this.stats.whatsapp > 0 ? this.stats.whatsapp : ''}</span>
+                <!-- Nút WhatsApp -->
+                <button class="optimized-btn whatsapp-btn-opt" id="optWhatsappBtn"
+                        aria-label="Chat WhatsApp với HTUTransport"
+                        data-performance="light">
+                    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                    <span class="optimized-tooltip">WhatsApp: ${this.formatPhone(this.phoneNumber)}</span>
+                    ${this.stats.whatsapp > 0 ? `<span class="optimized-badge" id="optWhatsappBadge">${this.stats.whatsapp}</span>` : ''}
                 </button>
             </div>
         `;
-
+        
         document.body.insertAdjacentHTML('beforeend', buttonsHTML);
         
-        // Tạo sparkles động
-        this.createDynamicSparkles();
+        // Tối ưu: Tắt animations nếu cần
+        if (this.shouldSkipAnimations()) {
+            this.disableAnimations();
+        }
     }
-
-    createSparkles() {
-        const buttons = document.querySelectorAll('.luxury-contact-btn');
+    
+    disableAnimations() {
+        const buttons = document.querySelectorAll('.optimized-btn');
         buttons.forEach(btn => {
-            for (let i = 1; i <= 6; i++) {
-                const sparkle = document.createElement('div');
-                sparkle.className = `sparkle-diamond sparkle-${i}`;
-                btn.appendChild(sparkle);
-            }
+            btn.style.animation = 'none';
+            btn.style.willChange = 'auto';
         });
     }
-
-    createDynamicSparkles() {
-        // Tạo sparkles ngẫu nhiên bay xung quanh
-        setInterval(() => {
-            if (Math.random() > 0.7) {
-                this.createFloatingSparkle();
-            }
-        }, 2000);
-    }
-
-    createFloatingSparkle() {
-        const container = document.getElementById('luxuryContactButtons');
-        const sparkle = document.createElement('div');
-        sparkle.className = 'floating-sparkle';
-        
-        // Random position
-        const x = Math.random() * 100;
-        const y = Math.random() * 100;
-        
-        sparkle.style.cssText = `
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: var(--diamond-sparkle);
-            border-radius: 50%;
-            top: ${y}%;
-            left: ${x}%;
-            box-shadow: 0 0 6px var(--diamond-sparkle);
-            animation: floatingSparkle 3s ease-in-out forwards;
-        `;
-        
-        container.appendChild(sparkle);
-        
-        // Xóa sau animation
-        setTimeout(() => sparkle.remove(), 3000);
-    }
-
-    setupEventListeners() {
-        const phoneBtn = document.getElementById('luxuryPhoneBtn');
-        const zaloBtn = document.getElementById('luxuryZaloBtn');
-        const whatsappBtn = document.getElementById('luxuryWhatsappBtn');
-
-        // Phone với hiệu ứng loading
-        phoneBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.playClickEffect();
-            this.animateButton('phone');
-            
-            setTimeout(() => {
-                this.trackInteraction('phone');
-                window.location.href = `tel:${this.phoneNumber}`;
-            }, 300);
-        });
-
-        // Zalo mở tab mới
-        zaloBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.playClickEffect();
-            this.animateButton('zalo');
-            
-            setTimeout(() => {
-                this.trackInteraction('zalo');
-                window.open(this.zaloLink, '_blank');
-            }, 300);
-        });
-
-        // WhatsApp
-        whatsappBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.playClickEffect();
-            this.animateButton('whatsapp');
-            
-            setTimeout(() => {
-                this.trackInteraction('whatsapp');
-                window.open(this.whatsappLink, '_blank');
-            }, 300);
-        });
-
-        // Hover effects
+    
+    setupOptimizedEvents() {
+    const phoneBtn = document.getElementById('optPhoneBtn');
+    const zaloBtn = document.getElementById('optZaloBtn');
+    const whatsappBtn = document.getElementById('optWhatsappBtn');
+    
+    // ⭐ CHỈ dùng passive cho scroll/touch events, KHÔNG dùng cho click
+    const passiveOptions = { passive: true, capture: false };
+    const activeOptions = { capture: false }; // Không có passive
+    
+    // Phone Button - KHÔNG dùng passive
+    phoneBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.handlePhoneClick();
+    }, activeOptions); // ⭐ Sửa thành activeOptions
+    
+    // Zalo Button - KHÔNG dùng passive
+    zaloBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.handleZaloClick();
+    }, activeOptions); // ⭐ Sửa thành activeOptions
+    
+    // WhatsApp Button - KHÔNG dùng passive
+    whatsappBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.handleWhatsAppClick();
+    }, activeOptions); // ⭐ Sửa thành activeOptions
+    
+    // Các sự kiện khác có thể dùng passive
+    if (this.isMobile) {
         [phoneBtn, zaloBtn, whatsappBtn].forEach(btn => {
-            btn.addEventListener('mouseenter', () => {
-                this.playHoverEffect();
-                this.createRippleEffect(btn);
-            });
-            
-            // Touch feedback
             btn.addEventListener('touchstart', () => {
                 btn.classList.add('active');
-            });
+            }, { passive: true }); // ✅ OK - không có preventDefault
             
             btn.addEventListener('touchend', () => {
                 setTimeout(() => btn.classList.remove('active'), 150);
-            });
-        });
-
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === '1' && e.altKey) {
-                phoneBtn.click();
-            } else if (e.key === '2' && e.altKey) {
-                zaloBtn.click();
-            } else if (e.key === '3' && e.altKey) {
-                whatsappBtn.click();
-            }
+            }, { passive: true }); // ✅ OK - không có preventDefault
         });
     }
-
-    animateButton(type) {
-        const btn = document.getElementById(`luxury${this.capitalize(type)}Btn`);
+}
+    
+    setupTooltipHover() {
+        // Debounce hover để tối ưu performance
+        let hoverTimeout;
+        const buttons = document.querySelectorAll('.optimized-btn');
+        
+        buttons.forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                clearTimeout(hoverTimeout);
+                hoverTimeout = setTimeout(() => {
+                    // Tooltip đã được CSS xử lý
+                }, 100);
+            }, { passive: true });
+            
+            btn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            }, { passive: true });
+        });
+    }
+    
+    // ===== CLICK HANDLERS =====
+    handlePhoneClick() {
+        this.trackInteraction('phone');
+        this.showClickFeedback('phone');
+        
+        // Slight delay để người dùng thấy feedback
+        setTimeout(() => {
+            window.location.href = `tel:${this.phoneNumber}`;
+        }, 150);
+    }
+    
+    handleZaloClick() {
+        this.trackInteraction('zalo');
+        this.showClickFeedback('zalo');
+        
+        setTimeout(() => {
+            window.open(this.zaloLink, '_blank', 'noopener,noreferrer');
+        }, 150);
+    }
+    
+    handleWhatsAppClick() {
+        this.trackInteraction('whatsapp');
+        this.showClickFeedback('whatsapp');
+        
+        setTimeout(() => {
+            window.open(this.whatsappLink, '_blank', 'noopener,noreferrer');
+        }, 150);
+    }
+    
+    // ===== FEEDBACK & TRACKING (LIGHTWEIGHT) =====
+    showClickFeedback(type) {
+        const btn = document.getElementById(`opt${this.capitalize(type)}Btn`);
         if (!btn) return;
         
-        // Thêm class loading
-        btn.classList.add('loading');
+        // Hiệu ứng click đơn giản
+        btn.style.transform = 'scale(0.95)';
         
-        // Hiệu ứng ripple
-        this.createClickRipple(btn);
-        
-        // Xóa loading sau 1s
         setTimeout(() => {
-            btn.classList.remove('loading');
-        }, 1000);
-    }
-
-    createRippleEffect(button) {
-        const ripple = document.createElement('div');
-        ripple.className = 'luxury-ripple';
+            btn.style.transform = '';
+        }, 150);
         
-        const rect = button.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        
-        ripple.style.cssText = `
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-            width: ${size}px;
-            height: ${size}px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            animation: rippleExpand 0.6s ease-out;
-            pointer-events: none;
-            z-index: 1;
-        `;
-        
-        button.appendChild(ripple);
-        
-        // Xóa sau animation
-        setTimeout(() => ripple.remove(), 600);
-    }
-
-    createClickRipple(button) {
-        const ripple = document.createElement('div');
-        ripple.className = 'click-ripple';
-        
-        ripple.style.cssText = `
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 70%);
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            transform: scale(0);
-            animation: clickRipple 0.5s ease-out;
-            pointer-events: none;
-            z-index: 1;
-        `;
-        
-        button.appendChild(ripple);
-        
-        setTimeout(() => ripple.remove(), 500);
-    }
-
-    playClickEffect() {
-        try {
-            if (typeof Howl !== 'undefined') {
-                // Nếu có Howl.js
-                const sound = new Howl({
-                    src: ['sounds/click.mp3'],
-                    volume: 0.3
-                });
-                sound.play();
-            } else {
-                // Fallback đơn giản
-                this.sounds.click.play();
-            }
-        } catch (e) {
-            console.log('Sound not available');
-        }
-    }
-
-    playHoverEffect() {
-        // Tạo âm thanh hover nhẹ
-        try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            oscillator.frequency.value = 523.25; // C5
-            oscillator.type = 'sine';
-            
-            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.05);
-            gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.2);
-            
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.2);
-        } catch (e) {
-            // Fallback silent
-        }
-    }
-
-    trackInteraction(type) {
-        this.stats[type]++;
-        this.stats.lastInteraction = Date.now();
-        
-        // Lưu vào localStorage
-        localStorage.setItem(`luxury_${type}_clicks`, this.stats[type]);
-        localStorage.setItem('last_contact_interaction', this.stats.lastInteraction);
-        
-        // Update badge
+        // Hiển thị badge nếu cần
         this.updateBadge(type);
-        
-        // Gửi analytics
-        this.sendEnhancedAnalytics(type);
-        
-        // Hiệu ứng thông báo
-        this.showNotification(type);
     }
-
-    updateBadge(type) {
-        const badge = document.getElementById(`${type}LuxuryBadge`);
-        if (badge && this.stats[type] > 0) {
-            badge.textContent = this.stats[type];
-            badge.style.display = 'flex';
-            
-            // Hiệu ứng badge mới
-            badge.classList.add('new-badge');
-            setTimeout(() => badge.classList.remove('new-badge'), 500);
-        }
-    }
-
-    showNotification(type) {
-        const messages = {
-            phone: '📞 Đang kết nối cuộc gọi...',
-            zalo: '💬 Mở Zalo để nhắn tin',
-            whatsapp: '💚 Mở WhatsApp để chat'
-        };
+    
+    trackInteraction(type) {
+        // Update local stats
+        this.stats[type] = (this.stats[type] || 0) + 1;
         
-        // Tạo toast notification
-        const toast = document.createElement('div');
-        toast.className = 'luxury-toast';
-        toast.textContent = messages[type];
+        // Lưu vào localStorage (debounced)
+        this.saveStatsDebounced();
         
-        toast.style.cssText = `
-            position: fixed;
-            top: 100px;
-            right: 30px;
-            background: linear-gradient(135deg, rgba(30,30,30,0.95), rgba(40,40,40,0.98));
-            color: var(--text-primary);
-            padding: 12px 20px;
-            border-radius: 10px;
-            border: 1px solid rgba(212,175,55,0.3);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 9999;
-            animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-out 2.7s forwards;
-        `;
-        
-        document.body.appendChild(toast);
-        
-        setTimeout(() => toast.remove(), 3000);
-    }
-
-    sendEnhancedAnalytics(type) {
-        const analyticsData = {
-            event: 'luxury_contact_click',
-            type: type,
-            timestamp: new Date().toISOString(),
-            page: window.location.pathname,
-            userAgent: navigator.userAgent,
-            screen: `${window.screen.width}x${window.screen.height}`,
-            totalClicks: this.stats[type],
-            sessionClicks: this.getSessionClicks()
-        };
-        
-        console.log('📊 Luxury Analytics:', analyticsData);
-        
-        // Google Analytics
+        // Analytics đơn giản
         if (typeof gtag !== 'undefined') {
-            gtag('event', 'luxury_contact', {
-                'event_category': 'conversion',
+            gtag('event', 'contact_click', {
+                'event_category': 'engagement',
                 'event_label': type,
                 'value': this.stats[type]
             });
         }
+    }
+    
+    updateBadge(type) {
+        const badge = document.getElementById(`opt${this.capitalize(type)}Badge`);
+        const count = this.stats[type];
         
-        // Facebook Pixel
-        if (typeof fbq !== 'undefined') {
-            fbq('trackCustom', 'LuxuryContactClick', { type: type });
+        if (count > 0) {
+            if (!badge) {
+                // Tạo badge nếu chưa có
+                const btn = document.getElementById(`opt${this.capitalize(type)}Btn`);
+                const badgeHTML = `<span class="optimized-badge" id="opt${this.capitalize(type)}Badge">${count}</span>`;
+                btn.insertAdjacentHTML('beforeend', badgeHTML);
+            } else {
+                // Update badge hiện có
+                badge.textContent = count;
+                badge.style.display = 'flex';
+                
+                // Hiệu ứng nhẹ
+                badge.style.animation = 'none';
+                setTimeout(() => {
+                    badge.style.animation = 'subtle-pulse 0.5s ease';
+                }, 10);
+            }
         }
     }
-
-    startAmbientAnimation() {
-        // Animation ngẫu nhiên cho các nút
-        setInterval(() => {
-            const buttons = document.querySelectorAll('.luxury-contact-btn');
-            const randomBtn = buttons[Math.floor(Math.random() * buttons.length)];
-            
-            if (randomBtn && Math.random() > 0.8) {
-                this.ambientPulse(randomBtn);
+    
+    // ===== PERFORMANCE OPTIMIZATIONS =====
+    observePerformance() {
+        // Theo dõi visibility để tạm dừng animations
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                this.pauseAnimations();
+            } else {
+                this.resumeAnimations();
             }
-        }, 8000);
-    }
-
-    ambientPulse(button) {
-        const originalAnimation = button.style.animation;
-        button.style.animation = 'ambientPulse 1s ease-in-out';
+        }, { passive: true });
         
-        setTimeout(() => {
-            button.style.animation = originalAnimation;
+        // Theo dõi battery trên supported browsers
+        if ('getBattery' in navigator) {
+            navigator.getBattery().then(battery => {
+                if (battery.level < 0.3) {
+                    this.enablePowerSavingMode();
+                }
+                
+                battery.addEventListener('levelchange', () => {
+                    if (battery.level < 0.2) {
+                        this.enablePowerSavingMode();
+                    }
+                });
+            });
+        }
+        
+        // Throttle scroll events để tránh performance hit
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            
+            // Tạm ẩn buttons khi đang scroll mạnh
+            const buttons = document.getElementById('optimizedContactButtons');
+            if (buttons) {
+                buttons.style.opacity = '0.7';
+                buttons.style.pointerEvents = 'none';
+                
+                scrollTimeout = setTimeout(() => {
+                    buttons.style.opacity = '1';
+                    buttons.style.pointerEvents = 'auto';
+                }, 300);
+            }
+        }, { passive: true });
+    }
+    
+    pauseAnimations() {
+        const buttons = document.querySelectorAll('.optimized-btn');
+        buttons.forEach(btn => {
+            btn.style.animationPlayState = 'paused';
+        });
+    }
+    
+    resumeAnimations() {
+        if (!this.shouldSkipAnimations()) {
+            const buttons = document.querySelectorAll('.optimized-btn');
+            buttons.forEach(btn => {
+                btn.style.animationPlayState = 'running';
+            });
+        }
+    }
+    
+    enablePowerSavingMode() {
+        // Tắt animations khi pin yếu
+        this.disableAnimations();
+        
+        // Giảm opacity
+        const container = document.getElementById('optimizedContactButtons');
+        if (container) {
+            container.style.opacity = '0.8';
+        }
+    }
+    
+    // ===== HELPER FUNCTIONS =====
+    getStat(type) {
+        try {
+            return parseInt(localStorage.getItem(`opt_${type}_clicks`)) || 0;
+        } catch {
+            return 0;
+        }
+    }
+    
+    saveStatsDebounced() {
+        clearTimeout(this.saveTimeout);
+        this.saveTimeout = setTimeout(() => {
+            try {
+                localStorage.setItem('opt_phone_clicks', this.stats.phone);
+                localStorage.setItem('opt_zalo_clicks', this.stats.zalo);
+                localStorage.setItem('opt_whatsapp_clicks', this.stats.whatsapp);
+            } catch (e) {
+                // Ignore localStorage errors
+            }
         }, 1000);
     }
-
-    // Helper functions
-    getStat(type) {
-        return parseInt(localStorage.getItem(`luxury_${type}_clicks`) || 0);
-    }
-
-    getSessionClicks() {
-        return this.stats.phone + this.stats.zalo + this.stats.whatsapp;
-    }
-
-    formatPhoneNumber(phone) {
+    
+    formatPhone(phone) {
         return phone.replace(/(\d{4})(\d{3})(\d{3})/, '$1.$2.$3');
     }
-
+    
     capitalize(str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 }
 
-// Thêm CSS animations
-const luxuryAnimations = `
-@keyframes rippleExpand {
-    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-    100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
-}
-
-@keyframes clickRipple {
-    0% { transform: scale(0); opacity: 1; }
-    100% { transform: scale(1.5); opacity: 0; }
-}
-
-@keyframes slideInRight {
-    from { transform: translateX(100px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
-
-@keyframes ambientPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-}
-
-@keyframes floatingSparkle {
-    0% { 
-        opacity: 0; 
-        transform: translate(0, 0) scale(0); 
+// ===== INITIALIZATION WRAPPER =====
+// Khởi tạo an toàn, không chặn page load
+(function() {
+    // Kiểm tra nếu đang ở trang cần scroll ngang
+    const hasHorizontalScroll = document.querySelector('.user-experience-row, .blog-horizontal-row, .gallery-grid');
+    
+    if (hasHorizontalScroll) {
+        // Delay thêm để đảm bảo scroll hoạt động trước
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const optimizedButtons = new OptimizedContactButtons();
+                optimizedButtons.init();
+                window.OptimizedContactButtons = optimizedButtons;
+            }, 1000);
+        }, { once: true });
+    } else {
+        // Trang không có scroll ngang, init sớm hơn
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const optimizedButtons = new OptimizedContactButtons();
+                optimizedButtons.init();
+                window.OptimizedContactButtons = optimizedButtons;
+            }, 500);
+        }, { once: true });
     }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { 
-        opacity: 0; 
-        transform: translate(${Math.random() * 50 - 25}px, ${Math.random() * 50 - 25}px) scale(1); 
-    }
+    
+    // Cleanup khi page unload
+    window.addEventListener('beforeunload', () => {
+        if (window.OptimizedContactButtons && window.OptimizedContactButtons.saveStatsDebounced) {
+            window.OptimizedContactButtons.saveStatsDebounced();
+        }
+    });
+})();
+
+// ===== EXPORT =====
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = OptimizedContactButtons;
 }
-
-.new-badge {
-    animation: newBadgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes newBadgePop {
-    0% { transform: scale(0); }
-    70% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
-`;
-
-// Thêm CSS vào document
-if (!document.getElementById('luxuryAnimations')) {
-    const style = document.createElement('style');
-    style.id = 'luxuryAnimations';
-    style.textContent = luxuryAnimations;
-    document.head.appendChild(style);
-}
-
-// Khởi tạo
-const luxuryContactButtons = new LuxuryContactButtons();
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => luxuryContactButtons.init());
-} else {
-    luxuryContactButtons.init();
-}
-
-// Tự động highlight sau delay
-setTimeout(() => {
-    if (luxuryContactButtons.stats.phone === 0) {
-        luxuryContactButtons.animateButton('phone');
-    }
-}, 8000);
-
-// Export
-window.luxuryContactButtons = luxuryContactButtons;
