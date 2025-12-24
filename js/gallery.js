@@ -1,3 +1,5 @@
+
+
 // ===== GALLERY FUNCTIONS =====
 let galleryData = { featured: [] };
 let galleryDatabase = null;
@@ -80,84 +82,6 @@ function loadGalleryFromLocalStorage() {
     }
 }
 
-// Render gallery
-function renderGallery() {
-    const container = document.getElementById('galleryContainer');
-    if (!container) {
-        console.log("ℹ️ Gallery container not found on this page");
-        return;
-    }
-    
-    // Clear loading skeleton
-    container.innerHTML = '';
-    
-    // Check if we have data
-    const items = galleryData.featured || [];
-    if (items.length === 0) {
-        container.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: var(--text-tertiary);">
-                <i class="fas fa-images" style="font-size: 48px; margin-bottom: 20px;"></i>
-                <h3>Đang cập nhật hình ảnh</h3>
-                <p>Gallery sẽ được cập nhật sớm</p>
-            </div>
-        `;
-        return;
-    }
-    
-    // Create gallery container
-    const galleryDiv = document.createElement('div');
-    galleryDiv.className = 'gallery-container';
-    
-    // Sort by order
-    const sortedItems = [...items].sort((a, b) => (a.order || 99) - (b.order || 99));
-    
-    // Create gallery cards
-    sortedItems.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'gallery-card';
-        
-        card.innerHTML = `
-            <div class="gallery-image-container">
-                <img src="${item.image}" alt="${item.title}" class="gallery-image" loading="lazy"
-                     onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800'">
-                <div class="gallery-category-badge">${getCategoryName(item.category)}</div>
-            </div>
-            <div class="gallery-info">
-                <h3 class="gallery-title">${item.title}</h3>
-                <p class="gallery-description">${item.description || 'Đang cập nhật...'}</p>
-                
-                ${item.tags && item.tags.length > 0 ? `
-                    <div class="gallery-tags">
-                        ${item.tags.slice(0, 3).map(tag => `
-                            <span class="gallery-tag">#${tag}</span>
-                        `).join('')}
-                    </div>
-                ` : ''}
-                
-                
-            </div>
-        `;
-        
-        // Add click event to open full view
-        card.addEventListener('click', function() {
-            console.log('bổ sung sau');
-        });
-        
-        galleryDiv.appendChild(card);
-    });
-    
-    container.appendChild(galleryDiv);
-    
-    // Add horizontal scroll hint
-    const scrollHint = document.createElement('div');
-    scrollHint.className = 'gallery-scroll-hint';
-    scrollHint.innerHTML = `
-        <span><i class="fas fa-hand-point-right"></i> Vuốt sang để xem thêm</span>
-        <i class="fas fa-chevron-right"></i>
-    `;
-    container.appendChild(scrollHint);
-    
-}
 
 // Lightbox
 function openGalleryLightbox(index) {
@@ -254,3 +178,116 @@ window.addEventListener('galleryUpdated', function() {
 document.addEventListener('DOMContentLoaded', function() {
     initGallery();
 });
+
+// Thêm vào hàm renderGallery()
+function renderGallery() {
+    const container = document.getElementById('galleryContainer');
+    if (!container) {
+        console.log("ℹ️ Gallery container not found on this page");
+        return;
+    }
+    
+    // Clear loading skeleton
+    container.innerHTML = '';
+    
+    // Check if we have data
+    const items = galleryData.featured || [];
+    if (items.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: var(--text-tertiary);">
+                <i class="fas fa-images" style="font-size: 48px; margin-bottom: 20px;"></i>
+                <h3>Đang cập nhật hình ảnh</h3>
+                <p>Gallery sẽ được cập nhật sớm</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Create gallery container
+    const galleryDiv = document.createElement('div');
+    galleryDiv.className = 'gallery-container gallery-touch-scroll';
+    
+    // Thêm event listener để xử lý touch events
+    galleryDiv.addEventListener('touchstart', handleTouchStart, { passive: true });
+    galleryDiv.addEventListener('touchmove', handleTouchMove, { passive: true });
+    galleryDiv.addEventListener('touchend', handleTouchEnd, { passive: true });
+    
+    // Sort by order
+    const sortedItems = [...items].sort((a, b) => (a.order || 99) - (b.order || 99));
+    
+    // Create gallery cards
+    sortedItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'gallery-card gallery-touch-scroll';
+        
+        card.innerHTML = `
+            <div class="gallery-image-container">
+                <img src="${item.image}" alt="${item.title}" class="gallery-image" loading="lazy"
+                     onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800'">
+                <div class="gallery-category-badge">${getCategoryName(item.category)}</div>
+            </div>
+            <div class="gallery-info">
+                <h3 class="gallery-title">${item.title}</h3>
+                <p class="gallery-description">${item.description || 'Đang cập nhật...'}</p>
+                
+                ${item.tags && item.tags.length > 0 ? `
+                    <div class="gallery-tags">
+                        ${item.tags.slice(0, 3).map(tag => `
+                            <span class="gallery-tag">#${tag}</span>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+        
+        // Add click event
+        card.addEventListener('click', function() {
+            console.log('bổ sung sau');
+        });
+        
+        galleryDiv.appendChild(card);
+    });
+    
+    container.appendChild(galleryDiv);
+    
+    // Add horizontal scroll hint
+    const scrollHint = document.createElement('div');
+    scrollHint.className = 'gallery-scroll-hint';
+    scrollHint.innerHTML = `
+        <span><i class="fas fa-hand-point-right"></i> Vuốt sang để xem thêm</span>
+        <i class="fas fa-chevron-right"></i>
+    `;
+    container.appendChild(scrollHint);
+}
+
+// Touch event handlers cho scroll mượt hơn
+let touchStartX = 0;
+let touchStartY = 0;
+let isScrolling = false;
+
+function handleTouchStart(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    isScrolling = false;
+}
+
+function handleTouchMove(e) {
+    if (!touchStartX || !touchStartY) return;
+    
+    const touchX = e.touches[0].clientX;
+    const touchY = e.touches[0].clientY;
+    
+    const diffX = touchStartX - touchX;
+    const diffY = touchStartY - touchY;
+    
+    // Chỉ xác định là scrolling khi diffX > diffY (scroll ngang)
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+        isScrolling = true;
+    }
+}
+
+function handleTouchEnd(e) {
+    touchStartX = 0;
+    touchStartY = 0;
+    isScrolling = false;
+}
