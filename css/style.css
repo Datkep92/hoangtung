@@ -144,10 +144,11 @@ a {
     z-index: 1000;
     background: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(20px);
-    padding: 12px 0;
+    padding: 0;
     border-bottom: 1px solid var(--divider);
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
 }
+
 
 .header-content {
     display: flex;
@@ -1264,26 +1265,9 @@ a {
     }
 }
 
-/* ===== HEADER ===== */
-.app-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(20px);
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-}
 
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-}
+
+
 
 /* Menu Toggle Button */
 .menu-toggle {
@@ -1305,43 +1289,6 @@ a {
 .menu-toggle:hover {
     background: rgba(212, 175, 55, 0.25);
     transform: translateY(-1px);
-}
-
-.menu-toggle:active {
-    transform: translateY(0);
-}
-
-/* Logo (Center) */
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: transform 0.3s ease;
-    flex: 1;
-    justify-content: center;
-    margin: 0 15px;
-}
-
-.logo:hover {
-    transform: scale(1.02);
-}
-
-.logo-icon {
-    color: var(--champagne);
-    font-size: 24px;
-    text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
-}
-
-.logo-text {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: 0.5px;
-}
-
-.logo-text span {
-    color: var(--champagne);
-    font-weight: 800;
 }
 
 /* Header Actions (Right) */
@@ -1443,9 +1390,9 @@ a {
     }
     
     .online-indicator {
-        padding: 6px 10px;
-        font-size: 13px;
-        min-width: 65px;
+        padding: 0px 0px;
+        font-size: 12px;
+        min-width: 40px;
     }
     
     .logo-icon {
@@ -1453,7 +1400,7 @@ a {
     }
     
     .logo-text {
-        font-size: 18px;
+        font-size: 14px;
     }
 }
 
@@ -1463,8 +1410,8 @@ a {
     }
     
     .online-indicator {
-        min-width: 60px;
-        padding: 6px 8px;
+        min-width: 40px;
+        padding: 4px 0px;
         font-size: 12px;
     }
     
@@ -1579,8 +1526,8 @@ a {
     border: 1px solid rgba(212, 175, 55, 0.3);
     border-radius: 8px;
     color: var(--text-primary);
-    padding: 8px 12px;
-    font-size: 14px;
+    padding: 5px 5px;
+    font-size: 12px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1690,4 +1637,9 @@ a {
     }
 }
 
-
+.app-header {
+    padding: 0;                /* loại bỏ padding mặc định */
+    height: 60px;              /* chiều cao header, tuỳ chỉnh */
+    display: flex;
+    align-items: center;       /* canh giữa nội dung theo chiều dọc */
+}
