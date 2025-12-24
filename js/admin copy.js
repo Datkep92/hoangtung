@@ -16,98 +16,12 @@ let adminToken = DEFAULT_ADMIN_TOKEN;
 let currentEditorType = null;
 let currentEditingId = null;
 let database = null;
-// 1. Cập nhật cấu trúc dataStore (Tìm biến dataStore và thêm settings)
 let dataStore = {
     services: { services: {} },
     experiences: { experiences: {} },
     gallery: { featured: [] },
-    blog: { posts: {} },
-    settings: { telegram: { token: '', chat_id: '' } } // Thêm dòng này
+    blog: { posts: {} }
 };
-
-// 2. Cập nhật hàm loadAllData để tải thêm settings
-async function loadAllData() {
-    showLoading(true);
-    try {
-        const [services, experiences, gallery, blog, settings] = await Promise.allSettled([
-            fetchFromFirebase('services'),
-            fetchFromFirebase('experiences'),
-            fetchFromFirebase('gallery'),
-            fetchFromFirebase('blog'),
-            fetchFromFirebase('settings') // Lấy thêm nhánh settings
-        ]);
-        
-        dataStore.services = services.value || { services: {} };
-        dataStore.experiences = experiences.value || { experiences: {} };
-        dataStore.gallery = gallery.value || { featured: [] };
-        dataStore.blog = blog.value || { posts: {} };
-        dataStore.settings = settings.value || { telegram: { token: '', chat_id: '' } };
-        
-        renderAllTabs();
-        fillTelegramSettings(); // Đưa dữ liệu vào form cấu hình
-        showStatus('Đã tải toàn bộ dữ liệu', 'success');
-    } catch (error) {
-        console.error("Load error:", error);
-        showStatus('Lỗi tải dữ liệu!', 'error');
-    } finally {
-        showLoading(false);
-    }
-}
-
-// 3. Hàm hiển thị tab (Đảm bảo tab settings hoạt động)
-function showTab(tabId) {
-    // Ẩn tất cả các nội dung tab
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.style.display = 'none';
-    });
-    
-    // Gỡ bỏ class active ở các nút
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    // Hiện tab được chọn
-    const targetTab = document.getElementById(tabId + 'Tab');
-    if (targetTab) {
-        targetTab.style.display = 'block';
-    }
-    
-    // Active nút bấm tương ứng
-    const activeBtn = Array.from(document.querySelectorAll('.tab-btn'))
-        .find(btn => btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`'${tabId}'`));
-    if (activeBtn) activeBtn.classList.add('active');
-}
-
-// 4. Các hàm quản lý Telegram
-function fillTelegramSettings() {
-    const tele = dataStore.settings.telegram || {};
-    const tokenInput = document.getElementById('teleBotToken');
-    const chatIdInput = document.getElementById('teleChatId');
-    
-    if (tokenInput) tokenInput.value = tele.token || '';
-    if (chatIdInput) chatIdInput.value = tele.chat_id || '';
-}
-
-async function saveTelegramSettings() {
-    const token = document.getElementById('teleBotToken').value.trim();
-    const chatId = document.getElementById('teleChatId').value.trim();
-    
-    if (!token || !chatId) {
-        showStatus('Vui lòng nhập đầy đủ thông tin!', 'error');
-        return;
-    }
-
-    dataStore.settings.telegram = {
-        token: token,
-        chat_id: chatId,
-        updated_at: new Date().toISOString()
-    };
-
-    const success = await saveToFirebase('settings', dataStore.settings);
-    if (success) {
-        showStatus('Đã lưu cấu hình Telegram!', 'success');
-    }
-}
 // Thêm vào đầu file hoặc trong phần initialization
 function initExperienceForm() {
     const benefitsInput = document.getElementById('editExpBenefits');

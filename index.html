@@ -161,32 +161,81 @@
     <!-- End Google Tag Manager (noscript) -->
     
     <!-- Header -->
-    <header class="app-header" role="banner">
-        <div class="header-content container">
-            <!-- Menu Toggle -->
-            <button class="menu-toggle" id="sidebarToggle" aria-label="Mở menu chính">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <!-- Logo -->
-            <div class="logo" itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
-                <meta itemprop="name" content="Hà Tùng">
-                <div class="logo-icon"><i class="fas fa-crown" aria-hidden="true"></i></div>
-                <div class="logo-text">HTU<span>Transport</span></div>
+<header class="app-header" role="banner">
+    <div class="header-content container">
+        <!-- Menu Toggle -->
+        <button class="menu-toggle" id="sidebarToggle" aria-label="Mở menu chính">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Logo -->
+        <div class="logo" itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
+            <meta itemprop="name" content="Hà Tùng">
+            <div class="logo-icon">
+                <img src="https://raw.githubusercontent.com/Datkep92/hoangtung/main/images/htu_vuong512notext.jpg" 
+                     alt="HTU Transport Logo" 
+                     width="60" 
+                     height="60">
             </div>
             
-            <!-- Header Actions -->
-            <div class="header-actions">
-                <div class="online-indicator" id="onlineIndicator" aria-label="Số khách đang online">
-                    <i class="fas fa-user" aria-hidden="true"></i>
-                    <span class="online-count" id="onlineBadge">0</span>
-                </div>
-                <a href="tel:0567033888" class="call-btn" aria-label="Gọi ngay">
-                    <i class="fas fa-phone-alt" aria-hidden="true"></i>
-                </a>
-            </div>
+            <div class="logo-text">HTU<span>Transport</span></div>
         </div>
-    </header>
+        
+        <!-- Sửa phần header actions -->
+<div class="header-actions">
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <!-- Nút custom của chúng ta - TRIGGER CHO GOOGLE TRANSLATE -->
+        <button class="language-btn notranslate" id="googleTranslateTrigger" aria-label="Chọn ngôn ngữ">
+            <i class="fas fa-globe notranslate"></i>
+            <span id="currentLanguageDisplay" class="notranslate">VI</span>
+            <i class="fas fa-chevron-down notranslate"></i>
+        </button>
+        
+        <!-- Google Translate Element (sẽ được JS tạo và ẩn) -->
+        <div id="google_translate_element" style="display: none;"></div>
+        
+        <!-- Custom dropdown cho chọn ngôn ngữ nhanh -->
+        <div class="language-dropdown notranslate" id="languageDropdown">
+            <a href="#" class="language-option notranslate" data-lang="vi">
+                <span class="language-flag notranslate">🇻🇳</span>
+                <span class="language-name notranslate">Tiếng Việt</span>
+                <span class="language-code notranslate">VI</span>
+            </a>
+            <a href="#" class="language-option notranslate" data-lang="en">
+                <span class="language-flag notranslate">🇺🇸</span>
+                <span class="language-name notranslate">English</span>
+                <span class="language-code notranslate">EN</span>
+            </a>
+            <a href="#" class="language-option notranslate" data-lang="ko">
+                <span class="language-flag notranslate">🇰🇷</span>
+                <span class="language-name notranslate">한국어</span>
+                <span class="language-code notranslate">KO</span>
+            </a>
+            <a href="#" class="language-option notranslate" data-lang="zh-CN">
+                <span class="language-flag notranslate">🇨🇳</span>
+                <span class="language-name notranslate">中文</span>
+                <span class="language-code notranslate">ZH</span>
+            </a>
+            <a href="#" class="language-option notranslate" data-lang="ja">
+                <span class="language-flag notranslate">🇯🇵</span>
+                <span class="language-name notranslate">日本語</span>
+                <span class="language-code notranslate">JA</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Thêm notranslate cho các phần tử khác nếu cần -->
+    <div class="call-btn notranslate" id="onlineIndicator" aria-label="Số khách đang online">
+        <i class="fas fa-user notranslate" aria-hidden="true"></i>
+        <span class="online-count notranslate" id="onlineBadge">0</span>
+    </div>
+    <a href="tel:0567033888" class="call-btn notranslate" aria-label="Gọi ngay">
+        <i class="fas fa-phone-alt notranslate" aria-hidden="true"></i>
+    </a>
+</div>
+    </div>
+</header>
 
     <!-- Gallery Section -->
     <section class="gallery-section" id="gallery" aria-labelledby="galleryTitle">
@@ -428,9 +477,12 @@
         <div class="sidebar-header">
             <div class="sidebar-header-content">
                 <div class="sidebar-logo">
-                    <i class="fas fa-crown"></i>
-                    <span>HTU<span>Transport</span></span>
-                </div>
+    <img src="https://raw.githubusercontent.com/Datkep92/hoangtung/main/images/htu_vuong512notext.jpg" 
+         alt="HTU Logo" 
+         width="40" 
+         height="40">
+    <span>HTU<span>Transport</span></span>
+</div>
                 <div class="sidebar-subtitle">Thống kê & Bảng giá</div>
             </div>
             <button class="sidebar-close" id="sidebarClose">
@@ -580,6 +632,7 @@
     <!-- Scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js" defer></script>
+    <script src="js/language.js" defer></script>
     <script src="js/script.js" defer></script>
     <script src="js/gallery.js" defer></script>
     <script src="js/pricing.js" defer></script>
