@@ -1,901 +1,500 @@
-// chatbot-pro.js - HTUTransport Professional Chatbot
-class HTUTransportProChatbot {
+// js/contact-buttons-luxury.js
+class LuxuryContactButtons {
     constructor() {
-        this.messages = [];
-        this.userPhone = localStorage.getItem('HTUTransport_user_phone') || '';
-        this.userName = localStorage.getItem('HTUTransport_user_name') || '';
-        this.conversationStage = 'welcome'; // welcome, asking, collecting, closing
-        this.chatOpen = false;
-        this.servicesData = null;
+        this.phoneNumber = '0567033888';
+        this.zaloLink = 'https://zalo.me/0567033888';
+        this.whatsappLink = `https://wa.me/840567033888?text=${encodeURIComponent('Xin chào HTUTransport! Tôi muốn tư vấn về dịch vụ xe.')}`;
+        
+        // Stats tracking
+        this.stats = {
+            phone: this.getStat('phone'),
+            zalo: this.getStat('zalo'),
+            whatsapp: this.getStat('whatsapp'),
+            lastInteraction: Date.now()
+        };
+        
+        // Sound effects
+        this.sounds = {
+            click: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=='), // Silent fallback
+            hover: null
+        };
     }
 
-    // Sửa hàm showNotification
-showNotification(text) {
-    const noti = document.getElementById('chatProNotification');
-    if (noti) {
-        noti.textContent = text;
-        noti.style.display = text ? 'block' : 'none';
+    init() {
+        this.createLuxuryButtons();
+        this.setupEventListeners();
+        this.createSparkles();
+        this.startAmbientAnimation();
         
-        if (text) {
-            // Auto hide after 5 seconds
-            setTimeout(() => {
-                if (noti.textContent === text) {
-                    noti.style.display = 'none';
-                }
-            }, 5000);
-        }
-    }
-}
-
-// Sửa hàm toggleChat
-toggleChat() {
-    this.chatOpen = !this.chatOpen;
-    const window = document.getElementById('chatbotProWindow');
-    const button = document.getElementById('chatbotProButton');
-    
-    if (!window || !button) {
-        console.error('Chatbot elements not found');
-        return;
-    }
-    
-    if (this.chatOpen) {
-        window.classList.add('active');
-        button.classList.add('active');
-        
-        // Focus input if exists
-        const input = document.getElementById('chatProInput');
-        if (input) input.focus();
-        
-        // Clear notification
-        this.showNotification('');
-        
-        // Load conversation history
-        this.loadConversationHistory();
-        
-    } else {
-        window.classList.remove('active');
-        button.classList.remove('active');
-    }
-}
-
-// Sửa hàm setupEventListeners để check element tồn tại
-setupEventListeners() {
-    const button = document.getElementById('chatbotProButton');
-    if (!button) {
-        console.error('Chatbot button not found');
-        return;
-    }
-    
-    button.addEventListener('click', () => this.toggleChat());
-    
-    // Click outside to close
-    document.addEventListener('click', (e) => {
-        const window = document.getElementById('chatbotProWindow');
-        const button = document.getElementById('chatbotProButton');
-        
-        if (!window || !button) return;
-        
-        if (this.chatOpen && 
-            !window.contains(e.target) && 
-            !button.contains(e.target)) {
-            this.toggleChat();
-        }
-    });
-}
-
-// Thêm hàm check DOM element trước khi thao tác
-checkElements() {
-    const requiredElements = [
-        'chatbotProContainer',
-        'chatbotProButton', 
-        'chatbotProWindow',
-        'chatProMessages',
-        'chatProInput'
-    ];
-    
-    const missing = requiredElements.filter(id => !document.getElementById(id));
-    
-    if (missing.length > 0) {
-        console.warn('Missing chatbot elements:', missing);
-        return false;
-    }
-    
-    return true;
-}
-
-// Sửa hàm init để check elements
-init() {
-    // Load services data
-    //this.loadServicesData();
-    
-    // Create UI
-    this.createProfessionalUI();
-    
-    // Check if elements were created successfully
-    setTimeout(() => {
-        if (this.checkElements()) {
-            this.setupEventListeners();
-            
-            // Auto welcome after 3 seconds
-            setTimeout(() => {
-                if (!localStorage.getItem('HTUTransport_chat_welcomed')) {
-                    this.showProfessionalWelcome();
-                }
-            }, 3000);
-            
-            console.log('✅ Chatbot initialized successfully');
-        } else {
-            console.error('❌ Chatbot failed to initialize - missing elements');
-        }
-    }, 100); // Small delay to ensure DOM is ready
-}
-
-    async loadServicesData() {
-        try {
-            const response = await fetch('https://raw.githubusercontent.com/Datkep92/hoangtung/main/data/services.json?v=' + Date.now());
-            if (response.ok) {
-                this.servicesData = await response.json();
-                console.log('✅ Loaded services data for chatbot');
-            }
-        } catch (error) {
-            console.log('ℹ️ No GitHub data for chatbot, using defaults');
-        }
+        console.log('💎 Luxury Contact Buttons initialized');
     }
 
-    createProfessionalUI() {
-        const html = `
-        <div class="chatbot-pro-container" id="chatbotProContainer">
-            <!-- Floating button -->
-            <div class="chatbot-pro-button" id="chatbotProButton">
-                <!-- Cập nhật phần icon trong chatbot-pro-button -->
-<div class="chatbot-pro-icon">
-    <i class="fas fa-headset"></i>
-    <div class="icon-ring"></div>
-    <!-- Sparkle dots -->
-    <div class="sparkle"></div>
-    <div class="sparkle"></div>
-    <div class="sparkle"></div>
-    <div class="sparkle"></div>
-</div>
+    createLuxuryButtons() {
+        const buttonsHTML = `
+            <div class="contact-buttons-luxury" id="luxuryContactButtons">
+                <!-- Nút Gọi Điện Vàng -->
+                <button class="luxury-contact-btn phone-btn-gold" id="luxuryPhoneBtn" 
+                        aria-label="Gọi điện cho HTUTransport">
+                    <div class="melt-effect"></div>
+                    <i class="fas fa-phone-alt"></i>
+                    <span class="luxury-tooltip">Gọi ngay: ${this.formatPhoneNumber(this.phoneNumber)}</span>
+                    <span class="luxury-badge" id="phoneLuxuryBadge">${this.stats.phone > 0 ? this.stats.phone : ''}</span>
+                </button>
+                
+                <!-- Nút Zalo Xanh Dương -->
+                <button class="luxury-contact-btn zalo-btn-blue" id="luxuryZaloBtn"
+                        aria-label="Nhắn tin Zalo cho HTUTransport">
+                    <div class="wave-effect"></div>
+                    <i class="fab fa-facebook-messenger"></i>
+                    <span class="luxury-tooltip">Zalo: ${this.formatPhoneNumber(this.phoneNumber)}</span>
+                    <span class="luxury-badge" id="zaloLuxuryBadge">${this.stats.zalo > 0 ? this.stats.zalo : ''}</span>
+                </button>
+                
+                <!-- Nút WhatsApp Xanh Lá -->
+                <button class="luxury-contact-btn whatsapp-btn-green" id="luxuryWhatsappBtn"
+                        aria-label="Chat WhatsApp với HTUTransport">
+                    <div class="leaf-effect"></div>
+                    <i class="fab fa-whatsapp"></i>
+                    <span class="luxury-tooltip">WhatsApp: ${this.formatPhoneNumber(this.phoneNumber)}</span>
+                    <span class="luxury-badge" id="whatsappLuxuryBadge">${this.stats.whatsapp > 0 ? this.stats.whatsapp : ''}</span>
+                </button>
             </div>
-
-            <!-- Chat window -->
-            <div class="chatbot-pro-window" id="chatbotProWindow">
-                <div class="chatbot-pro-header">
-                    <div class="chatbot-pro-avatar">
-                        <i class="fas fa-crown"></i>
-                    </div>
-                    <div class="chatbot-pro-info">
-                        <h4>Trợ lý</h4>
-                        <p class="chatbot-pro-status">
-                            <span class="status-dot"></span>
-                            online
-                        </p>
-                    </div>
-                    <div class="chatbot-pro-actions">
-                        <button class="chat-action-btn" title="Gọi điện" onclick="window.location.href='tel:0567033888'">
-                            <i class="fas fa-phone"></i>
-                        </button>
-                        <button class="chat-action-btn" title="Zalo" onclick="window.open('https://zalo.me/0567033888')">
-                            <i class="fab fa-facebook-messenger"></i>
-                        </button>
-                        <button class="chat-action-btn" title="Đóng" onclick="chatbotPro.toggleChat()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="chatbot-pro-messages" id="chatProMessages">
-                    <!-- Messages will load here -->
-                </div>
-
-                <div class="chatbot-pro-input-section">
-                    <div class="chatbot-pro-quick-actions" id="quickActions">
-                        <button class="quick-action" onclick="chatbotPro.quickAction('pricing')">
-                            <i class="fas fa-tags"></i> Báo giá
-                        </button>
-                        <button class="quick-action" onclick="chatbotPro.quickAction('booking')">
-                            <i class="fas fa-calendar-alt"></i> Đặt xe
-                        </button>
-                        <button class="quick-action" onclick="chatbotPro.quickAction('contact')">
-                            <i class="fas fa-phone"></i> Liên hệ
-                        </button>
-                    </div>
-
-                    <div class="chatbot-pro-input-area">
-                        <input type="text" id="chatProInput" 
-                               placeholder="Nhập câu hỏi của bạn..." 
-                               onkeypress="if(event.key==='Enter') chatbotPro.sendMessage()">
-                        <button class="chatbot-pro-send" onclick="chatbotPro.sendMessage()">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-
-                   
-                </div>
-            </div>
-        </div>
         `;
 
-        document.body.insertAdjacentHTML('beforeend', html);
+        document.body.insertAdjacentHTML('beforeend', buttonsHTML);
+        
+        // Tạo sparkles động
+        this.createDynamicSparkles();
+    }
+
+    createSparkles() {
+        const buttons = document.querySelectorAll('.luxury-contact-btn');
+        buttons.forEach(btn => {
+            for (let i = 1; i <= 6; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = `sparkle-diamond sparkle-${i}`;
+                btn.appendChild(sparkle);
+            }
+        });
+    }
+
+    createDynamicSparkles() {
+        // Tạo sparkles ngẫu nhiên bay xung quanh
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                this.createFloatingSparkle();
+            }
+        }, 2000);
+    }
+
+    createFloatingSparkle() {
+        const container = document.getElementById('luxuryContactButtons');
+        const sparkle = document.createElement('div');
+        sparkle.className = 'floating-sparkle';
+        
+        // Random position
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+        
+        sparkle.style.cssText = `
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--diamond-sparkle);
+            border-radius: 50%;
+            top: ${y}%;
+            left: ${x}%;
+            box-shadow: 0 0 6px var(--diamond-sparkle);
+            animation: floatingSparkle 3s ease-in-out forwards;
+        `;
+        
+        container.appendChild(sparkle);
+        
+        // Xóa sau animation
+        setTimeout(() => sparkle.remove(), 3000);
     }
 
     setupEventListeners() {
-        document.getElementById('chatbotProButton').addEventListener('click', () => this.toggleChat());
-        
-        // Click outside to close
-        document.addEventListener('click', (e) => {
-            const window = document.getElementById('chatbotProWindow');
-            const button = document.getElementById('chatbotProButton');
+        const phoneBtn = document.getElementById('luxuryPhoneBtn');
+        const zaloBtn = document.getElementById('luxuryZaloBtn');
+        const whatsappBtn = document.getElementById('luxuryWhatsappBtn');
+
+        // Phone với hiệu ứng loading
+        phoneBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.playClickEffect();
+            this.animateButton('phone');
             
-            if (this.chatOpen && 
-                !window.contains(e.target) && 
-                !button.contains(e.target)) {
-                this.toggleChat();
-            }
+            setTimeout(() => {
+                this.trackInteraction('phone');
+                window.location.href = `tel:${this.phoneNumber}`;
+            }, 300);
         });
-    }
 
-    showProfessionalWelcome() {
-        localStorage.setItem('HTUTransport_chat_welcomed', 'true');
-        
-        this.addMessage('bot', `
-            <div class="welcome-message">
-                <div class="welcome-header">
-                    <i class="fas fa-crown welcome-icon"></i>
-                    <h3>Xin chào Quý khách!</h3>
-                </div>
-                <p>Tôi là <strong>Trợ lý ảo HTUTransport</strong> - được huấn luyện để hỗ trợ bạn 24/7.</p>
-                <div class="welcome-features">
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Tư vấn dịch vụ cao cấp</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Báo giá tham khảo nhanh</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Kết nối đội ngũ chuyên nghiệp</span>
-                    </div>
-                </div>
-                <p class="welcome-note">Để được tư vấn <strong>chính xác và cá nhân hóa</strong>, vui lòng cung cấp số điện thoại.</p>
-            </div>
-        `);
-        
-        this.showNotification('Có tin nhắn mới');
-    }
-
-
-
-    addMessage(sender, htmlContent) {
-        const messagesDiv = document.getElementById('chatProMessages');
-        const messageDiv = document.createElement('div');
-        
-        messageDiv.className = `chat-pro-message ${sender}-message`;
-        messageDiv.innerHTML = htmlContent;
-        
-        messagesDiv.appendChild(messageDiv);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        
-        // Save to history
-        this.messages.push({
-            sender,
-            content: htmlContent,
-            time: new Date().toISOString()
+        // Zalo mở tab mới
+        zaloBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.playClickEffect();
+            this.animateButton('zalo');
+            
+            setTimeout(() => {
+                this.trackInteraction('zalo');
+                window.open(this.zaloLink, '_blank');
+            }, 300);
         });
-        
-        this.saveConversationHistory();
-    }
 
-    sendMessage() {
-        const input = document.getElementById('chatProInput');
-        const message = input.value.trim();
-        
-        if (!message) return;
-        
-        // Add user message
-        this.addMessage('user', `
-            <div class="user-message-content">
-                <strong>Bạn:</strong> ${this.escapeHtml(message)}
-            </div>
-        `);
-        
-        input.value = '';
-        
-        // Process after delay
-        setTimeout(() => {
-            this.processProfessionalMessage(message);
-        }, 600);
-    }
-
-    quickAction(action) {
-        const actions = {
-            'pricing': 'Tôi muốn xem bảng giá dịch vụ',
-            'booking': 'Tôi muốn đặt xe dịch vụ',
-            'contact': 'Tôi cần liên hệ tư vấn ngay'
-        };
-        
-        document.getElementById('chatProInput').value = actions[action];
-        this.sendMessage();
-    }
-
-    async processProfessionalMessage(message) {
-        const lowerMsg = message.toLowerCase();
-        
-        // Show typing indicator
-        this.showTypingIndicator();
-        
-        // Simulate processing delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        // Remove typing indicator
-        this.hideTypingIndicator();
-        
-        // Route to appropriate handler
-        if (this.isPricingRequest(lowerMsg)) {
-            await this.handlePricingRequest();
+        // WhatsApp
+        whatsappBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.playClickEffect();
+            this.animateButton('whatsapp');
             
-        } else if (this.isBookingRequest(lowerMsg)) {
-            await this.handleBookingRequest();
-            
-        } else if (this.isContactRequest(lowerMsg)) {
-            await this.handleContactRequest();
-            
-        } else if (this.isThankYou(lowerMsg)) {
-            this.handleThankYou();
-            
-        } else {
-            await this.handleGeneralInquiry(message);
-        }
-    }
+            setTimeout(() => {
+                this.trackInteraction('whatsapp');
+                window.open(this.whatsappLink, '_blank');
+            }, 300);
+        });
 
-    showTypingIndicator() {
-        const messagesDiv = document.getElementById('chatProMessages');
-        const typingDiv = document.createElement('div');
-        typingDiv.className = 'typing-indicator';
-        typingDiv.id = 'typingIndicator';
-        typingDiv.innerHTML = `
-            <div class="typing-dots">
-                <span></span><span></span><span></span>
-            </div>
-            <span class="typing-text">Trợ lý đang soạn tin nhắn...</span>
-        `;
-        messagesDiv.appendChild(typingDiv);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    hideTypingIndicator() {
-        const typing = document.getElementById('typingIndicator');
-        if (typing) typing.remove();
-    }
-
-    isPricingRequest(message) {
-        const keywords = ['giá', 'báo giá', 'chi phí', 'phí', 'bao nhiêu tiền', 'giá cả', 'cost', 'price'];
-        return keywords.some(keyword => message.includes(keyword));
-    }
-
-    isBookingRequest(message) {
-        const keywords = ['đặt xe', 'book', 'đặt lịch', 'thuê xe', 'đón', 'chuyến', 'di chuyển', 'đi lại'];
-        return keywords.some(keyword => message.includes(keyword));
-    }
-
-    isContactRequest(message) {
-        const keywords = ['liên hệ', 'sđt', 'số điện thoại', 'phone', 'gọi lại', 'alo', 'zalo', 'contact'];
-        return keywords.some(keyword => message.includes(keyword));
-    }
-
-    isThankYou(message) {
-        const keywords = ['cảm ơn', 'thanks', 'thank you', 'cám ơn'];
-        return keywords.some(keyword => message.includes(keyword));
-    }
-
-    async handlePricingRequest() {
-        // Start with apology for not giving exact prices
-        this.addMessage('bot', `
-            <div class="bot-message-content">
-                <div class="message-header">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <strong>Thông tin quan trọng về báo giá</strong>
-                </div>
-                <p>Xin lỗi Quý khách, <strong>tôi không thể cung cấp giá chính xác</strong> vì:</p>
-                <ul class="reason-list">
-                    <li>Giá dịch vụ thay đổi theo thời điểm</li>
-                    <li>Phụ thuộc vào lộ trình cụ thể</li>
-                    <li>Có nhiều chương trình ưu đãi đặc biệt</li>
-                    <li>Chi phí nhiên liệu biến động</li>
-                </ul>
-                <p>Tuy nhiên, tôi có thể cung cấp <strong>bảng giá tham khảo</strong> để bạn hình dung:</p>
-            </div>
-        `);
-        
-        // Show reference pricing from GitHub or default
-        await this.showReferencePricing();
-        
-        // Always ask for phone number for accurate pricing
-        setTimeout(() => {
-            this.askForContactInfo('pricing');
-        }, 800);
-    }
-
-    async showReferencePricing() {
-        let pricingHTML = '';
-        
-        if (this.servicesData?.services) {
-            // Get pricing from GitHub data
-            const services = Object.values(this.servicesData.services);
-            const sampleServices = services.slice(0, 3); // Show first 3 services
-            
-            pricingHTML = `
-                <div class="pricing-reference">
-                    <div class="pricing-header">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                        <h4>Bảng giá tham khảo (cập nhật từ hệ thống)</h4>
-                    </div>
-                    <div class="pricing-items">
-            `;
-            
-            sampleServices.forEach(service => {
-                if (service.pricing && service.pricing.length > 0) {
-                    const price = service.pricing[0];
-                    pricingHTML += `
-                        <div class="pricing-item">
-                            <span class="service-name">${service.title}</span>
-                            <span class="service-price">${price.price || 'Liên hệ'}</span>
-                        </div>
-                    `;
-                }
+        // Hover effects
+        [phoneBtn, zaloBtn, whatsappBtn].forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                this.playHoverEffect();
+                this.createRippleEffect(btn);
             });
             
-            pricingHTML += `
-                    </div>
-                    <p class="pricing-note"><i class="fas fa-info-circle"></i> Giá trên chỉ mang tính tham khảo</p>
-                </div>
-            `;
+            // Touch feedback
+            btn.addEventListener('touchstart', () => {
+                btn.classList.add('active');
+            });
             
-        } else {
-            // Default pricing
-            pricingHTML = `
-                <div class="pricing-reference">
-                    <div class="pricing-header">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                        <h4>Bảng giá tham khảo</h4>
-                    </div>
-                    <div class="pricing-items">
-                        <div class="pricing-item">
-                            <span class="service-name">Đưa đón sân bay</span>
-                            <span class="service-price">Từ 450,000 VND</span>
-                        </div>
-                        <div class="pricing-item">
-                            <span class="service-name">Tour du lịch 1 ngày</span>
-                            <span class="service-price">Từ 1,200,000 VND</span>
-                        </div>
-                        <div class="pricing-item">
-                            <span class="service-name">Thuê xe có tài xế</span>
-                            <span class="service-price">Từ 350,000 VND/giờ</span>
-                        </div>
-                    </div>
-                    <p class="pricing-note"><i class="fas fa-info-circle"></i> Giá chưa bao gồm VAT & phụ phí</p>
-                </div>
-            `;
-        }
-        
-        this.addMessage('bot', pricingHTML);
-    }
+            btn.addEventListener('touchend', () => {
+                setTimeout(() => btn.classList.remove('active'), 150);
+            });
+        });
 
-    askForContactInfo(context = 'general') {
-        const contextMessages = {
-            'pricing': 'Để nhận <strong>báo giá chính xác và ưu đãi tốt nhất</strong>, vui lòng để lại số điện thoại.',
-            'booking': 'Để <strong>đặt xe nhanh chóng và xác nhận lịch trình</strong>, chúng tôi cần số điện thoại của bạn.',
-            'general': 'Để được <strong>tư vấn chuyên nghiệp và hỗ trợ tốt nhất</strong>, xin vui lòng cung cấp số điện thoại.'
-        };
-        
-        this.addMessage('bot', `
-            <div class="contact-request">
-                <div class="contact-header">
-                    <i class="fas fa-phone-volume"></i>
-                    <h4>Kết nối với chuyên viên</h4>
-                </div>
-                <p>${contextMessages[context] || contextMessages['general']}</p>
-                <p><strong>Chúng tôi cam kết:</strong></p>
-                <ul class="commitment-list">
-                    <li>📞 Gọi lại trong <strong>3 phút</strong></li>
-                    <li>💰 Báo giá <strong>cạnh tranh nhất</strong></li>
-                    <li>👔 Tư vấn bởi <strong>chuyên viên HTUTransport</strong></li>
-                    <li>⏰ Hỗ trợ <strong>24/7</strong></li>
-                </ul>
-                
-                <div class="contact-options">
-                    <button class="contact-option-btn primary" onclick="chatbotPro.showPhoneForm()">
-                        <i class="fas fa-mobile-alt"></i>
-                        <span>Để lại số điện thoại</span>
-                    </button>
-                    <button class="contact-option-btn secondary" onclick="window.location.href='tel:0567033888'">
-                        <i class="fas fa-phone"></i>
-                        <span>Gọi ngay: 0567.033.888</span>
-                    </button>
-                    <button class="contact-option-btn secondary" onclick="window.open('https://zalo.me/0567033888')">
-                        <i class="fab fa-facebook-messenger"></i>
-                        <span>Nhắn tin Zalo</span>
-                    </button>
-                </div>
-            </div>
-        `);
-    }
-
-    showPhoneForm() {
-        this.addMessage('bot', `
-            <div class="phone-form-container">
-                <div class="phone-form-header">
-                    <i class="fas fa-user-check"></i>
-                    <h4>Thông tin liên hệ</h4>
-                </div>
-                <p>Vui lòng điền thông tin để chuyên viên liên hệ:</p>
-                
-                <div class="form-group">
-                    <label for="proPhoneInput"><i class="fas fa-mobile-alt"></i> Số điện thoại *</label>
-                    <input type="tel" id="proPhoneInput" placeholder="0567.033.888" 
-                           pattern="[0-9]{10,11}" maxlength="11">
-                </div>
-                
-                <div class="form-group">
-                    <label for="proNameInput"><i class="fas fa-user"></i> Tên của bạn</label>
-                    <input type="text" id="proNameInput" placeholder="Nguyễn Văn A">
-                </div>
-                
-                <div class="form-group">
-                    <label for="proServiceSelect"><i class="fas fa-car"></i> Dịch vụ quan tâm</label>
-                    <select id="proServiceSelect">
-                        <option value="">Chọn dịch vụ</option>
-                        <option value="airport">Đưa đón sân bay</option>
-                        <option value="tour">Tour du lịch</option>
-                        <option value="business">Dịch vụ doanh nghiệp</option>
-                        <option value="rental">Thuê xe có tài xế</option>
-                        <option value="wedding">Xe cưới & sự kiện</option>
-                        <option value="other">Dịch vụ khác</option>
-                    </select>
-                </div>
-                
-                <div class="form-actions">
-                    <button class="form-submit-btn" onclick="chatbotPro.submitContactForm()">
-                        <i class="fas fa-paper-plane"></i>
-                        Gửi thông tin
-                    </button>
-                    <button class="form-cancel-btn" onclick="chatbotPro.cancelContactForm()">
-                        Hủy bỏ
-                    </button>
-                </div>
-                
-                <p class="form-note">
-                    <i class="fas fa-shield-alt"></i>
-                    Thông tin được bảo mật tuyệt đối
-                </p>
-            </div>
-        `);
-        
-        // Auto focus
-        setTimeout(() => {
-            document.getElementById('proPhoneInput')?.focus();
-        }, 100);
-    }
-
-    async submitContactForm() {
-        const phone = document.getElementById('proPhoneInput')?.value.trim();
-        const name = document.getElementById('proNameInput')?.value.trim();
-        const service = document.getElementById('proServiceSelect')?.value;
-        
-        if (!phone || !/^(0|\+84)(3[2-9]|5[2689]|7[06-9]|8[1-9]|9[0-9])[0-9]{7}$/.test(phone)) {
-            this.addMessage('bot', `
-                <div class="error-message">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <strong>Vui lòng nhập số điện thoại hợp lệ (10-11 số, bắt đầu bằng 0)</strong>
-                </div>
-            `);
-            return;
-        }
-        
-        // Save user info
-        this.userPhone = phone;
-        this.userName = name;
-        localStorage.setItem('HTUTransport_user_phone', phone);
-        if (name) localStorage.setItem('HTUTransport_user_name', name);
-        
-        // Remove form
-        const form = document.querySelector('.phone-form-container');
-        if (form) form.remove();
-        
-        // Show confirmation
-        this.addMessage('bot', `
-            <div class="confirmation-message">
-                <div class="confirmation-header">
-                    <i class="fas fa-check-circle"></i>
-                    <h4>✅ Đã ghi nhận thông tin</h4>
-                </div>
-                <p><strong>Cảm ơn ${name || 'Quý khách'}!</strong></p>
-                <p>Chuyên viên HTUTransport sẽ liên hệ qua số:</p>
-                <div class="contact-highlight">
-                    <i class="fas fa-phone"></i>
-                    <span class="phone-number">${phone}</span>
-                </div>
-                <p class="confirmation-time">
-                    <i class="fas fa-clock"></i>
-                    Thời gian: <strong>Trong 3 phút</strong>
-                </p>
-                <div class="next-steps">
-                    <p><strong>Tiếp theo sẽ:</strong></p>
-                    <ol>
-                        <li>Chuyên viên gọi xác nhận thông tin</li>
-                        <li>Tư vấn chi tiết dịch vụ phù hợp</li>
-                        <li>Báo giá ưu đãi đặc biệt</li>
-                        <li>Hỗ trợ đặt xe nhanh chóng</li>
-                    </ol>
-                </div>
-                <p class="thank-you-note">Trân trọng cảm ơn sự tin tưởng của Quý khách! ❤️</p>
-            </div>
-        `);
-        
-        // Send notification to admin (can be Zalo/Email/SMS)
-        await this.notifyAdmin(phone, name, service);
-        
-        // Update conversation stage
-        this.conversationStage = 'closing';
-    }
-
-    cancelContactForm() {
-        const form = document.querySelector('.phone-form-container');
-        if (form) form.remove();
-        
-        this.addMessage('bot', `
-            <div class="cancel-message">
-                <p>Không sao cả! Bạn có thể liên hệ bất cứ khi nào:</p>
-                <div class="contact-options-inline">
-                    <button onclick="window.location.href='tel:0567033888'" class="inline-btn">
-                        <i class="fas fa-phone"></i> Gọi ngay
-                    </button>
-                    <button onclick="window.open('https://zalo.me/0567033888')" class="inline-btn">
-                        <i class="fab fa-facebook-messenger"></i> Zalo
-                    </button>
-                </div>
-            </div>
-        `);
-    }
-
-    async notifyAdmin(phone, name, service) {
-        // This is where you would integrate with Zalo API, Email, or SMS
-        console.log('📤 Notify admin:', { phone, name, service });
-        
-        // Example: Send to webhook
-        try {
-            const webhookData = {
-                type: 'new_lead',
-                phone: phone,
-                name: name || 'Khách hàng',
-                service: service || 'general',
-                source: 'website_chatbot',
-                timestamp: new Date().toISOString(),
-                url: window.location.href
-            };
-            
-            // Uncomment to enable webhook
-            // await fetch('YOUR_WEBHOOK_URL', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(webhookData)
-            // });
-            
-        } catch (error) {
-            console.error('Notification error:', error);
-        }
-    }
-
-    async handleBookingRequest() {
-        this.addMessage('bot', `
-            <div class="booking-assistance">
-                <div class="booking-header">
-                    <i class="fas fa-calendar-check"></i>
-                    <h4>Hỗ trợ đặt xe chuyên nghiệp</h4>
-                </div>
-                <p>Để đặt xe <strong>nhanh chóng và chính xác</strong>, chúng tôi cần:</p>
-                <ul class="booking-requirements">
-                    <li>📅 Thời gian & địa điểm đón</li>
-                    <li>👥 Số lượng hành khách</li>
-                    <li>🚗 Loại xe yêu cầu</li>
-                    <li>📍 Lộ trình di chuyển</li>
-                </ul>
-                <p><strong>Quy trình đặt xe HTUTransport:</strong></p>
-                <ol class="booking-process">
-                    <li>Tư vấn dịch vụ phù hợp</li>
-                    <li>Xác nhận lộ trình chi tiết</li>
-                    <li>Báo giá ưu đãi đặc biệt</li>
-                    <li>Đặt cọc & xác nhận booking</li>
-                    <li>Theo dõi hành trình 24/7</li>
-                </ol>
-            </div>
-        `);
-        
-        setTimeout(() => {
-            this.askForContactInfo('booking');
-        }, 1000);
-    }
-
-    async handleContactRequest() {
-        this.addMessage('bot', `
-            <div class="direct-contact">
-                <div class="contact-header">
-                    <i class="fas fa-comments"></i>
-                    <h4>Kênh liên hệ trực tiếp</h4>
-                </div>
-                <p>Để được hỗ trợ <strong>nhanh nhất và hiệu quả nhất</strong>:</p>
-                
-                <div class="contact-channels">
-                    <div class="channel-card primary">
-                        <div class="channel-icon">
-                            <i class="fas fa-phone"></i>
-                        </div>
-                        <div class="channel-info">
-                            <h5>Gọi điện trực tiếp</h5>
-                            <p class="channel-detail">0567.033.888</p>
-                            <p class="channel-note">Phản hồi ngay lập tức</p>
-                        </div>
-                        <button class="channel-action" onclick="window.location.href='tel:0567033888'">
-                            Gọi ngay
-                        </button>
-                    </div>
-                    
-                    <div class="channel-card">
-                        <div class="channel-icon">
-                            <i class="fab fa-facebook-messenger"></i>
-                        </div>
-                        <div class="channel-info">
-                            <h5>Zalo Official</h5>
-                            <p class="channel-detail">0567.033.888</p>
-                            <p class="channel-note">Nhắn tin miễn phí</p>
-                        </div>
-                        <button class="channel-action" onclick="window.open('https://zalo.me/0567033888')">
-                            Mở Zalo
-                        </button>
-                    </div>
-                    
-                    <div class="channel-card">
-                        <div class="channel-icon">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <div class="channel-info">
-                            <h5>Email chuyên nghiệp</h5>
-                            <p class="channel-detail">contact@HTUTransport.vn</p>
-                            <p class="channel-note">Phản hồi trong 1h</p>
-                        </div>
-                        <button class="channel-action" onclick="window.location.href='mailto:contact@HTUTransport.vn'">
-                            Gửi Email
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="contact-note">
-                    <i class="fas fa-clock"></i>
-                    <span>Đội ngũ hỗ trợ làm việc <strong>24/7</strong> kể cả cuối tuần & ngày lễ</span>
-                </div>
-            </div>
-        `);
-    }
-
-    handleThankYou() {
-        this.addMessage('bot', `
-            <div class="thank-you-response">
-                <div class="thank-you-header">
-                    <i class="fas fa-heart"></i>
-                    <h4>Trân trọng cảm ơn!</h4>
-                </div>
-                <p>Rất vui được phục vụ Quý khách! ❤️</p>
-                <p>Nếu cần hỗ trợ thêm, chúng tôi luôn sẵn sàng:</p>
-                <div class="thank-you-contacts">
-                    <p><strong>📞 Hotline:</strong> 0567.033.888</p>
-                    <p><strong>💬 Zalo:</strong> 0567.033.888</p>
-                    <p><strong>📧 Email:</strong> contact@HTUTransport.vn</p>
-                </div>
-                <p class="closing-note">Chúc Quý khách một ngày tốt lành! 🚗💨</p>
-            </div>
-        `);
-    }
-
-    async handleGeneralInquiry(message) {
-        this.addMessage('bot', `
-            <div class="general-response">
-                <div class="response-header">
-                    <i class="fas fa-lightbulb"></i>
-                    <h4>Cảm ơn câu hỏi của bạn!</h4>
-                </div>
-                <p>Tôi hiểu bạn đang hỏi về: <strong>"${this.escapeHtml(message)}"</strong></p>
-                <p>Để cung cấp thông tin <strong>chính xác và hữu ích nhất</strong>, tôi cần kết nối bạn với chuyên viên tư vấn.</p>
-                
-                <div class="expert-benefits">
-                    <p><strong>Lợi ích khi tư vấn với chuyên viên:</strong></p>
-                    <ul>
-                        <li>✅ Thông tin cập nhật mới nhất</li>
-                        <li>✅ Tư vấn cá nhân hóa theo nhu cầu</li>
-                        <li>✅ Báo giá chính xác với ưu đãi đặc biệt</li>
-                        <li>✅ Hỗ trợ đặt dịch vụ nhanh chóng</li>
-                    </ul>
-                </div>
-            </div>
-        `);
-        
-        setTimeout(() => {
-            this.askForContactInfo('general');
-        }, 1000);
-    }
-
-    // Utility functions
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    saveConversationHistory() {
-        const history = {
-            messages: this.messages.slice(-50), // Keep last 50 messages
-            lastUpdated: new Date().toISOString()
-        };
-        
-        localStorage.setItem('HTUTransport_conversation_history', JSON.stringify(history));
-    }
-
-    loadConversationHistory() {
-        const saved = localStorage.getItem('HTUTransport_conversation_history');
-        if (saved && this.messages.length === 0) {
-            try {
-                const history = JSON.parse(saved);
-                history.messages.forEach(msg => {
-                    const messageDiv = document.createElement('div');
-                    messageDiv.className = `chat-pro-message ${msg.sender}-message`;
-                    messageDiv.innerHTML = msg.content;
-                    document.getElementById('chatProMessages').appendChild(messageDiv);
-                });
-                
-                this.messages = history.messages;
-            } catch (e) {
-                console.error('Load history error:', e);
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '1' && e.altKey) {
+                phoneBtn.click();
+            } else if (e.key === '2' && e.altKey) {
+                zaloBtn.click();
+            } else if (e.key === '3' && e.altKey) {
+                whatsappBtn.click();
             }
+        });
+    }
+
+    animateButton(type) {
+        const btn = document.getElementById(`luxury${this.capitalize(type)}Btn`);
+        if (!btn) return;
+        
+        // Thêm class loading
+        btn.classList.add('loading');
+        
+        // Hiệu ứng ripple
+        this.createClickRipple(btn);
+        
+        // Xóa loading sau 1s
+        setTimeout(() => {
+            btn.classList.remove('loading');
+        }, 1000);
+    }
+
+    createRippleEffect(button) {
+        const ripple = document.createElement('div');
+        ripple.className = 'luxury-ripple';
+        
+        const rect = button.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        
+        ripple.style.cssText = `
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            width: ${size}px;
+            height: ${size}px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            animation: rippleExpand 0.6s ease-out;
+            pointer-events: none;
+            z-index: 1;
+        `;
+        
+        button.appendChild(ripple);
+        
+        // Xóa sau animation
+        setTimeout(() => ripple.remove(), 600);
+    }
+
+    createClickRipple(button) {
+        const ripple = document.createElement('div');
+        ripple.className = 'click-ripple';
+        
+        ripple.style.cssText = `
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 70%);
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            transform: scale(0);
+            animation: clickRipple 0.5s ease-out;
+            pointer-events: none;
+            z-index: 1;
+        `;
+        
+        button.appendChild(ripple);
+        
+        setTimeout(() => ripple.remove(), 500);
+    }
+
+    playClickEffect() {
+        try {
+            if (typeof Howl !== 'undefined') {
+                // Nếu có Howl.js
+                const sound = new Howl({
+                    src: ['sounds/click.mp3'],
+                    volume: 0.3
+                });
+                sound.play();
+            } else {
+                // Fallback đơn giản
+                this.sounds.click.play();
+            }
+        } catch (e) {
+            console.log('Sound not available');
         }
     }
-    // Thêm vào chatbot-pro.js trong constructor hoặc init()
-createSparkles() {
-    const icon = document.querySelector('.chatbot-pro-icon');
-    if (!icon) return;
-    
-    // Tạo sparkles động
-    for (let i = 0; i < 6; i++) {
-        const sparkle = document.createElement('div');
-        sparkle.className = 'sparkle';
+
+    playHoverEffect() {
+        // Tạo âm thanh hover nhẹ
+        try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 523.25; // C5
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.05);
+            gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.2);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.2);
+        } catch (e) {
+            // Fallback silent
+        }
+    }
+
+    trackInteraction(type) {
+        this.stats[type]++;
+        this.stats.lastInteraction = Date.now();
         
-        // Random position
-        const angle = (Math.PI * 2 * i) / 6;
-        const radius = 20;
-        const x = 50 + radius * Math.cos(angle);
-        const y = 50 + radius * Math.sin(angle);
+        // Lưu vào localStorage
+        localStorage.setItem(`luxury_${type}_clicks`, this.stats[type]);
+        localStorage.setItem('last_contact_interaction', this.stats.lastInteraction);
         
-        sparkle.style.left = `${x}%`;
-        sparkle.style.top = `${y}%`;
-        sparkle.style.animationDelay = `${i * 0.3}s`;
+        // Update badge
+        this.updateBadge(type);
         
-        icon.appendChild(sparkle);
+        // Gửi analytics
+        this.sendEnhancedAnalytics(type);
+        
+        // Hiệu ứng thông báo
+        this.showNotification(type);
+    }
+
+    updateBadge(type) {
+        const badge = document.getElementById(`${type}LuxuryBadge`);
+        if (badge && this.stats[type] > 0) {
+            badge.textContent = this.stats[type];
+            badge.style.display = 'flex';
+            
+            // Hiệu ứng badge mới
+            badge.classList.add('new-badge');
+            setTimeout(() => badge.classList.remove('new-badge'), 500);
+        }
+    }
+
+    showNotification(type) {
+        const messages = {
+            phone: '📞 Đang kết nối cuộc gọi...',
+            zalo: '💬 Mở Zalo để nhắn tin',
+            whatsapp: '💚 Mở WhatsApp để chat'
+        };
+        
+        // Tạo toast notification
+        const toast = document.createElement('div');
+        toast.className = 'luxury-toast';
+        toast.textContent = messages[type];
+        
+        toast.style.cssText = `
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            background: linear-gradient(135deg, rgba(30,30,30,0.95), rgba(40,40,40,0.98));
+            color: var(--text-primary);
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(212,175,55,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 9999;
+            animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-out 2.7s forwards;
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    sendEnhancedAnalytics(type) {
+        const analyticsData = {
+            event: 'luxury_contact_click',
+            type: type,
+            timestamp: new Date().toISOString(),
+            page: window.location.pathname,
+            userAgent: navigator.userAgent,
+            screen: `${window.screen.width}x${window.screen.height}`,
+            totalClicks: this.stats[type],
+            sessionClicks: this.getSessionClicks()
+        };
+        
+        console.log('📊 Luxury Analytics:', analyticsData);
+        
+        // Google Analytics
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'luxury_contact', {
+                'event_category': 'conversion',
+                'event_label': type,
+                'value': this.stats[type]
+            });
+        }
+        
+        // Facebook Pixel
+        if (typeof fbq !== 'undefined') {
+            fbq('trackCustom', 'LuxuryContactClick', { type: type });
+        }
+    }
+
+    startAmbientAnimation() {
+        // Animation ngẫu nhiên cho các nút
+        setInterval(() => {
+            const buttons = document.querySelectorAll('.luxury-contact-btn');
+            const randomBtn = buttons[Math.floor(Math.random() * buttons.length)];
+            
+            if (randomBtn && Math.random() > 0.8) {
+                this.ambientPulse(randomBtn);
+            }
+        }, 8000);
+    }
+
+    ambientPulse(button) {
+        const originalAnimation = button.style.animation;
+        button.style.animation = 'ambientPulse 1s ease-in-out';
+        
+        setTimeout(() => {
+            button.style.animation = originalAnimation;
+        }, 1000);
+    }
+
+    // Helper functions
+    getStat(type) {
+        return parseInt(localStorage.getItem(`luxury_${type}_clicks`) || 0);
+    }
+
+    getSessionClicks() {
+        return this.stats.phone + this.stats.zalo + this.stats.whatsapp;
+    }
+
+    formatPhoneNumber(phone) {
+        return phone.replace(/(\d{4})(\d{3})(\d{3})/, '$1.$2.$3');
+    }
+
+    capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
     }
 }
 
-
+// Thêm CSS animations
+const luxuryAnimations = `
+@keyframes rippleExpand {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
 }
 
-// Initialize chatbot
-const chatbotPro = new HTUTransportProChatbot();
+@keyframes clickRipple {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
 
-// Start when page loads
+@keyframes slideInRight {
+    from { transform: translateX(100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes ambientPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes floatingSparkle {
+    0% { 
+        opacity: 0; 
+        transform: translate(0, 0) scale(0); 
+    }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { 
+        opacity: 0; 
+        transform: translate(${Math.random() * 50 - 25}px, ${Math.random() * 50 - 25}px) scale(1); 
+    }
+}
+
+.new-badge {
+    animation: newBadgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes newBadgePop {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+`;
+
+// Thêm CSS vào document
+if (!document.getElementById('luxuryAnimations')) {
+    const style = document.createElement('style');
+    style.id = 'luxuryAnimations';
+    style.textContent = luxuryAnimations;
+    document.head.appendChild(style);
+}
+
+// Khởi tạo
+const luxuryContactButtons = new LuxuryContactButtons();
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => chatbotPro.init());
+    document.addEventListener('DOMContentLoaded', () => luxuryContactButtons.init());
 } else {
-    chatbotPro.init();
+    luxuryContactButtons.init();
 }
 
-// Make available globally
-window.chatbotPro = chatbotPro;
+// Tự động highlight sau delay
+setTimeout(() => {
+    if (luxuryContactButtons.stats.phone === 0) {
+        luxuryContactButtons.animateButton('phone');
+    }
+}, 8000);
+
+// Export
+window.luxuryContactButtons = luxuryContactButtons;
