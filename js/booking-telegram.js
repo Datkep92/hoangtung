@@ -96,35 +96,8 @@ class TelegramBooking {
     const style = document.createElement('style');
     style.id = 'telegram-booking-css';
     style.textContent = `
-/* ===============================
-   QUICK BOOKING SECTION - FORCE STYLES
-================================ */
-#booking.quick-booking,
-section.quick-booking,
-.quick-booking {
-    position: relative !important;
-    padding: 60px 15px !important; /* Tăng lên 15px */
-    margin: 0 !important;
-    background: linear-gradient(135deg, #000000ff, #0a0a0a) !important;
-    overflow: hidden !important;
-    font-family: 'Segoe UI', Roboto, sans-serif !important;
-    box-sizing: border-box !important;
-    width: 100% !important;
-    max-width: 100vw !important;
-    left: 0 !important;
-    right: 0 !important;
-}
 
-/* Reset mọi container cha */
-#booking,
-section#booking,
-body > section,
-body > div > section {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-}
+
 
 /* Đảm bảo body và html không có margin/padding */
 body, html {

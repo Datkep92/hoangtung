@@ -2,25 +2,19 @@
    GALLERY SECTION
 ========================= */
 .gallery-section {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
+    padding: 70px 0 40px;
     background: var(--primary-black);
     position: relative;
     overflow: hidden;
 }
-.service-intro {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
-   
-}
+
 /* =========================
    SCROLL CONTAINER
 ========================= */
 .gallery-container {
     display: flex;
     gap: 24px;
-    padding-left: 10px !important;
-    padding-right: 10px !important;
+    padding: 20px 12px 30px;
 
     overflow-x: auto;
     overflow-y: hidden;
@@ -38,7 +32,23 @@
     scrollbar-color: var(--champagne) rgba(212, 175, 55, 0.1);
 }
 
+.gallery-container:active {
+    cursor: grabbing;
+}
 
+.gallery-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.gallery-container::-webkit-scrollbar-track {
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 4px;
+}
+
+.gallery-container::-webkit-scrollbar-thumb {
+    background: var(--champagne);
+    border-radius: 4px;
+}
 
 /* =========================
    CARD
@@ -58,7 +68,10 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-
+.gallery-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.45);
+}
 
 /* =========================
    IMAGE
@@ -77,7 +90,9 @@
     transition: transform 0.4s ease;
 }
 
-
+.gallery-card:hover .gallery-image {
+    transform: scale(1.06);
+}
 
 /* =========================
    CATEGORY BADGE
@@ -161,13 +176,12 @@
 @media (max-width: 768px) {
     .gallery-container {
         gap: 14px;
-        padding-left: 10px;
-        padding-right: 10px;
+        padding-left: 14px;
+        padding-right: 14px;
     }
 
     .gallery-card {
         width: 78vw;   /* 👈 đẹp nhất để vuốt */
-        
     }
 
     .gallery-title {
