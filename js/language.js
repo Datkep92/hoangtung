@@ -1,38 +1,236 @@
+// language-standalone.js - HOÀN TOÀN ĐỘC LẬP
+// Chỉ cần include file này, không cần HTML/CSS trước
 
-
-// Google Translate Implementation - FIXED VERSION
-class GoogleTranslateManager {
+class StandaloneTranslate {
     constructor() {
         this.isLoaded = false;
         this.retryCount = 0;
         this.maxRetries = 3;
         this.preventGoogleTranslateStyles = true;
+        
+        // Tạo HTML và CSS
+        this.createLanguageSelector();
+        this.injectLanguageCSS();
+        
+        // Khởi tạo
         this.setupEventDelegation();
         this.init();
     }
-
-    // ===== PHƯƠNG PHÁP MỚI: Event Delegation để chống lại Google Translate =====
-    setupEventDelegation() {
-        // 1. Sử dụng event delegation cho toàn bộ trang
-        document.addEventListener('click', this.handleGlobalClick.bind(this), true); // capture phase
+    
+    createLanguageSelector() {
+        // Kiểm tra nếu đã có header actions
+        let headerActions = document.querySelector('.header-actions');
         
-        // 2. Bảo vệ event listeners khỏi bị Google Translate ghi đè
-        this.protectExistingEventListeners();
-        
-        // 3. Setup dropdown với delegation
-        this.setupDropdownDelegation();
-    }
-
-    handleGlobalClick(e) {
-        // QUAN TRỌNG: Cho phép tất cả click events trừ Google Translate
-        if (this.isGoogleTranslateElement(e.target)) {
-            return; // Cho phép Google Translate hoạt động
+        if (!headerActions) {
+            // Tạo header actions nếu chưa có
+            const header = document.querySelector('.app-header .header-content') || document.querySelector('header') || document.body;
+            
+            headerActions = document.createElement('div');
+            headerActions.className = 'header-actions';
+            header.appendChild(headerActions);
         }
         
-        // Phục hồi click cho các element bị Google Translate vô hiệu hóa
+        // Kiểm tra nếu language selector đã tồn tại
+        if (document.getElementById('languageSelector')) return;
+        
+        const languageHTML = `
+            <div class="language-selector" id="languageSelector">
+                <!-- Nút custom của chúng ta - TRIGGER CHO GOOGLE TRANSLATE -->
+                <button class="language-btn notranslate" id="googleTranslateTrigger" aria-label="Chọn ngôn ngữ">
+                    <i class="fas fa-globe notranslate"></i>
+                    <span id="currentLanguageDisplay" class="notranslate">VI</span>
+                    <i class="fas fa-chevron-down notranslate"></i>
+                </button>
+                
+                <!-- Google Translate Element (sẽ được JS tạo và ẩn) -->
+                <div id="google_translate_element" style="display: none;"></div>
+                
+                <!-- Custom dropdown cho chọn ngôn ngữ nhanh -->
+                <div class="language-dropdown notranslate" id="languageDropdown">
+                    <a href="#" class="language-option notranslate" data-lang="vi">
+                        <span class="language-flag notranslate">🇻🇳</span>
+                        <span class="language-name notranslate">Tiếng Việt</span>
+                        <span class="language-code notranslate">VI</span>
+                    </a>
+                    <a href="#" class="language-option notranslate" data-lang="en">
+                        <span class="language-flag notranslate">🇺🇸</span>
+                        <span class="language-name notranslate">English</span>
+                        <span class="language-code notranslate">EN</span>
+                    </a>
+                    <a href="#" class="language-option notranslate" data-lang="ko">
+                        <span class="language-flag notranslate">🇰🇷</span>
+                        <span class="language-name notranslate">한국어</span>
+                        <span class="language-code notranslate">KO</span>
+                    </a>
+                    <a href="#" class="language-option notranslate" data-lang="zh-CN">
+                        <span class="language-flag notranslate">🇨🇳</span>
+                        <span class="language-name notranslate">中文</span>
+                        <span class="language-code notranslate">ZH</span>
+                    </a>
+                    <a href="#" class="language-option notranslate" data-lang="ja">
+                        <span class="language-flag notranslate">🇯🇵</span>
+                        <span class="language-name notranslate">日本語</span>
+                        <span class="language-code notranslate">JA</span>
+                    </a>
+                </div>
+            </div>
+        `;
+        
+        headerActions.insertAdjacentHTML('beforeend', languageHTML);
+    }
+    
+    injectLanguageCSS() {
+        if (document.getElementById('standalone-language-css')) return;
+        
+        const css = `
+            /* Language Selector CSS */
+            .header-actions {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .language-selector {
+                position: relative;
+                display: inline-block;
+            }
+            
+            .language-btn {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: rgba(212, 175, 55, 0.1);
+                border: 1px solid rgba(212, 175, 55, 0.3);
+                border-radius: 8px;
+                padding: 8px 12px;
+                color: var(--champagne);
+                font-weight: 600;
+                font-size: 14px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                min-width: 80px;
+                justify-content: space-between;
+            }
+            
+            .language-btn:hover {
+                background: rgba(212, 175, 55, 0.2);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+            }
+            
+            .language-dropdown {
+                position: absolute;
+                top: calc(100% + 5px);
+                right: 0;
+                background: #1a1a1a;
+                border: 1px solid rgba(212, 175, 55, 0.3);
+                border-radius: 10px;
+                min-width: 180px;
+                padding: 8px 0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                display: none;
+                z-index: 1000;
+            }
+            
+            .language-dropdown.show {
+                display: block;
+            }
+            
+            .language-option {
+                display: flex;
+                align-items: center;
+                padding: 10px 15px;
+                color: var(--text-primary);
+                text-decoration: none;
+                transition: all 0.2s ease;
+                cursor: pointer;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            
+            .language-option:last-child {
+                border-bottom: none;
+            }
+            
+            .language-option:hover {
+                background: rgba(212, 175, 55, 0.1);
+            }
+            
+            .language-option.active {
+                background: rgba(212, 175, 55, 0.15);
+                color: var(--champagne);
+            }
+            
+            .language-flag {
+                font-size: 18px;
+                margin-right: 10px;
+                width: 24px;
+            }
+            
+            .language-name {
+                flex: 1;
+                font-size: 14px;
+            }
+            
+            .language-code {
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--champagne);
+                background: rgba(212, 175, 55, 0.1);
+                padding: 2px 8px;
+                border-radius: 4px;
+            }
+            
+            .online-indicator {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                background: rgba(76, 175, 80, 0.1);
+                border: 1px solid rgba(76, 175, 80, 0.3);
+                border-radius: 20px;
+                padding: 6px 12px;
+                color: #4CAF50;
+                font-size: 12px;
+                font-weight: 600;
+            }
+            
+            .online-count {
+                font-size: 13px;
+            }
+            
+            /* Google Translate Protection CSS */
+            .goog-te-banner-frame,
+            .skiptranslate,
+            .goog-te-menu-value,
+            .goog-te-gadget {
+                display: none !important;
+            }
+            
+            body {
+                top: 0 !important;
+                position: static !important;
+            }
+        `;
+        
+        const style = document.createElement('style');
+        style.id = 'standalone-language-css';
+        style.textContent = css;
+        document.head.appendChild(style);
+    }
+    
+    // ===== CÁC PHƯƠNG THỨC CŨ GIỮ NGUYÊN =====
+    setupEventDelegation() {
+        document.addEventListener('click', this.handleGlobalClick.bind(this), true);
+        this.protectExistingEventListeners();
+        this.setupDropdownDelegation();
+    }
+    
+    handleGlobalClick(e) {
+        if (this.isGoogleTranslateElement(e.target)) {
+            return;
+        }
         this.restoreClickEvents(e);
     }
-
+    
     isGoogleTranslateElement(element) {
         let el = element;
         while (el && el !== document) {
@@ -45,23 +243,19 @@ class GoogleTranslateManager {
         }
         return false;
     }
-
+    
     restoreClickEvents(event) {
         const target = event.target;
-        
-        // Kiểm tra nếu element hoặc cha của nó có onclick
         let currentElement = target;
+        
         while (currentElement && currentElement !== document) {
-            // Nếu có onclick attribute, thực thi nó
             if (currentElement.hasAttribute('onclick')) {
                 const onclickValue = currentElement.getAttribute('onclick');
                 if (onclickValue && !onclickValue.includes('goog-te')) {
-                    // Ngăn hành vi mặc định và thực thi onclick
                     event.stopPropagation();
                     event.preventDefault();
                     
                     try {
-                        // Thực thi hàm onclick an toàn
                         if (onclickValue.includes('(') && onclickValue.includes(')')) {
                             const fn = new Function(onclickValue);
                             fn.call(currentElement);
@@ -75,11 +269,9 @@ class GoogleTranslateManager {
                 }
             }
             
-            // Kiểm tra nếu là button có sự kiện click đã đăng ký
             if (currentElement.tagName === 'BUTTON' || 
                 currentElement.tagName === 'A' ||
                 currentElement.hasAttribute('onclick')) {
-                // Đảm bảo sự kiện tiếp tục lan truyền
                 currentElement.style.pointerEvents = 'auto';
                 currentElement.style.zIndex = '9999';
             }
@@ -87,17 +279,14 @@ class GoogleTranslateManager {
             currentElement = currentElement.parentElement;
         }
     }
-
+    
     protectExistingEventListeners() {
-        // Bảo vệ tất cả các element có onclick
         const elementsWithOnclick = document.querySelectorAll('[onclick]');
         elementsWithOnclick.forEach(el => {
             const originalOnclick = el.getAttribute('onclick');
             if (originalOnclick && !originalOnclick.includes('goog-te')) {
-                // Lưu onclick gốc vào data attribute
                 el.setAttribute('data-original-onclick', originalOnclick);
                 
-                // Thêm event listener bằng JavaScript thay vì onclick attribute
                 el.addEventListener('click', function(e) {
                     if (e.isTrusted && !e.defaultPrevented) {
                         try {
@@ -110,22 +299,18 @@ class GoogleTranslateManager {
             }
         });
     }
-
-    // ===== SETUP DROPDOWN MỚI - AN TOÀN =====
+    
     setupDropdownDelegation() {
-        // Sử dụng event delegation cho dropdown
         document.addEventListener('click', (e) => {
             const translateBtn = document.getElementById('googleTranslateTrigger');
             const dropdown = document.getElementById('languageDropdown');
             
             if (!translateBtn || !dropdown) return;
             
-            // Toggle dropdown
             if (translateBtn.contains(e.target)) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 
-                // Đóng dropdown khác
                 document.querySelectorAll('.language-dropdown.show').forEach(d => {
                     if (d !== dropdown) d.classList.remove('show');
                 });
@@ -134,7 +319,6 @@ class GoogleTranslateManager {
                 return;
             }
             
-            // Xử lý chọn ngôn ngữ
             if (dropdown.contains(e.target)) {
                 const option = e.target.closest('.language-option');
                 if (option) {
@@ -144,7 +328,6 @@ class GoogleTranslateManager {
                 }
             }
             
-            // Đóng dropdown khi click ra ngoài
             if (dropdown.classList.contains('show') && 
                 !dropdown.contains(e.target) && 
                 !translateBtn.contains(e.target)) {
@@ -152,28 +335,24 @@ class GoogleTranslateManager {
             }
         });
     }
-
+    
     handleLanguageSelect(option) {
         const lang = option.getAttribute('data-lang');
         if (!lang) return;
         
-        // Đóng dropdown ngay lập tức
         const dropdown = document.getElementById('languageDropdown');
         if (dropdown) dropdown.classList.remove('show');
         
-        // Xử lý chọn VI (về bản gốc)
         if (lang === 'vi') {
             localStorage.removeItem('HTUTransport_lang');
             this.resetToVietnamese();
             return;
         }
         
-        // Dịch sang ngôn ngữ khác
         this.translateTo(lang);
         this.updateLanguageDisplay(lang);
     }
-
-    // ===== CÁC PHƯƠNG THỨC KHÁC GIỮ NGUYÊN HOẶC SỬA NHẸ =====
+    
     translateTo(language) {
         if (!this.isLoaded) {
             console.log('⚠️ Google Translate not ready, queuing translation...');
@@ -182,16 +361,12 @@ class GoogleTranslateManager {
         }
         
         try {
-            // Sử dụng Google Translate API trực tiếp
             if (window.google && window.google.translate && window.google.translate.TranslateElement) {
-                // Lấy instance hiện tại
                 const translateInstance = window.google.translate.TranslateElement.getInstance();
                 
                 if (translateInstance && translateInstance.selectValue) {
-                    // Sử dụng API chính thức của Google
                     translateInstance.selectValue(language);
                 } else {
-                    // Fallback: thay đổi select element
                     const select = document.querySelector('.goog-te-combo');
                     if (select) {
                         select.value = language;
@@ -199,7 +374,6 @@ class GoogleTranslateManager {
                     }
                 }
                 
-                // Lưu ngôn ngữ đã chọn
                 localStorage.setItem('HTUTransport_lang', language);
                 console.log(`✅ Translation to ${language} triggered`);
             }
@@ -207,7 +381,7 @@ class GoogleTranslateManager {
             console.error('Translation error:', error);
         }
     }
-
+    
     resetToVietnamese() {
         try {
             if (window.google && window.google.translate && window.google.translate.TranslateElement) {
@@ -217,13 +391,11 @@ class GoogleTranslateManager {
                     translateInstance.restore();
                 }
                 
-                // Ẩn các element của Google Translate
                 document.querySelectorAll('.goog-te-menu-value, .goog-te-gadget, .goog-te-banner')
                     .forEach(el => {
                         el.style.display = 'none';
                     });
                 
-                // Reload trang sau 300ms để về bản gốc
                 setTimeout(() => {
                     window.location.reload();
                 }, 300);
@@ -235,32 +407,25 @@ class GoogleTranslateManager {
             window.location.reload();
         }
     }
-
-    // ===== PHƯƠNG THỨC KHỞI TẠO CẢI TIẾN =====
+    
     init() {
-        // Load Google Translate với cấu hình bảo vệ
         this.loadProtectedScript();
         this.checkLoaded();
     }
-
+    
     loadProtectedScript() {
-        // Xóa script cũ nếu có
         const existingScript = document.querySelector('script[src*="translate.google.com"]');
         if (existingScript) existingScript.remove();
         
-        // Tạo script mới với callback bảo vệ
         const script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateCallbackProtected';
         script.async = true;
         
-        // Callback bảo vệ
         window.googleTranslateCallbackProtected = () => {
             console.log('✅ Google Translate script loaded with protection');
             this.isLoaded = true;
             this.initializeProtectedWidget();
-            
-            // Áp dụng CSS bảo vệ ngay lập tức
             this.applyProtectionStyles();
         };
         
@@ -271,7 +436,7 @@ class GoogleTranslateManager {
         
         document.head.appendChild(script);
     }
-
+    
     initializeProtectedWidget() {
         if (!window.google || !window.google.translate) {
             console.error('Google Translate API not available');
@@ -279,7 +444,6 @@ class GoogleTranslateManager {
         }
         
         try {
-            // Khởi tạo widget với cấu hình hạn chế can thiệp
             new google.translate.TranslateElement({
                 pageLanguage: 'vi',
                 includedLanguages: 'vi,en,ko,zh-CN,ja',
@@ -287,24 +451,19 @@ class GoogleTranslateManager {
                 autoDisplay: false,
                 disableAutoTranslation: true,
                 multilanguagePage: true,
-                // QUAN TRỌNG: Cấu hình để giảm thiểu can thiệp
                 disableAutoDisplay: true,
                 preventReload: true
             }, 'google_translate_element');
             
             console.log('✅ Google Translate widget initialized with protection');
-            
-            // Tải ngôn ngữ đã lưu
             this.loadSavedLanguage();
             
         } catch (error) {
             console.error('Error initializing widget:', error);
         }
     }
-
-    // ===== CSS BẢO VỆ QUAN TRỌNG =====
+    
     applyProtectionStyles() {
-        // Xóa style cũ nếu có
         const oldStyle = document.getElementById('google-translate-protection');
         if (oldStyle) oldStyle.remove();
         
@@ -368,13 +527,10 @@ class GoogleTranslateManager {
         `;
         
         document.head.appendChild(style);
-        
-        // Thêm style inline bảo vệ ngay lập tức
         this.applyImmediateProtection();
     }
-
+    
     applyImmediateProtection() {
-        // Áp dụng ngay lập tức cho các element quan trọng
         const protectSelectors = [
             '.pricing-preview-card',
             '.gallery-card',
@@ -398,8 +554,7 @@ class GoogleTranslateManager {
             });
         });
     }
-
-    // ===== CÁC PHƯƠNG THỨC CÒN LẠI GIỮ NGUYÊN =====
+    
     updateLanguageDisplay(lang) {
         const display = document.getElementById('currentLanguageDisplay');
         if (!display) return;
@@ -408,7 +563,7 @@ class GoogleTranslateManager {
         display.textContent = codes[lang] || 'VI';
         this.updateActiveLanguage(lang);
     }
-
+    
     updateActiveLanguage(lang) {
         const options = document.querySelectorAll('.language-option');
         const langMap = { 'vi': 'VI', 'en': 'EN', 'ko': 'KO', 'zh-CN': '中文', 'ja': '日本語' };
@@ -421,7 +576,7 @@ class GoogleTranslateManager {
             }
         });
     }
-
+    
     retryLoad() {
         if (this.retryCount < this.maxRetries) {
             this.retryCount++;
@@ -429,7 +584,7 @@ class GoogleTranslateManager {
             setTimeout(() => this.loadProtectedScript(), 1000 * this.retryCount);
         }
     }
-
+    
     checkLoaded() {
         if (window.google && window.google.translate) {
             this.isLoaded = true;
@@ -439,7 +594,7 @@ class GoogleTranslateManager {
             setTimeout(() => this.checkLoaded(), 500);
         }
     }
-
+    
     loadSavedLanguage() {
         const savedLang = localStorage.getItem('HTUTransport_lang') || 'vi';
         if (savedLang !== 'vi') {
@@ -450,31 +605,15 @@ class GoogleTranslateManager {
     }
 }
 
-// ===== KHỞI TẠO AN TOÀN =====
-let translateManager = null;
-
+// ===== KHỞI TẠO TỰ ĐỘNG =====
 document.addEventListener('DOMContentLoaded', () => {
-    // Đảm bảo tất cả scripts khác đã load trước
     setTimeout(() => {
-        translateManager = new GoogleTranslateManager();
-        
-        // Expose function an toàn
-        window.translateTo = (language) => {
-            if (translateManager) {
-                translateManager.translateTo(language);
-            }
-        };
-        
-        console.log('✅ Google Translate Manager initialized with full protection');
+        window.standaloneTranslate = new StandaloneTranslate();
+        console.log('✅ Standalone Translate initialized');
     }, 100);
 });
 
-// Simple language change function (giữ nguyên cho compatibility)
-function changeLanguage(lang) {
-    if (window.translateTo) {
-        window.translateTo(lang);
-    }
-    if (translateManager) {
-        translateManager.updateActiveLanguage(lang);
-    }
+// Export for module system
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = StandaloneTranslate;
 }

@@ -37,15 +37,15 @@ class SEOHelper {
     // Tự động thêm URL blog vào sitemap
     async updateSitemapWithBlogPosts(blogPosts) {
         try {
-            console.log('📝 Updating sitemap with blog posts:', Object.keys(blogPosts).length);
+            //console.log('📝 Updating sitemap with blog posts:', Object.keys(blogPosts).length);
             
             // Tạo XML entries
             const entries = this.generateBlogSitemapEntries(blogPosts);
             
             // Log cho developer
-            console.log('✅ Generated sitemap entries for blog posts');
-            console.log('📊 Add this to your sitemap.xml manually:');
-            console.log(entries);
+            //console.log('✅ Generated sitemap entries for blog posts');
+            //console.log('📊 Add this to your sitemap.xml manually:');
+            //console.log(entries);
             
             return true;
         } catch (error) {
@@ -116,7 +116,7 @@ class SEOHelper {
         script.textContent = JSON.stringify(breadcrumbSchema);
         document.head.appendChild(script);
         
-        console.log('✅ Added dynamic breadcrumb schema');
+        //console.log('✅ Added dynamic breadcrumb schema');
     }
 
     // Trong seo-helper.js, sửa method optimizeImages()
@@ -143,7 +143,7 @@ optimizeImages() {
         // ... rest of the code
     });
     
-    console.log(`✅ Optimized ${optimizedCount} images, skipped ${skippedCount} small images`);
+    //console.log(`✅ Optimized ${optimizedCount} images, skipped ${skippedCount} small images`);
     return optimizedCount;
 }
 
@@ -234,7 +234,7 @@ optimizeImages() {
         if (brokenCount > 0) {
             console.warn(`⚠️ Found ${brokenCount} potential broken links, fixed ${fixedCount} links`);
         } else {
-            console.log(`✅ No broken links found, fixed ${fixedCount} links`);
+            //console.log(`✅ No broken links found, fixed ${fixedCount} links`);
         }
         
         return { broken: brokenCount, fixed: fixedCount };
@@ -332,7 +332,7 @@ optimizeImages() {
             }
         });
 
-        console.log('✅ SEO tracking initialized');
+        //console.log('✅ SEO tracking initialized');
         return true;
     }
 
@@ -369,7 +369,7 @@ optimizeImages() {
         
         // Console log cho development
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            console.log(`📊 SEO Event: ${eventName}`, data);
+            //console.log(`📊 SEO Event: ${eventName}`, data);
         }
         
         return true;
@@ -409,14 +409,14 @@ optimizeImages() {
             }
         });
         
-        console.log('✅ Updated social meta tags');
+        //console.log('✅ Updated social meta tags');
         return metaTags;
     }
 
     // Kiểm tra Core Web Vitals
     checkCoreWebVitals() {
         if (!('PerformanceObserver' in window)) {
-            console.log('⚠️ PerformanceObserver not supported');
+            //console.log('⚠️ PerformanceObserver not supported');
             return;
         }
 
@@ -465,7 +465,7 @@ optimizeImages() {
             });
             clsObserver.observe({ entryTypes: ['layout-shift'] });
 
-            console.log('✅ Core Web Vitals monitoring initialized');
+            //console.log('✅ Core Web Vitals monitoring initialized');
         } catch (error) {
             console.error('❌ Error initializing Core Web Vitals:', error);
         }
@@ -501,7 +501,7 @@ optimizeImages() {
         }
         canonical.href = url;
         
-        console.log('✅ Added canonical URL:', url);
+        //console.log('✅ Added canonical URL:', url);
         return url;
     }
 
@@ -560,10 +560,10 @@ optimizeImages() {
         }
 
         // Log kết quả
-        console.group('🔍 On-Page SEO Check');
+        //console.group('🔍 On-Page SEO Check');
         Object.entries(checks).forEach(([check, data]) => {
             const icon = data.passed ? '✅' : '⚠️';
-            console.log(`${icon} ${check}: ${data.message}`);
+            //console.log(`${icon} ${check}: ${data.message}`);
         });
         console.groupEnd();
 
@@ -587,7 +587,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const isAdminPage = path.includes('admin') || path.includes('test');
             
             if (!isAdminPage) {
-                console.group('🚀 SEO Helper Initializing');
+                //console.group('🚀 SEO Helper Initializing');
                 
                 // Tối ưu hình ảnh
                 const optimized = window.SEOHelper.optimizeImages();
@@ -618,7 +618,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.groupEnd();
                 
                 // Summary log
-                console.log(`🎯 SEO Summary: ${optimized} images optimized, ${linkResults.fixed} links fixed`);
+                //console.log(`🎯 SEO Summary: ${optimized} images optimized, ${linkResults.fixed} links fixed`);
             }
         }
     }, 500);

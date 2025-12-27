@@ -1,854 +1,320 @@
-// js/booking-telegram.js - Version 3.1 (Fixed security setup error)
+// js/booking-telegram.js - Version 3.8 (Deep IP Tracking & Luxury UI)
 class TelegramBooking {
     constructor() {
         this.config = null;
         this.isLoading = false;
         this.vehicleTypes = ['4 chỗ', '7 chỗ', '16 chỗ', '45 chỗ'];
-        this.selectedVehicleType = '4 chỗ'; // Mặc định
-        this.lastSubmission = 0;
-        this.submitCount = 0;
-        this.maxSubmissionsPerMinute = 5;
+        this.userLocation = {
+            city: 'Chưa rõ', region: 'Chưa rõ', country: 'Việt Nam',
+            ip: 'Đang lấy...', isp: 'Mạng di động/Wifi'
+        };
         this.init();
     }
     
     async init() {
-        await this.loadTelegramConfig();
-        this.createVehicleSelector();
-        this.attachFormListener();
-        this.setupSecurityChecks();
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.initializeSystem());
+        } else {
+            this.initializeSystem();
+        }
+    }
+    
+    async initializeSystem() {
+        try {
+            await this.initializeFirebase();
+            await this.loadTelegramConfig();
+            await this.detectLocationByIP(); // Hàm định vị mạnh mẽ
+            this.addStyles();
+            this.createBookingForm();
+            this.createPopupElement();
+            this.setupFormListeners();
+            console.log('✅ Hệ thống Luxury sẵn sàng - IP:', this.userLocation.ip);
+        } catch (error) {
+            console.error('❌ Lỗi khởi tạo:', error);
+        }
+    }
+    
+    async initializeFirebase() {
+        const config = {
+            apiKey: "AIzaSyCeYPoizbE-Op79186r7pmndGpJ-JfESAk",
+            authDomain: "hoangtung-af982.firebaseapp.com",
+            databaseURL: "https://hoangtung-af982-default-rtdb.firebaseio.com",
+            projectId: "hoangtung-af982",
+            storageBucket: "hoangtung-af982.firebasestorage.app",
+            messagingSenderId: "232719624914",
+            appId: "1:232719624914:web:cac7ce833ae105d9255b0b"
+        };
+        if (typeof firebase === 'undefined') return;
+        if (!firebase.apps.length) firebase.initializeApp(config);
     }
     
     async loadTelegramConfig() {
         try {
-            // Chỉ lấy config từ Firebase, không lưu token trong localStorage
-            console.log('📡 Loading Telegram config from Firebase...');
-            this.config = await this.fetchFromFirebase();
-            
-            if (this.config && this.validateConfig(this.config)) {
-                console.log('✅ Telegram config loaded successfully');
-                return true;
-            } else {
-                console.warn('⚠️ No valid Telegram config found');
-                return false;
+            const snapshot = await firebase.database().ref('telegram_configs').once('value');
+            const data = snapshot.val();
+            if (data && data.configs) {
+                const configId = data.default || Object.keys(data.configs)[0];
+                this.config = data.configs[configId];
             }
-        } catch (error) {
-            console.error('❌ Error loading Telegram config:', error);
-            return false;
-        }
+        } catch (e) { console.error('Lỗi tải Telegram Config'); }
     }
-    
-    async fetchFromFirebase() {
+
+    // HÀM GỐC CẢI TIẾN: Xác định vị trí đa lớp
+    async detectLocationByIP() {
         try {
-            if (typeof firebase !== 'undefined' && firebase.database) {
-                const database = firebase.database();
-                const snapshot = await database.ref('telegram_configs').once('value');
-                const data = snapshot.val();
+            const ipResponse = await fetch('https://api.ipify.org?format=json');
+            const ipData = await ipResponse.json();
+            this.userLocation.ip = ipData.ip;
+            
+            try {
+                const response = await fetch('https://ipinfo.io/json');
+                const data = await response.json();
                 
-                if (data && data.configs) {
-                    // Tìm config mặc định hoặc config đầu tiên
-                    const defaultId = data.default;
-                    let config = null;
-                    
-                    if (defaultId && data.configs[defaultId]) {
-                        config = data.configs[defaultId];
-                        config.id = defaultId;
-                    } else {
-                        // Lấy config đầu tiên
-                        const firstKey = Object.keys(data.configs)[0];
-                        if (firstKey) {
-                            config = data.configs[firstKey];
-                            config.id = firstKey;
-                        }
-                    }
-                    
-                    return config;
+                if (data && !data.error) {
+                    const loc = data.loc ? data.loc.split(',') : [null, null];
+                    this.userLocation = {
+                        ip: data.ip || ipData.ip,
+                        city: data.city || 'Không xác định',
+                        region: data.region || 'Không xác định',
+                        country: data.country || 'Không xác định',
+                        latitude: loc[0],
+                        longitude: loc[1],
+                        timezone: data.timezone,
+                        isp: data.org || 'Không xác định'
+                    };
                 }
+            } catch (error) {
+                console.warn('Location detection failed');
             }
         } catch (error) {
-            console.error('Firebase fetch error:', error);
+            console.warn('IP detection failed');
         }
-        
-        return null;
     }
-    
-    validateConfig(config) {
-        return config && 
-               config.botToken && 
-               config.chatIds && 
-               Array.isArray(config.chatIds) && 
-               config.chatIds.length > 0;
-    }
-    
-    // Tạo dropdown lựa chọn loại xe
-    createVehicleSelector() {
-        const form = document.getElementById('bookingForm');
-        if (!form) return;
-        
-        // Kiểm tra nếu đã có selector chưa
-        if (document.getElementById('vehicleTypeSelector')) return;
-        
-        // Tìm vị trí để chèn (sau điểm đến)
-        const dropoffLocation = document.getElementById('dropoffLocation');
-        if (!dropoffLocation || !dropoffLocation.parentNode) return;
-        
-        // Tạo container cho selector
-        const selectorContainer = document.createElement('div');
-        selectorContainer.className = 'form-group';
-        
-        const label = document.createElement('label');
-        label.className = 'form-label';
-        label.textContent = 'Loại xe *';
-        label.setAttribute('for', 'vehicleTypeSelector');
-        
-        const select = document.createElement('select');
-        select.id = 'vehicleTypeSelector';
-        select.className = 'form-input';
-        select.name = 'vehicleType';
-        select.required = true;
-        select.setAttribute('aria-required', 'true');
-        
-        // Thêm options
-        this.vehicleTypes.forEach(type => {
-            const option = document.createElement('option');
-            option.value = type;
-            option.textContent = `Xe ${type}`;
-            select.appendChild(option);
-        });
-        
-        // Thêm sự kiện thay đổi
-        select.addEventListener('change', (e) => {
-            this.selectedVehicleType = e.target.value;
-        });
-        
-        // Thêm vào form
-        selectorContainer.appendChild(label);
-        selectorContainer.appendChild(select);
-        dropoffLocation.parentNode.insertAdjacentElement('afterend', selectorContainer);
-        
-        // Thêm CSS cho selector
-        this.addSelectorStyles();
-    }
-    
-    addSelectorStyles() {
-        const styleId = 'vehicle-selector-styles';
-        if (document.getElementById(styleId)) return;
-        
+
+    addStyles() {
+        if (document.getElementById('telegram-booking-css')) return;
         const style = document.createElement('style');
-        style.id = styleId;
+        style.id = 'telegram-booking-css';
         style.textContent = `
-            #vehicleTypeSelector {
-                appearance: none;
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-                background-repeat: no-repeat;
-                background-position: right 15px center;
-                background-size: 16px;
-                padding-right: 40px;
-                cursor: pointer;
-            }
-            
-            #vehicleTypeSelector:focus {
-                border-color: #d4af37;
-                box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
-            }
-            
-            .form-group select option {
-                background: #1a1a1a;
-                color: #f2e6c4;
-                padding: 10px;
-            }
+            :root { --champagne: #d4af37; --text-primary: #ffffff; --text-secondary: #b0b0b0; }
+            .quick-booking { padding: 60px 10px; background: linear-gradient(135deg, #1a1a1a, #0a0a0a); position: relative; overflow: hidden; font-family: 'Segoe UI', Roboto, sans-serif; }
+            .quick-booking::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><path fill="%23d4af37" fill-opacity="0.03" d="M0,0h1000v1000H0V0z M150,150h700v700H150V150z"/></svg>'); background-size: 50px; opacity: 0.3; z-index: 1; }
+            .booking-card { max-width: 600px; margin: 0 auto; background: rgba(20, 20, 20, 0.95); border-radius: 20px; border: 2px solid rgba(212, 175, 55, 0.3); padding: 40px; position: relative; z-index: 2; backdrop-filter: blur(10px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); box-sizing: border-box; }
+            .booking-title { color: var(--champagne); font-size: 32px; margin-bottom: 10px; font-weight: 700; background: linear-gradient(135deg, #d4af37, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-transform: uppercase; text-align: center; }
+            .booking-subtitle { color: var(--text-secondary); font-size: 16px; text-align: center; margin-bottom: 30px; }
+            .form-group { margin-bottom: 20px; }
+            .form-label { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-weight: 600; color: var(--text-primary); font-size: 14px; }
+            .form-label i { color: var(--champagne); width: 20px; text-align: center; }
+            .form-input, select.form-input { width: 100%; padding: 14px 18px; background: rgba(30, 30, 30, 0.9); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #fff; font-size: 15px; transition: all 0.3s ease; box-sizing: border-box; }
+            select.form-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 18px center; background-size: 16px; padding-right: 50px; cursor: pointer; }
+            .form-input:focus { outline: none; border-color: #d4af37; box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2); background: rgba(40, 40, 40, 0.95); }
+            .btn-submit { width: 100%; padding: 18px; font-size: 17px; font-weight: 700; margin-top: 10px; background: linear-gradient(135deg, #d4af37, #ffd700); border: none; border-radius: 12px; color: #1a1a1a; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px; }
+            .btn-submit:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(212, 175, 55, 0.4); }
+            .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+            /* Popup Styles Gốc */
+            .booking-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(5px); }
+            .popup-content { background: #1a1a1a; border: 2px solid var(--champagne); border-radius: 20px; padding: 40px; max-width: 400px; width: 90%; text-align: center; transform: scale(0.7); transition: 0.3s ease; }
+            .booking-popup.active { display: flex; }
+            .booking-popup.active .popup-content { transform: scale(1); }
+            .popup-icon { font-size: 60px; color: var(--champagne); margin-bottom: 20px; }
+            .popup-title { color: #fff; font-size: 24px; margin-bottom: 10px; font-weight: 700; }
+            .popup-msg { color: var(--text-secondary); margin-bottom: 25px; line-height: 1.6; }
+            .btn-close-popup { padding: 12px 30px; background: var(--champagne); border: none; border-radius: 8px; color: #000; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+
+            @media (max-width: 768px) { .booking-card { padding: 25px 20px; } .booking-title { font-size: 26px; } }
         `;
         document.head.appendChild(style);
     }
-    
-    attachFormListener() {
-        const form = document.getElementById('bookingForm');
-        if (form) {
-            // Xóa event listener cũ nếu có
-            form.removeEventListener('submit', this.handleSubmitBound);
-            
-            // Tạo bound function để có thể remove sau này
-            this.handleSubmitBound = this.handleSubmit.bind(this);
-            form.addEventListener('submit', this.handleSubmitBound);
-            console.log('✅ Form listener attached');
+
+    createBookingForm() {
+        let container = document.getElementById('booking');
+        if (!container) {
+            container = document.createElement('section');
+            container.id = 'booking'; container.className = 'quick-booking';
+            document.body.appendChild(container);
+        }
+        container.innerHTML = `
+        <div class="booking-card">
+            <div class="booking-header">
+                <h2 id="bookingTitle" class="booking-title">Đặt Xe Nhanh Chóng - Nhận Ưu Đãi Ngay</h2>
+                        <p class="booking-subtitle">Chỉ cần điền thông tin, chúng tôi sẽ gọi lại tư vấn ngay</p>
+            </div>
+            <form id="bookingForm">
+                <div class="form-group"><label class="form-label"><i class="fas fa-car"></i> Loại Xe</label>
+                    <select id="carType" class="form-input">${this.vehicleTypes.map(t => `<option value="${t}">${t}</option>`).join('')}</select>
+                </div>
+                <div class="form-group"><label class="form-label"><i class="fas fa-phone"></i> Số Điện Thoại *</label>
+                    <input type="tel" id="customerPhone" class="form-input" placeholder="Nhập SĐT..." required autocomplete="off">
+                </div>
+                <div class="form-group"><label class="form-label"><i class="fas fa-user"></i> Họ Tên Khách Hàng</label>
+                    <input type="text" id="customerName" class="form-input" placeholder="Tên của bạn...">
+                </div>
+                <div class="form-group"><label class="form-label"><i class="fas fa-map-marker-alt"></i> Điểm Đón *</label>
+                    <input type="text" id="pickupLocation" class="form-input" placeholder="Bạn đang ở đâu?" required>
+                </div>
+                <div class="form-group"><label class="form-label"><i class="fas fa-flag-checkered"></i> Điểm Đến</label>
+                    <input type="text" id="dropoffLocation" class="form-input" placeholder="Bạn muốn đi đâu?">
+                </div>
+                <div class="form-group"><label class="form-label"><i class="fas fa-sticky-note"></i> Ghi Chú Yêu Cầu</label>
+                    <textarea id="customerNote" class="form-input" rows="2" placeholder="Yêu cầu thêm (nếu có)..."></textarea>
+                </div>
+                <button type="submit" id="bookingSubmitBtn" class="btn-submit">Gửi Yêu Cầu Đặt Xe</button>
+            </form>
+        </div>`;
+    }
+
+    createPopupElement() {
+        const popup = document.createElement('div');
+        popup.id = 'bookingPopup';
+        popup.className = 'booking-popup';
+        popup.innerHTML = `
+            <div class="popup-content">
+                <div class="popup-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="popup-title">Thành Công!</div>
+                <div class="popup-msg" id="popupMsg">Chúng tôi đã nhận được yêu cầu của bạn.</div>
+                <button class="btn-close-popup" onclick="document.getElementById('bookingPopup').classList.remove('active')">Đồng Ý</button>
+            </div>`;
+        document.body.appendChild(popup);
+    }
+
+    showPopup(title, msg, isError = false) {
+        const popup = document.getElementById('bookingPopup');
+        popup.querySelector('.popup-title').innerText = title;
+        popup.querySelector('.popup-msg').innerText = msg;
+        const icon = popup.querySelector('.popup-icon i');
+        if (isError) {
+            icon.className = 'fas fa-exclamation-triangle';
+            icon.style.color = '#ff4d4d';
         } else {
-            console.warn('📝 Booking form not found, will retry in 1s');
-            setTimeout(() => this.attachFormListener(), 1000);
+            icon.className = 'fas fa-check-circle';
+            icon.style.color = 'var(--champagne)';
         }
+        popup.classList.add('active');
     }
-    
-    // Kiểm tra bảo mật - ĐƠN GIẢN HÓA
-    setupSecurityChecks() {
-        console.log('🔒 Security checks initialized');
-        
-        // Rate limiting protection
-        this.setupRateLimiting();
-        
-        // Input sanitization
-        this.setupInputSanitization();
-    }
-    
-    setupRateLimiting() {
-        // Reset counter mỗi phút
-        setInterval(() => {
-            this.submitCount = 0;
-        }, 60000);
-    }
-    
-    setupInputSanitization() {
-        // Thêm sự kiện blur để sanitize input
-        const form = document.getElementById('bookingForm');
-        if (!form) return;
-        
-        const inputs = form.querySelectorAll('input[type="text"], input[type="tel"], textarea');
-        
-        inputs.forEach(input => {
-            input.addEventListener('blur', (e) => {
-                this.sanitizeInput(e.target);
-            });
-            
-            input.addEventListener('input', (e) => {
-                this.validateInput(e.target);
-            });
+
+    setupFormListeners() {
+        const phoneInput = document.getElementById('customerPhone');
+        // Sửa lỗi SDT: Lọc thô không qua format trung gian
+        phoneInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '').substring(0, 11);
         });
+        document.getElementById('bookingForm').addEventListener('submit', (e) => this.handleSubmit(e));
+        this.loadSavedDraft();
     }
-    
-    sanitizeInput(element) {
-        if (!element || !element.value) return;
-        
-        let value = element.value;
-        
-        // Loại bỏ các thẻ HTML
-        value = value.replace(/<[^>]*>/g, '');
-        
-        // Loại bỏ các ký tự nguy hiểm
-        value = value.replace(/[<>{}[\]]/g, '');
-        
-        // Giới hạn độ dài
-        if (value.length > 500) {
-            value = value.substring(0, 500);
-        }
-        
-        element.value = value.trim();
+
+    loadSavedDraft() {
+        try {
+            const draft = JSON.parse(localStorage.getItem('booking_draft') || '{}');
+            if (draft.phone) document.getElementById('customerPhone').value = draft.phone;
+            if (draft.name) document.getElementById('customerName').value = draft.name;
+        } catch (e) {}
     }
-    
-    validateInput(element) {
-        if (!element || !element.value) return true;
-        
-        const value = element.value;
-        const name = element.name || element.id;
-        
-        // Kiểm tra XSS patterns
-        const xssPatterns = [
-            /<script\b/i,
-            /javascript:/i,
-            /on\w+\s*=/i,
-            /eval\s*\(/i,
-            /alert\s*\(/i
-        ];
-        
-        for (const pattern of xssPatterns) {
-            if (pattern.test(value.toLowerCase())) {
-                console.warn(`⚠️ Potential XSS detected in ${name}:`, value.substring(0, 50));
-                element.classList.add('input-error');
-                return false;
-            }
-        }
-        
-        element.classList.remove('input-error');
-        return true;
-    }
-    
-    checkRateLimit() {
-        const now = Date.now();
-        const minTimeBetweenSubmissions = 5000; // 5 giây
-        
-        // Kiểm tra thời gian giữa các lần submit
-        if (now - this.lastSubmission < minTimeBetweenSubmissions) {
-            throw new Error('Vui lòng đợi 5 giây trước khi gửi yêu cầu tiếp theo');
-        }
-        
-        // Kiểm tra số lần submit trong phút
-        if (this.submitCount >= this.maxSubmissionsPerMinute) {
-            throw new Error('Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau 1 phút');
-        }
-        
-        this.lastSubmission = now;
-        this.submitCount++;
-        return true;
-    }
-    
+
     async handleSubmit(e) {
         e.preventDefault();
-        
-        // Kiểm tra rate limiting
+        if (this.isLoading) return;
+
+        const data = {
+            carType: document.getElementById('carType').value,
+            phone: document.getElementById('customerPhone').value,
+            name: document.getElementById('customerName').value,
+            pickup: document.getElementById('pickupLocation').value,
+            dropoff: document.getElementById('dropoffLocation').value,
+            note: document.getElementById('customerNote').value,
+            location: this.userLocation,
+            time: new Date().toLocaleString('vi-VN')
+        };
+
+        if (data.phone.length < 10) {
+            this.showPopup('Lỗi', 'Vui lòng nhập đúng số điện thoại di động.', true);
+            return;
+        }
+
+        const btn = document.getElementById('bookingSubmitBtn');
+        this.isLoading = true; btn.innerHTML = 'ĐANG GỬI...'; btn.disabled = true;
+
         try {
-            this.checkRateLimit();
-        } catch (error) {
-            this.showAlert(error.message, 'warning');
-            return;
-        }
-        
-        // Kiểm tra config
-        if (!this.config) {
-            await this.loadTelegramConfig();
-            if (!this.config) {
-                this.showAlert('Hệ thống thông báo đang bảo trì. Vui lòng gọi 0567.033.888', 'error');
-                return;
-            }
-        }
-        
-        const formData = this.getFormData();
-        
-        // Kiểm tra dữ liệu đầu vào
-        if (!this.validateForm(formData)) {
-            return;
-        }
-        
-        // Kiểm tra XSS
-        if (this.detectXSS(formData)) {
-            this.showAlert('Dữ liệu không hợp lệ. Vui lòng kiểm tra lại thông tin!', 'error');
-            console.warn('⚠️ Potential XSS attempt detected');
-            return;
-        }
-        
-        const btn = e.target.querySelector('.btn-submit');
-        this.disableButton(btn, 'Đang gửi...');
-        
-        try {
-            // Gửi đến Telegram (KHÔNG lưu vào Firebase)
-            await this.sendTelegramNotification(formData);
-            this.showSuccess();
+            await this.sendTelegram(data);
+            await this.saveToFirebase(data);
+            localStorage.setItem('booking_draft', JSON.stringify({ name: data.name, phone: data.phone }));
+            this.showPopup('Đã Nhận Yêu Cầu', `Cảm ơn ${data.name || 'quý khách'}! Chúng tôi sẽ gọi lại ngay.`);
             e.target.reset();
-            
-            // Reset loại xe về mặc định
-            this.selectedVehicleType = '4 chỗ';
-            const selector = document.getElementById('vehicleTypeSelector');
-            if (selector) selector.value = '4 chỗ';
-            
+            this.loadSavedDraft();
         } catch (error) {
-            console.error('Telegram error:', error);
-            this.showAlert('Có lỗi xảy ra. Vui lòng gọi 0567.033.888', 'error');
+            this.showPopup('Thất Bại', 'Không thể kết nối máy chủ. Vui lòng gọi Hotline.', true);
         } finally {
-            this.enableButton(btn, 'Gửi Yêu Cầu Đặt Xe');
+            this.isLoading = false; btn.innerHTML = 'Gửi Yêu Cầu Đặt Xe'; btn.disabled = false;
         }
     }
-    
-    getFormData() {
-        const vehicleSelector = document.getElementById('vehicleTypeSelector');
-        const vehicleType = vehicleSelector ? vehicleSelector.value : this.selectedVehicleType;
-        
-        // Sanitize tất cả input
-        const sanitize = (str) => {
-            if (!str) return '';
-            return str.toString()
-                .replace(/[<>{}[\]]/g, '') // Loại bỏ các ký tự nguy hiểm
-                .trim()
-                .substring(0, 500); // Giới hạn độ dài
-        };
-        
-        return {
-            vehicleType: sanitize(vehicleType),
-            serviceType: 'Xe hợp đồng', // Cố định cho dịch vụ
-            pickupLocation: sanitize(document.getElementById('pickupLocation')?.value || ''),
-            dropoffLocation: sanitize(document.getElementById('dropoffLocation')?.value || ''),
-            customerName: sanitize(document.getElementById('customerName')?.value || ''),
-            customerPhone: sanitize(document.getElementById('customerPhone')?.value || ''),
-            customerNote: sanitize(document.getElementById('customerNote')?.value || ''),
-            timestamp: new Date().toLocaleString('vi-VN'),
-            pageUrl: window.location.href,
-            userAgent: navigator.userAgent.substring(0, 100)
-        };
+
+    async sendTelegram(d) {
+        if (!this.config) throw new Error('Config missing');
+        const message = `<b>🚕 ĐƠN ĐẶT XE MỚI (LUXURY)</b>\n` +
+                        `--------------------------\n` +
+                        `👤 <b>Khách:</b> ${d.name || 'N/A'}\n` +
+                        `📞 <b>SĐT:</b> <code>${d.phone}</code>\n` +
+                        `🚗 <b>Loại:</b> ${d.carType}\n` +
+                        `📍 <b>Đón:</b> ${d.pickup}\n` +
+                        `🏁 <b>Đến:</b> ${d.dropoff || 'N/A'}\n` +
+                        `📝 <b>Note:</b> ${d.note || 'Không'}\n` +
+                        `--------------------------\n` +
+                        `🏠 <b>Khu vực:</b> ${d.location.city}, ${d.location.region}\n` +
+                        `🌐 <b>IP:</b> ${d.location.ip}\n` +
+                        `⚡ <b>Mạng:</b> ${d.location.isp}`;
+
+        const promises = this.config.chatIds.map(id => fetch(`https://api.telegram.org/bot${this.config.botToken}/sendMessage`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: id, text: message, parse_mode: 'HTML' })
+        }));
+        await Promise.all(promises);
+    }
+
+    async saveToFirebase(data) {
+        try { await firebase.database().ref('bookings').push({ ...data, timestamp: firebase.database.ServerValue.TIMESTAMP }); } catch (e) {}
     }
     
-    detectXSS(data) {
-        const xssPatterns = [
-            /<script\b/i,
-            /javascript:/i,
-            /on\w+\s*=/i,
-            /eval\s*\(/i,
-            /alert\s*\(/i,
-            /document\./i,
-            /window\./i
-        ];
+}
+// ===== THÊM HÀM SCROLL ĐƠN GIẢN =====
+function scrollToBookingSection() {
+    const bookingSection = document.getElementById('booking');
+    if (bookingSection) {
+        bookingSection.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
         
-        // Kiểm tra tất cả giá trị trong form data
-        for (const key in data) {
-            if (data.hasOwnProperty(key)) {
-                const value = data[key].toString().toLowerCase();
-                
-                for (const pattern of xssPatterns) {
-                    if (pattern.test(value)) {
-                        console.warn(`XSS detected in ${key}:`, value.substring(0, 100));
-                        return true;
-                    }
+        // Thêm hiệu ứng highlight
+        bookingSection.classList.add('highlight-booking');
+        setTimeout(() => {
+            bookingSection.classList.remove('highlight-booking');
+        }, 3000);
+    } else {
+        // Nếu booking section chưa tạo, tạo trước rồi scroll
+        if (window.completeBookingSystem) {
+            window.completeBookingSystem.createBookingSection().then(() => {
+                const newBookingSection = document.getElementById('booking');
+                if (newBookingSection) {
+                    newBookingSection.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    newBookingSection.classList.add('highlight-booking');
+                    setTimeout(() => {
+                        newBookingSection.classList.remove('highlight-booking');
+                    }, 3000);
                 }
-                
-                // Kiểm tra độ dài quá lớn
-                if (value.length > 1000 && key !== 'customerNote') {
-                    console.warn(`Suspicious long input in ${key}:`, value.length);
-                    return true;
-                }
-            }
-        }
-        
-        return false;
-    }
-    
-    validateForm(data) {
-        // Kiểm tra cơ bản
-        if (!data.pickupLocation || data.pickupLocation.trim().length < 3) {
-            this.showAlert('Vui lòng nhập điểm đón hợp lệ (ít nhất 3 ký tự)', 'warning');
-            return false;
-        }
-        
-        if (!data.dropoffLocation || data.dropoffLocation.trim().length < 3) {
-            this.showAlert('Vui lòng nhập điểm đến hợp lệ (ít nhất 3 ký tự)', 'warning');
-            return false;
-        }
-        
-        if (!data.customerName || data.customerName.trim().length < 2) {
-            this.showAlert('Vui lòng nhập tên hợp lệ (ít nhất 2 ký tự)', 'warning');
-            return false;
-        }
-        
-        if (!data.customerPhone) {
-            this.showAlert('Vui lòng nhập số điện thoại', 'warning');
-            return false;
-        }
-        
-        // Kiểm tra số điện thoại (chỉ số, 10-11 ký tự)
-        const cleanPhone = data.customerPhone.replace(/\D/g, '');
-        const phoneRegex = /^[0-9]{10,11}$/;
-        
-        if (!phoneRegex.test(cleanPhone)) {
-            this.showAlert('Số điện thoại không hợp lệ! Vui lòng nhập 10-11 chữ số.', 'warning');
-            return false;
-        }
-        
-        // Kiểm tra tên (chỉ chữ cái và khoảng trắng)
-        const nameRegex = /^[a-zA-ZÀ-ỹ\s]{2,50}$/;
-        if (!nameRegex.test(data.customerName)) {
-            this.showAlert('Tên không hợp lệ! Chỉ cho phép chữ cái và khoảng trắng (2-50 ký tự).', 'warning');
-            return false;
-        }
-        
-        return true;
-    }
-    
-    async sendTelegramNotification(data) {
-        const message = this.formatMessage(data);
-        
-        // Tạo promises với timeout để tránh blocking
-        const sendPromises = this.config.chatIds.map(chatId => 
-            this.sendToChatWithTimeout(chatId, message)
-        );
-        
-        const results = await Promise.allSettled(sendPromises);
-        
-        // Kiểm tra kết quả
-        const successful = results.filter(r => r.status === 'fulfilled' && r.value.ok).length;
-        
-        if (successful === 0) {
-            console.error('All Telegram notifications failed:', results);
-            throw new Error('Không thể gửi thông báo qua Telegram');
-        }
-        
-        console.log(`✅ ${successful}/${this.config.chatIds.length} Telegram notifications sent successfully`);
-        return results;
-    }
-    
-    async sendToChatWithTimeout(chatId, message) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-        
-        try {
-            const response = await fetch(`https://api.telegram.org/bot${this.config.botToken}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message,
-                    parse_mode: 'HTML',
-                    disable_web_page_preview: true,
-                    disable_notification: false
-                }),
-                signal: controller.signal
             });
-            
-            clearTimeout(timeoutId);
-            return await response.json();
-        } catch (error) {
-            clearTimeout(timeoutId);
-            console.error('Telegram API error:', error);
-            throw error;
         }
-    }
-    
-    formatMessage(data) {
-        // Escape special Telegram characters
-        const escapeHTML = (str) => {
-            if (!str) return '';
-            return str
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;');
-        };
-        
-        return `<b>🚖 YÊU CẦU ĐẶT XE MỚI - HTUTransport</b>
-
-<b>📋 Loại xe:</b> ${escapeHTML(data.vehicleType)}
-<b>👤 Khách hàng:</b> ${escapeHTML(data.customerName)}
-<b>📞 Điện thoại:</b> <code>${escapeHTML(data.customerPhone)}</code>
-<b>📍 Đón tại:</b> ${escapeHTML(data.pickupLocation)}
-<b>🎯 Đến:</b> ${escapeHTML(data.dropoffLocation)}
-${data.customerNote ? `<b>📝 Ghi chú:</b> ${escapeHTML(data.customerNote)}` : ''}
-
-<b>🕐 Thời gian:</b> ${escapeHTML(data.timestamp)}
-<b>🌐 Trang:</b> ${escapeHTML(data.pageUrl.split('?')[0])}
-
-<u>🔥 VUI LÒNG LIÊN HỆ NGAY!</u>
-<code>Hotline: 0567.033.888</code>`;
-    }
-    
-    disableButton(btn, text) {
-        if (!btn) return;
-        
-        const originalHTML = btn.innerHTML;
-        btn.setAttribute('data-original-html', originalHTML);
-        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${text}`;
-        btn.disabled = true;
-        btn.style.opacity = '0.7';
-        btn.style.cursor = 'not-allowed';
-    }
-    
-    enableButton(btn, text) {
-        if (!btn) return;
-        
-        const originalHTML = btn.getAttribute('data-original-html');
-        btn.innerHTML = originalHTML || `<i class="fas fa-paper-plane"></i> ${text}`;
-        btn.disabled = false;
-        btn.style.opacity = '1';
-        btn.style.cursor = 'pointer';
-    }
-    
-    showSuccess() {
-        // Tạo và hiển thị popup thành công
-        const popupId = 'booking-success-popup';
-        if (document.getElementById(popupId)) return;
-        
-        const popup = document.createElement('div');
-        popup.id = popupId;
-        popup.className = 'booking-success-popup';
-        
-        popup.innerHTML = `
-            <div class="success-modal">
-                <div class="success-header">
-                    <i class="fas fa-check-circle"></i>
-                    <h3>Đặt xe thành công!</h3>
-                </div>
-                <div class="success-body">
-                    <p>✅ Yêu cầu đã được gửi đến đội ngũ HTUTransport</p>
-                    <p>📞 Chúng tôi sẽ gọi lại cho bạn trong <strong>3 phút</strong></p>
-                    <div class="success-hotline">
-                        <i class="fas fa-phone-alt"></i>
-                        <span>0567.033.888</span>
-                    </div>
-                    <div class="success-note">
-                        <i class="fas fa-shield-alt"></i>
-                        <small>Thông tin của bạn được bảo mật</small>
-                    </div>
-                </div>
-                <button class="btn-success-close">
-                    <i class="fas fa-times"></i> Đóng
-                </button>
-            </div>
-        `;
-        
-        document.body.appendChild(popup);
-        this.addSuccessStyles();
-        
-        // Close handlers
-        const closeBtn = popup.querySelector('.btn-success-close');
-        closeBtn.addEventListener('click', () => {
-            popup.remove();
-        });
-        
-        popup.addEventListener('click', (e) => {
-            if (e.target === popup) popup.remove();
-        });
-        
-        // Thêm sự kiện ESC để đóng
-        const closeOnEsc = (e) => {
-            if (e.key === 'Escape' && document.getElementById(popupId)) {
-                popup.remove();
-                document.removeEventListener('keydown', closeOnEsc);
-            }
-        };
-        document.addEventListener('keydown', closeOnEsc);
-        
-        // Auto close after 8 seconds
-        setTimeout(() => {
-            if (document.getElementById(popupId)) {
-                popup.remove();
-                document.removeEventListener('keydown', closeOnEsc);
-            }
-        }, 8000);
-    }
-    
-    addSuccessStyles() {
-        const styleId = 'booking-success-styles';
-        if (document.getElementById(styleId)) return;
-        
-        const style = document.createElement('style');
-        style.id = styleId;
-        style.textContent = `
-            .booking-success-popup {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.85);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 10000;
-                animation: fadeIn 0.3s ease;
-                backdrop-filter: blur(5px);
-            }
-            
-            .success-modal {
-                background: #1a1a1a;
-                border: 2px solid #d4af37;
-                border-radius: 20px;
-                padding: 30px;
-                max-width: 400px;
-                width: 90%;
-                text-align: center;
-                box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-                animation: slideUp 0.4s ease;
-            }
-            
-            .success-header {
-                margin-bottom: 20px;
-                color: #4CAF50;
-            }
-            
-            .success-header i {
-                font-size: 48px;
-                margin-bottom: 15px;
-            }
-            
-            .success-header h3 {
-                margin: 0;
-                font-size: 22px;
-                font-weight: 600;
-                color: #ffffff;
-            }
-            
-            .success-body {
-                color: #cccccc;
-                line-height: 1.6;
-                margin-bottom: 25px;
-            }
-            
-            .success-body p {
-                margin: 10px 0;
-            }
-            
-            .success-hotline {
-                display: inline-flex;
-                align-items: center;
-                gap: 10px;
-                background: rgba(76, 175, 80, 0.1);
-                color: #4CAF50;
-                padding: 12px 20px;
-                border-radius: 12px;
-                margin: 15px 0;
-                font-weight: 600;
-                font-size: 18px;
-            }
-            
-            .success-hotline i {
-                font-size: 20px;
-            }
-            
-            .success-note {
-                margin-top: 15px;
-                color: #999999;
-                font-size: 13px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-            }
-            
-            .btn-success-close {
-                background: linear-gradient(135deg, #d4af37, #f1c40f);
-                color: #000000;
-                border: none;
-                padding: 12px 30px;
-                border-radius: 12px;
-                font-weight: 700;
-                font-size: 15px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-            }
-            
-            .btn-success-close:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
-            }
-            
-            @keyframes fadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
-            }
-            
-            @keyframes slideUp {
-                from { opacity: 0; transform: translateY(30px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            
-            @media (max-width: 480px) {
-                .success-modal {
-                    padding: 20px 15px;
-                }
-                
-                .success-header h3 {
-                    font-size: 20px;
-                }
-                
-                .success-hotline {
-                    font-size: 16px;
-                    padding: 10px 15px;
-                }
-                
-                .btn-success-close {
-                    width: 100%;
-                    justify-content: center;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    showAlert(message, type = 'info') {
-        // Tạo toast notification
-        const toastId = 'custom-toast-' + Date.now();
-        const toast = document.createElement('div');
-        toast.id = toastId;
-        toast.className = `custom-toast toast-${type}`;
-        
-        const icon = type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
-        toast.innerHTML = `<span class="toast-icon">${icon}</span><span class="toast-message">${message}</span>`;
-        
-        document.body.appendChild(toast);
-        
-        // Thêm style cho toast
-        this.addToastStyles();
-        
-        // Auto remove sau 4 giây
-        setTimeout(() => {
-            const toastElement = document.getElementById(toastId);
-            if (toastElement) {
-                toastElement.style.animation = 'fadeOut 0.3s ease forwards';
-                setTimeout(() => {
-                    if (toastElement.parentNode) {
-                        toastElement.parentNode.removeChild(toastElement);
-                    }
-                }, 300);
-            }
-        }, 4000);
-    }
-    
-    addToastStyles() {
-        const styleId = 'toast-styles';
-        if (document.getElementById(styleId)) return;
-        
-        const style = document.createElement('style');
-        style.id = styleId;
-        style.textContent = `
-            .custom-toast {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #1a1a1a;
-                color: #ffffff;
-                padding: 15px 20px;
-                border-radius: 10px;
-                border-left: 4px solid;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-                z-index: 10001;
-                animation: slideInRight 0.3s ease;
-                max-width: 350px;
-                font-size: 14px;
-                backdrop-filter: blur(10px);
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-            
-            .toast-error {
-                border-left-color: #ff4444;
-            }
-            
-            .toast-warning {
-                border-left-color: #ffaa00;
-            }
-            
-            .toast-info {
-                border-left-color: #2196F3;
-            }
-            
-            .toast-icon {
-                font-size: 16px;
-            }
-            
-            .toast-message {
-                flex: 1;
-            }
-            
-            @keyframes slideInRight {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            
-            @keyframes fadeOut {
-                to { opacity: 0; transform: translateY(-10px); }
-            }
-            
-            @media (max-width: 480px) {
-                .custom-toast {
-                    top: 10px;
-                    right: 10px;
-                    left: 10px;
-                    max-width: none;
-                }
-            }
-            
-            .input-error {
-                border-color: #ff4444 !important;
-                box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.2) !important;
-            }
-        `;
-        document.head.appendChild(style);
     }
 }
+// Cũng thêm vào window object để dễ truy cập
+window.scrollToBookingSection = scrollToBookingSection;
 
-// Khởi tạo khi DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-    // Delay một chút để đảm bảo các phần tử khác đã load
-    setTimeout(() => {
-        try {
-            const telegramBooking = new TelegramBooking();
-            window.telegramBooking = telegramBooking;
-            console.log('✅ TelegramBooking initialized successfully');
-        } catch (error) {
-            console.error('❌ Failed to initialize TelegramBooking:', error);
-        }
-    }, 1500);
-});
+// Thêm vào completeBookingSystem
+if (window.completeBookingSystem) {
+    window.completeBookingSystem.scrollToBookingSection = function() {
+        scrollToBookingSection();
+    };
+}
+new TelegramBooking();

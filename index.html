@@ -202,10 +202,7 @@
     <!-- Header -->
 <header class="app-header" role="banner">
     <div class="header-content container">
-        <!-- Menu Toggle -->
-        <button class="menu-toggle" id="sidebarToggle" aria-label="Mở menu chính">
-            <i class="fas fa-bars"></i>
-        </button>
+        
         
         <!-- Logo -->
         <div class="logo" itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
@@ -218,58 +215,6 @@
             </div>
             <div class="logo-text">HTU<span>Transport</span></div>
         </div>
-        
-        <!-- Sửa phần header actions -->
-<div class="header-actions">
-    <!-- Language Selector -->
-    <div class="language-selector">
-        <!-- Nút custom của chúng ta - TRIGGER CHO GOOGLE TRANSLATE -->
-        <button class="language-btn notranslate" id="googleTranslateTrigger" aria-label="Chọn ngôn ngữ">
-            <i class="fas fa-globe notranslate"></i>
-            <span id="currentLanguageDisplay" class="notranslate">VI</span>
-            <i class="fas fa-chevron-down notranslate"></i>
-        </button>
-        
-        <!-- Google Translate Element (sẽ được JS tạo và ẩn) -->
-        <div id="google_translate_element" style="display: none;"></div>
-        
-        <!-- Custom dropdown cho chọn ngôn ngữ nhanh -->
-        <div class="language-dropdown notranslate" id="languageDropdown">
-            <a href="#" class="language-option notranslate" data-lang="vi">
-                <span class="language-flag notranslate">🇻🇳</span>
-                <span class="language-name notranslate">Tiếng Việt</span>
-                <span class="language-code notranslate">VI</span>
-            </a>
-            <a href="#" class="language-option notranslate" data-lang="en">
-                <span class="language-flag notranslate">🇺🇸</span>
-                <span class="language-name notranslate">English</span>
-                <span class="language-code notranslate">EN</span>
-            </a>
-            <a href="#" class="language-option notranslate" data-lang="ko">
-                <span class="language-flag notranslate">🇰🇷</span>
-                <span class="language-name notranslate">한국어</span>
-                <span class="language-code notranslate">KO</span>
-            </a>
-            <a href="#" class="language-option notranslate" data-lang="zh-CN">
-                <span class="language-flag notranslate">🇨🇳</span>
-                <span class="language-name notranslate">中文</span>
-                <span class="language-code notranslate">ZH</span>
-            </a>
-            <a href="#" class="language-option notranslate" data-lang="ja">
-                <span class="language-flag notranslate">🇯🇵</span>
-                <span class="language-name notranslate">日本語</span>
-                <span class="language-code notranslate">JA</span>
-            </a>
-        </div>
-    </div>
-    
-    <!-- Thêm notranslate cho các phần tử khác nếu cần -->
-    <div class="online-indicator" id="onlineIndicator" aria-label="Số khách đang online">
-        <i class="fas fa-user notranslate" aria-hidden="true"></i>
-        <span class="online-count notranslate" id="onlineBadge">0</span>
-    </div>
-    
-</div>
     </div>
 </header>
 
@@ -284,14 +229,17 @@
                 <span class="text-champagne">Đưa Đón Sân Bay • Du Lịch • Thuê Xe Dài Hạn</span>
             </h1>
             
-             <div class="hero-cta" itemprop="potentialAction" itemscope itemtype="https://schema.org/ReserveAction">
+             <!-- TRONG PHẦN Gallery Section, TÌM VÀ SỬA -->
+<div class="hero-cta" itemprop="potentialAction" itemscope itemtype="https://schema.org/ReserveAction">
     <meta itemprop="name" content="Đặt xe dịch vụ">
     <a href="tel:0567033888" class="btn btn-primary btn-call" itemprop="target" aria-label="Gọi ngay để đặt xe">
         <i class="fas fa-phone-alt" aria-hidden="true"></i> Gọi Ngay
     </a>
-    <a href="#booking" class="btn btn-outline" aria-label="Đặt xe trực tuyến">
+    <!-- SỬA DÒNG NÀY -->
+    <a href="javascript:void(0)" class="btn btn-outline" onclick="window.bookingSystem.scrollToBooking()" aria-label="Đặt xe trực tuyến">
         <i class="fas fa-calendar-alt" aria-hidden="true"></i> Đặt Xe
     </a>
+    <!-- HẾT SỬA -->
 </div>
             
             <div class="title-divider" aria-hidden="true">
@@ -306,11 +254,11 @@
                     <h2 class="visually-hidden">Giới thiệu dịch vụ</h2>
                     <p><strong>Hà Tùng Transport</strong> - Đơn vị cung cấp dịch vụ xe hợp đồng hàng đầu tại khu vực Phan Rang Tháp Chàm, Ninh Thuận. Chuyên đưa đón sân bay Cam Ranh - Liên Khương, xe du lịch 4-7-16 chỗ, phục vụ 24/7 với đội ngũ tài xế chuyên nghiệp, xe đời mới.</p>
                     <!-- Trong service-intro, thêm: -->
-<p>Xem chi tiết: 
-    <a href="#services">dịch vụ xe hợp đồng</a> | 
-    <a href="#pricing">bảng giá ưu đãi</a> | 
-    <a href="#booking">đặt xe trực tuyến</a>
-</p>
+                    <p>Xem chi tiết: 
+                        <a href="#services">dịch vụ xe hợp đồng</a> | 
+                        <a href="#pricing">bảng giá ưu đãi</a> | 
+                        <a href="#booking">đặt xe trực tuyến</a>
+                    </p>
                     <h3>Dịch vụ chính:</h3>
                     <ul aria-label="Danh sách dịch vụ">
                         <li><strong>Đưa đón sân bay Cam Ranh - Liên Khương:</strong> Phục vụ tất cả các chuyến bay, đón tận nơi</li>
@@ -423,11 +371,12 @@
                 <p class="section-description">Đa dạng dịch vụ đáp ứng mọi nhu cầu di chuyển của quý khách</p>
             </div>
             <div class="services-grid" id="servicesGrid">
+                
                 <!-- Services sẽ được tải bằng JavaScript -->
             </div>
         </div>
     </section>
-
+<div id="booking"></div>
     <!-- Blog Section -->
     <section class="blog-section" id="blog" aria-labelledby="blogTitle">
         <div class="container">
@@ -462,171 +411,33 @@
         </div>
     </section>
 
-    <!-- Booking Section -->
-    <section class="quick-booking" id="booking" aria-labelledby="bookingTitle">
-    <div class="container">
-        <div class="booking-card" itemscope itemtype="https://schema.org/Reservation">
-            <div class="booking-header">
-                <h2 id="bookingTitle" class="booking-title">Đặt Xe Nhanh Chóng - Nhận Ưu Đãi Ngay</h2>
-                <p class="booking-subtitle">Chỉ cần điền thông tin, chúng tôi sẽ gọi lại tư vấn trong 3 phút</p>
-            </div>
-            <form id="bookingForm" itemprop="potentialAction" itemscope itemtype="https://schema.org/ReserveAction">
-                
-                <!-- Điểm đón -->
-                <div class="form-group">
-                    <label for="pickupLocation" class="form-label">Điểm đón *</label>
-                    <input type="text" class="form-input" id="pickupLocation" name="pickupLocation" required aria-required="true" placeholder="Nhập điểm đón">
-                </div>
-
-                <!-- Điểm đến -->
-                <div class="form-group">
-                    <label for="dropoffLocation" class="form-label">Điểm đến *</label>
-                    <input type="text" class="form-input" id="dropoffLocation" name="dropoffLocation" required aria-required="true" placeholder="Nhập điểm đến">
-                </div>
-
-                <!-- Họ tên khách hàng -->
-                <div class="form-group">
-                    <label for="customerName" class="form-label">Họ tên khách hàng *</label>
-                    <input type="text" class="form-input" id="customerName" name="customerName" required aria-required="true" placeholder="Nhập họ tên của bạn">
-                </div>
-
-                <!-- Số điện thoại -->
-                <div class="form-group">
-                    <label for="customerPhone" class="form-label">Số điện thoại *</label>
-                    <input type="tel" class="form-input" id="customerPhone" name="customerPhone" required aria-required="true" placeholder="Nhập số điện thoại" pattern="[0-9]{10,11}">
-                </div>
-
-                <!-- Submit -->
-                <button type="submit" class="btn btn-primary btn-submit">
-                    <i class="fas fa-paper-plane" aria-hidden="true"></i> Gửi Yêu Cầu Đặt Xe
-                </button>
-
-                <p class="form-note">
-                    <small><i class="fas fa-shield-alt"></i> Thông tin của bạn được bảo mật 100%</small>
-                </p>
-            </form>
-        </div>
-    </div>
-</section>
-
-
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- Sidebar Container -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-header-content">
-                <div class="sidebar-logo">
-    <img src="https://raw.githubusercontent.com/Datkep92/hoangtung/main/images/htu_vuong512notext.jpg" 
-         alt="HTU Logo" 
-         width="40" 
-         height="40">
-    <span>HTU<span>Transport</span></span>
-</div>
-                <div class="sidebar-subtitle">Thống kê & Bảng giá</div>
-            </div>
-            <button class="sidebar-close" id="sidebarClose">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <div class="sidebar-content" id="sidebarContent">
-            <div class="sidebar-loading">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Đang tải dữ liệu...</p>
-            </div>
-        </div>
-        
-        <div class="sidebar-footer">
-            <div class="sidebar-update-time">
-                <i class="far fa-clock"></i>
-                <span>Cập nhật: <span id="lastUpdateTime">--:--</span></span>
-            </div>
-            <button class="btn-refresh-stats" id="refreshStatsBtn">
-                <i class="fas fa-sync-alt"></i> Làm mới
-            </button>
-        </div>
-    </aside>
-
-    <!-- Footer -->
-    <footer class="main-footer" id="contact" role="contentinfo">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section" itemscope itemtype="https://schema.org/Organization">
-                    <div class="footer-logo">
-                        <i class="fas fa-crown" aria-hidden="true"></i>
-                        <span>HTU<span>Transport</span></span>
-                    </div>
-                    <p class="footer-desc" itemprop="description">Đơn vị vận tải cao cấp hàng đầu khu vực miền Trung - Tây Nguyên</p>
-                    <div class="social-links">
-                        <a href="https://facebook.com" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                            <i class="fab fa-facebook-f" aria-hidden="true"></i>
-                        </a>
-                        <a href="https://zalo.me/0567033888" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Zalo">
-                            <span class="zalo-icon">Z</span>
-                        </a>
-                        <a href="mailto:contact@HTUtransport.vn" class="social-link" aria-label="Email">
-                            <i class="fas fa-envelope" aria-hidden="true"></i>
-                        </a>
-                        <a href="tel:0567033888" class="social-link" aria-label="Điện thoại">
-                            <i class="fas fa-phone-alt" aria-hidden="true"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Liên Hệ</h4>
-                    <div class="contact-info" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-                        <p><i class="fas fa-phone-alt" aria-hidden="true"></i> <strong><a href="tel:0567033888" itemprop="telephone">0567.033.888</a></strong></p>
-                        <p><i class="fas fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="addressLocality">TP. Nha Trang</span>, <span itemprop="addressRegion">Khánh Hòa</span></p>
-                        <p><i class="fas fa-clock" aria-hidden="true"></i> Hoạt động 24/7</p>
-                        <p><i class="fas fa-envelope" aria-hidden="true"></i> <a href="mailto:cskh@htutransport.vn" itemprop="email">cskh@htutransport.com</a></p>
-                    </div>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Hệ Thống</h4>
-                    <ul class="footer-links">
-                        <li><a href="admin.html" target="_blank"><i class="fas fa-cog"></i> Admin Panel</a></li>
-                        <li><a href="privacy-policy.html" target="_blank"><i class="fas fa-shield-alt"></i> Chính sách bảo mật</a></li>
-                        <li><a href="terms-of-service.html" target="_blank"><i class="fas fa-file-contract"></i> Điều khoản dịch vụ</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="copyright">
-                <p>&copy; 2024 <span itemprop="name">Hà Tùng</span>. All Rights Reserved.</p>
-                <p class="copyright-note">Website được thiết kế bởi Datkep92</p>
-            </div>
-        </div>
-    </footer>
-
+    
     <!-- Mobile Navigation -->
-    <nav class="bottom-tab-bar" role="navigation" aria-label="Menu di động">
-        <div class="tab-items">
-            <a href="#gallery" class="tab-item">
+<nav class="bottom-tab-bar" role="navigation" aria-label="Menu di động">
+    <div class="tab-items">
+        <a href="#gallery" class="tab-item">
             <div class="tab-icon"><i class="fas fa-home"></i></div>
             <div class="tab-label">Main</div>
         </a>
-            <a href="#services" class="tab-item">
-                <div class="tab-icon"><i class="fas fa-car"></i></div>
-                <div class="tab-label">Dịch vụ</div>
-            </a>
-            <a href="#booking" class="tab-item">
-                <div class="tab-icon"><i class="fas fa-calendar-alt"></i></div>
-                <div class="tab-label">Đặt xe</div>
-            </a>
-            <a href="#contact" class="tab-item">
-                <div class="tab-icon"><i class="fas fa-phone"></i></div>
-                <div class="tab-label">Liên hệ</div>
-            </a>
-            <a href="javascript:void(0)" class="tab-item" onclick="openFullPricingPage()" id="pricingTab">
-                <div class="tab-icon"><i class="fas fa-tag"></i></div>
-                <div class="tab-label">Bảng giá</div>
-            </a>
-        </div>
-    </nav>
+        <a href="#services" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-car"></i></div>
+            <div class="tab-label">Dịch vụ</div>
+        </a>
+        <!-- SỬA Ở ĐÂY -->
+        <a href="javascript:void(0)" class="tab-item" onclick="scrollToBookingSection()">
+            <div class="tab-icon"><i class="fas fa-calendar-alt"></i></div>
+            <div class="tab-label">Đặt xe</div>
+        </a>
+        <a href="#contact" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-phone"></i></div>
+            <div class="tab-label">Liên hệ</div>
+        </a>
+        <a href="javascript:void(0)" class="tab-item" onclick="openFullPricingPage()" id="pricingTab">
+            <div class="tab-icon"><i class="fas fa-tag"></i></div>
+            <div class="tab-label">Bảng giá</div>
+        </a>
+    </div>
+</nav>
 
     <!-- Service Details Modal -->
     <div class="service-details-overlay" id="serviceDetails" style="display: none;" aria-hidden="true" role="dialog" aria-modal="true">
@@ -674,16 +485,17 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js" defer></script>
     <script src="js/language.js" defer></script>
-    <script src="js/script.js" defer></script>
     <script src="js/gallery.js" defer></script>
     <script src="js/pricing.js" defer></script>
     <script src="js/chatbot.js" defer></script>
     <script src="js/sidebar.js" defer></script>
     <script src="js/seo-helper.js" defer></script>
     <script src="js/booking-telegram.js" defer></script>
-
-
-    
+    <script src="js/footer-standalone.js" defer></script>
+    <script src="js/service.js" defer></script>
+    <script src="js/experience.js" defer></script>
+    <script src="js/blog.js" defer></script>
+  
     <script>
         // Thay thế phần preload trong index.html bằng code này
 document.addEventListener('DOMContentLoaded', function() {

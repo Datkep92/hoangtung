@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>Thuê Xe Du Lịch Tham Quan | HTU Transport</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/style.css" media="all">
+    <link rel="stylesheet" href="/css/chatbot.css" media="all">
+    <link rel="stylesheet" href="/css/sidebar.css" media="all">
+    <link rel="stylesheet" href="/css/blog.css" media="all">
+    <link rel="stylesheet" href="/service/airport.css" media="all">
+    <link rel="stylesheet" href="/service/travel/travel.css" media="all">
+
+    <style>
+        .travel-tab-content { display: none; }
+        .travel-tab-content.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="travel-body">
+
+<header class="app-header" role="banner">
+    <div class="header-content container">
+        
+        
+        <!-- Logo -->
+        <div class="logo" itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
+            <meta itemprop="name" content="Hà Tùng">
+            <div class="logo-icon">
+                <img src="https://raw.githubusercontent.com/Datkep92/hoangtung/main/images/htu_vuong512notext.jpg" 
+                     alt="HTU Transport Logo" 
+                     width="50" 
+                     height="50">
+            </div>
+            <div class="logo-text">HTU<span>Transport</span></div>
+        </div>
+    </div>
+</header>
+
+<main class="travel-main">
+
+    <!-- HERO -->
+    <section class="sanbay-hero">
+        <div class="container">
+            <h1>Thuê Xe Du Lịch Tham Quan Phan Rang – Nha Trang – Đà Lạt</h1>
+            <p class="sanbay-intro">
+                HTU Transport cung cấp dịch vụ thuê xe 4 – 7 – 16 chỗ, tài xế kinh nghiệm,
+                lộ trình linh hoạt, khám phá biển, đảo, sa mạc và cao nguyên.
+            </p>
+            <div class="tab-buttons" role="tablist">
+                <button class="tab-btn active" data-tab="phanrang">Phan Rang</button>
+                <button class="tab-btn" data-tab="nhatrang">Nha Trang</button>
+                <button class="tab-btn" data-tab="dalat">Đà Lạt</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- PHAN RANG -->
+    <section id="phanrang" class="destination-content active" role="tabpanel">
+        <div class="container">
+            <h2 class="experience-title">Phan Rang – Biển Hoang Sơ & Văn Hóa Chăm Pa</h2>
+            <p class="experience-desc">
+                Phan Rang – Ninh Thuận nổi bật với biển xanh, đồi cát, sa mạc nắng gió,
+                kết hợp văn hóa Chăm Pa lâu đời, phù hợp du khách yêu thiên nhiên và nhiếp ảnh.
+            </p>
+
+            <!-- SLIDER ẢNH -->
+            <div class="travel-slider" data-slider="phanrang">
+                <div class="slider-track">
+                    <div class="slide active">
+                        <img src="https://images.unsplash.com/photo-1593693399746-35f8afc4d8a4?auto=format&fit=crop&w=1400&q=80"
+                             alt="Vịnh Vĩnh Hy Phan Rang">
+                    </div>
+                    <div class="slide">
+                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80"
+                             alt="Hang Rái Ninh Thuận">
+                    </div>
+                    <div class="slide">
+                        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1400&q=80"
+                             alt="Đồi Cừu Phan Rang">
+                    </div>
+                </div>
+                <button class="slider-btn prev" aria-label="Ảnh trước">‹</button>
+                <button class="slider-btn next" aria-label="Ảnh sau">›</button>
+            </div>
+
+            <!-- HIGHLIGHTS -->
+            <div class="highlight-list">
+                <div>Vịnh Vĩnh Hy – vịnh đẹp nhất miền Trung</div>
+                <div>Hang Rái – địa hình đá ven biển độc đáo</div>
+                <div>Tháp Chàm Poklong Garai – biểu tượng kiến trúc Chăm</div>
+            </div>
+
+            <!-- BENEFITS -->
+            <div class="benefits-grid">
+                <div>✔ Biển hoang sơ – ít khách</div>
+                <div>✔ Góc sống ảo cực đẹp</div>
+                <div>✔ Lịch trình linh hoạt theo nhóm</div>
+            </div>
+
+            <!-- PRICE -->
+            <div class="price-grid">
+                <div class="price-card">
+                    <h3>Tour Vĩnh Hy – Hang Rái (từ TP Phan Rang)</h3>
+                    <span class="price">900.000 ₫ / xe</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NHA TRANG -->
+    <section id="nhatrang" class="destination-content" role="tabpanel">
+        <div class="container">
+            <h2 class="experience-title">Nha Trang – Thành Phố Biển & Đảo</h2>
+            <p class="experience-desc">
+                Nha Trang nổi bật với vịnh biển tuyệt đẹp, đảo nổi tiếng và dịch vụ nghỉ dưỡng cao cấp,
+                thích hợp gia đình, nhóm bạn và khách du lịch chuyên nghiệp.
+            </p>
+
+            <div class="travel-slider" data-slider="nhatrang">
+                <div class="slider-track">
+                    <div class="slide active">
+                        <img src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1400&q=80"
+                             alt="Vịnh Nha Trang">
+                    </div>
+                    <div class="slide">
+                        <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=80"
+                             alt="Đảo Hòn Mun">
+                    </div>
+                    <div class="slide">
+                        <img src="https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&w=1400&q=80"
+                             alt="City Nha Trang">
+                    </div>
+                </div>
+                <button class="slider-btn prev" aria-label="Ảnh trước">‹</button>
+                <button class="slider-btn next" aria-label="Ảnh sau">›</button>
+            </div>
+
+            <div class="highlight-list">
+                <div>Vịnh Nha Trang – một trong những vịnh đẹp nhất thế giới</div>
+                <div>Hòn Mun – hòn đảo san hô nổi tiếng</div>
+                <div>City tour – chợ đêm & văn hóa địa phương</div>
+            </div>
+
+            <div class="benefits-grid">
+                <div>✔ Di chuyển thuận tiện trong ngày</div>
+                <div>✔ Thích hợp nghỉ dưỡng gia đình</div>
+                <div>✔ Kết hợp trải nghiệm đảo & biển</div>
+            </div>
+
+            <div class="price-grid">
+                <div class="price-card">
+                    <h3>City Tour Nha Trang</h3>
+                    <span class="price">700.000 ₫ / xe</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ĐÀ LẠT -->
+    <section id="dalat" class="destination-content" role="tabpanel">
+        <div class="container">
+            <h2 class="experience-title">Đà Lạt – Cao Nguyên Mát Lành</h2>
+            <p class="experience-desc">
+                Đà Lạt nổi bật với khí hậu ôn hòa, rừng thông, hồ, hoa và không gian cao nguyên yên bình,
+                thích hợp nghỉ dưỡng, thư giãn và trải nghiệm thiên nhiên.
+            </p>
+
+            <div class="travel-slider" data-slider="dalat">
+                <div class="slider-track">
+                    <div class="slide active">
+                        <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1400&q=80"
+                             alt="Rừng thông Đà Lạt">
+                    </div>
+                    <div class="slide">
+                        <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1400&q=80"
+                             alt="Hồ Tuyền Lâm">
+                    </div>
+                    <div class="slide">
+                        <img src="https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?auto=format&fit=crop&w=1400&q=80"
+                             alt="Thành phố Đà Lạt">
+                    </div>
+                </div>
+                <button class="slider-btn prev" aria-label="Ảnh trước">‹</button>
+                <button class="slider-btn next" aria-label="Ảnh sau">›</button>
+            </div>
+
+            <div class="highlight-list">
+                <div>Hồ Tuyền Lâm – sinh thái & thư giãn</div>
+                <div>Đồi thông & thác nước – trải nghiệm thiên nhiên</div>
+                <div>City tour nội thành – quán cà phê view cao nguyên</div>
+            </div>
+
+            <div class="benefits-grid">
+                <div>✔ Khí hậu mát mẻ quanh năm</div>
+                <div>✔ Thư giãn – không ồn ào</div>
+                <div>✔ Lộ trình linh hoạt theo nhóm</div>
+            </div>
+
+            <div class="price-grid">
+                <div class="price-card">
+                    <h3>Tour Nội Thành Đà Lạt</h3>
+                    <span class="price">800.000 ₫ / xe</span>
+                </div>
+            </div>
+        </div>
+    </section>
+<div id="booking"></div>
+
+</main>
+<nav class="bottom-tab-bar" role="navigation" aria-label="Menu di động">
+    <div class="tab-items">
+        <a href="/" class="tab-item">
+    <div class="tab-icon"><i class="fas fa-home"></i></div>
+    <div class="tab-label">Main</div>
+</a>
+
+<a href="/service" class="tab-item">
+    <div class="tab-icon"><i class="fas fa-car"></i></div>
+    <div class="tab-label">Dịch vụ</div>
+</a>
+
+        <!-- SỬA Ở ĐÂY -->
+        <a href="javascript:void(0)" class="tab-item" onclick="scrollToBookingSection()">
+            <div class="tab-icon"><i class="fas fa-calendar-alt"></i></div>
+            <div class="tab-label">Đặt xe</div>
+        </a>
+        <a href="javascript:void(0)" class="tab-item" id="tabContact">
+    <div class="tab-icon"><i class="fas fa-phone"></i></div>
+    <div class="tab-label">Liên hệ</div>
+</a>
+        <a href="javascript:void(0)" class="tab-item" onclick="openFullPricingPage()" id="pricingTab">
+            <div class="tab-icon"><i class="fas fa-tag"></i></div>
+            <div class="tab-label">Bảng giá</div>
+        </a>
+    </div>
+</nav>
+<!-- Blog Section -->
+    <section class="blog-section" id="blog" aria-labelledby="blogTitle">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="blogTitle" class="section-title">Tin Tức & Kinh Nghiệm Du Lịch</h2>
+                <p class="section-description">Cập nhật thông tin du lịch, mẹo đặt xe và đánh giá dịch vụ</p>
+            </div>
+            <div class="blog-horizontal-container">
+                <div class="blog-horizontal-row" id="blogRow">
+                    <!-- Blog posts sẽ được tải bằng JavaScript -->
+                </div>
+            </div>
+            <div class="blog-cta">
+                <a href="blog.html" class="btn btn-outline" aria-label="Xem tất cả bài viết blog">
+                    <i class="fas fa-book-open" aria-hidden="true"></i> Xem tất cả bài viết
+                </a>
+            </div>
+        </div>
+    </section>
+<script>
+function showTravel(cityId, btn) {
+    document.querySelectorAll('.destination-content').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(cityId).classList.add('active');
+    btn.classList.add('active');
+}
+
+// Slider JS
+document.querySelectorAll('.travel-slider').forEach(slider => {
+    const track = slider.querySelector('.slider-track');
+    const slides = Array.from(track.children);
+    let index = 0;
+    const showSlide = (i) => {
+        slides.forEach(s => s.classList.remove('active'));
+        slides[i].classList.add('active');
+    }
+    slider.querySelector('.next').addEventListener('click', () => {
+        index = (index+1)%slides.length;
+        showSlide(index);
+    });
+    slider.querySelector('.prev').addEventListener('click', () => {
+        index = (index-1+slides.length)%slides.length;
+        showSlide(index);
+    });
+});
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js" defer></script>
+    <!-- Scripts -->
+    <script src="/js/language.js" defer></script>
+    <script src="/js/pricing.js" defer></script>
+    <script src="/js/chatbot.js" defer></script>
+    <script src="/js/sidebar.js" defer></script>
+    <script src="/js/booking-telegram.js" defer></script>
+    <script src="/js/footer-standalone.js" defer></script>
+    <script src="/js/blog.js" defer></script>
+</body>
+
+
+
+</html>

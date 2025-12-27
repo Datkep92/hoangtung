@@ -4,17 +4,7 @@ let blogData = { posts: {} };
 let currentPostId = null;
 let blogDatabase = null;
 
-// Firebase config (nên dùng chung với file script.js)
-const firebaseConfig = {
-    apiKey: "AIzaSyCeYPoizbE-Op79186r7pmndGpJ-JfESAk",
-    authDomain: "hoangtung-af982.firebaseapp.com",
-    databaseURL: "https://hoangtung-af982-default-rtdb.firebaseio.com",
-    projectId: "hoangtung-af982",
-    storageBucket: "hoangtung-af982.firebasestorage.app",
-    messagingSenderId: "232719624914",
-    appId: "1:232719624914:web:cac7ce833ae105d9255b0b",
-    measurementId: "G-FWHFP1W032"
-};
+
 
 // ===== HÀM TẠO SLUG CHO URL =====
 function createSlug(text) {
@@ -153,7 +143,6 @@ function resetMetaTagsToDefault() {
     window.history.replaceState({}, document.title, window.location.pathname);
 }
 
-// ===== KHỞI TẠO BLOG =====
 async function initBlog() {
     console.log("📚 Initializing LuxuryMove Blog with Firebase and SEO...");
     
@@ -167,53 +156,68 @@ async function initBlog() {
         // Load blog data
         await loadBlogDataFromFirebase();
         
-        // Setup event listeners
-        setupBlogEventListeners();
+        // Setup event listeners (chỉ trên trang blog)
+        const isBlogPage = document.getElementById('postsGrid') !== null;
+        if (isBlogPage) {
+            setupBlogEventListeners();
+        }
         
         // Setup Firebase listeners
         setupFirebaseListeners();
         
-        // Handle URL on page load
-        setTimeout(() => {
-            handleURLOnLoad();
-        }, 500);
+        // Setup homepage blog listener (chỉ trên trang chủ)
+        const isHomePage = document.getElementById('blogRow') !== null;
+        if (isHomePage) {
+            setupHomepageBlogListener();
+        }
         
-        // Setup back button handling
-        window.addEventListener('popstate', function(event) {
-            if (event.state && event.state.postId) {
-                openBlogPost(event.state.postId);
-            } else {
-                closeBlogModal();
-                resetMetaTagsToDefault();
-            }
-        });
+        // Handle URL on page load (chỉ trên trang blog)
+        if (isBlogPage) {
+            setTimeout(() => {
+                handleURLOnLoad();
+            }, 500);
+            
+            // Setup back button handling (chỉ trên trang blog)
+            window.addEventListener('popstate', function(event) {
+                if (event.state && event.state.postId) {
+                    openBlogPost(event.state.postId);
+                } else {
+                    closeBlogModal();
+                    resetMetaTagsToDefault();
+                }
+            });
+        }
         
     } catch (error) {
         console.error("❌ Error initializing blog:", error);
         await loadBlogDataFromLocalStorage();
-        setupBlogEventListeners();
-        handleURLOnLoad();
+        
+        const isBlogPage = document.getElementById('postsGrid') !== null;
+        if (isBlogPage) {
+            setupBlogEventListeners();
+            handleURLOnLoad();
+        }
     }
 }
 
-// ===== LOAD BLOG DATA FROM FIREBASE =====
 async function loadBlogDataFromFirebase() {
     try {
         console.log("🔍 Loading blog data from Firebase...");
         
-        const postsGrid = document.getElementById('postsGrid');
-        if (!postsGrid) {
-            console.error("❌ Element 'postsGrid' not found");
-            return;
-        }
+        // KIỂM TRA NẾU ĐANG Ở TRANG BLOG HAY TRANG CHỦ
+        const isBlogPage = document.getElementById('postsGrid') !== null;
+        const isHomePage = document.getElementById('blogRow') !== null;
         
-        // Show loading
-        postsGrid.innerHTML = `
-            <div class="loading-posts" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: var(--champagne); margin-bottom: 20px;"></i>
-                <p style="color: var(--text-secondary);">Đang tải bài viết từ Firebase...</p>
-            </div>
-        `;
+        if (isBlogPage) {
+            // TRANG BLOG: hiển thị loading trong postsGrid
+            const postsGrid = document.getElementById('postsGrid');
+            postsGrid.innerHTML = `
+                <div class="loading-posts" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: var(--champagne); margin-bottom: 20px;"></i>
+                    <p style="color: var(--text-secondary);">Đang tải bài viết từ Firebase...</p>
+                </div>
+            `;
+        }
         
         // Fetch from Firebase
         const snapshot = await blogDatabase.ref('blog').once('value');
@@ -226,8 +230,15 @@ async function loadBlogDataFromFirebase() {
             // Save to localStorage for offline use
             localStorage.setItem('luxurymove_blog', JSON.stringify(blogData));
             
-            renderBlogPosts();
-            updateCategoryCounts();
+            // RENDER TÙY THEO TRANG
+            if (isBlogPage) {
+                renderBlogPosts();
+                updateCategoryCounts();
+            }
+            
+            if (isHomePage && typeof window.renderHomepageBlog === 'function') {
+                window.renderHomepageBlog();
+            }
             
             // Add structured data for SEO
             addBlogStructuredData();
@@ -466,11 +477,11 @@ function getSamplePosts() {
     };
 }
 
-// ===== RENDER BLOG POSTS =====
 function renderBlogPosts(category = 'all') {
     const postsGrid = document.getElementById('postsGrid');
     if (!postsGrid) {
-        console.error("❌ Cannot render posts: postsGrid element not found");
+        // KHÔNG hiển thị lỗi nếu không ở trang blog
+        console.log("ℹ️ Not on blog page, skipping posts grid rendering");
         return;
     }
     
@@ -490,58 +501,7 @@ function renderBlogPosts(category = 'all') {
         return;
     }
     
-    let html = '';
-    let filteredPosts = Object.entries(posts);
-    
-    // Filter by category
-    if (category !== 'all') {
-        filteredPosts = filteredPosts.filter(([id, post]) => post.category === category);
-    }
-    
-    // Sort by date (newest first)
-    filteredPosts.sort((a, b) => new Date(b[1].date) - new Date(a[1].date));
-    
-    filteredPosts.forEach(([id, post]) => {
-        const date = new Date(post.date).toLocaleDateString('vi-VN');
-        const updatedAt = post.updated_at ? new Date(post.updated_at).toLocaleString('vi-VN') : '';
-        const slug = createSlug(post.title);
-        
-        html += `
-            <article class="blog-post-card" itemscope itemtype="https://schema.org/BlogPosting">
-                <a href="blog.html?post=${id}&title=${slug}" class="post-link" onclick="openBlogPost('${id}'); return false;" itemprop="url">
-                    <div class="post-image" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
-                        <img src="${post.image}" alt="${post.title}" loading="lazy" itemprop="url">
-                        <span class="post-category" itemprop="articleSection">${getCategoryName(post.category)}</span>
-                        ${updatedAt ? `<span class="post-updated" title="Cập nhật: ${updatedAt}"><i class="fas fa-sync-alt"></i></span>` : ''}
-                    </div>
-                    <div class="post-content">
-                        <div class="post-meta">
-                            <span class="post-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
-                                <i class="fas fa-user"></i> <span itemprop="name">${post.author}</span>
-                            </span>
-                            <span class="post-date" itemprop="datePublished" content="${post.date}">
-                                <i class="far fa-calendar"></i> ${date}
-                            </span>
-                        </div>
-                        <h3 class="post-title" itemprop="headline">${post.title}</h3>
-                        <p class="post-excerpt" itemprop="description">${post.excerpt}</p>
-                        ${post.tags ? `
-                            <div class="post-tags" itemprop="keywords">
-                                ${post.tags.slice(0, 3).map(tag => `
-                                    <span class="post-tag">#${tag}</span>
-                                `).join('')}
-                            </div>
-                        ` : ''}
-                        <span class="read-more-btn">
-                            Đọc tiếp <i class="fas fa-arrow-right"></i>
-                        </span>
-                    </div>
-                </a>
-            </article>
-        `;
-    });
-    
-    postsGrid.innerHTML = html;
+    // ... phần còn lại giữ nguyên
 }
 
 // ===== GET CATEGORY NAME =====
@@ -840,11 +800,111 @@ async function refreshBlogData() {
     console.log("🔄 Refreshing blog data...");
     await loadBlogDataFromFirebase();
 }
+// ===== HÀM HIỂN THỊ BLOG TRANG CHỦ =====
+function renderHomepageBlog() {
+    const blogRow = document.getElementById('blogRow');
+    if (!blogRow) return;
+    
+    const posts = blogData.posts || {};
+    
+    if (Object.keys(posts).length === 0) {
+        blogRow.innerHTML = '<div class="empty-blog">Chưa có bài viết nào</div>';
+        return;
+    }
+    
+    const latestPosts = Object.entries(posts)
+        .sort((a, b) => new Date(b[1].date || 0) - new Date(a[1].date || 0))
+        .slice(0, 6);
+    
+    if (latestPosts.length === 0) return;
+    
+    let html = '';
+    latestPosts.forEach(([id, post]) => {
+        const date = new Date(post.date || new Date()).toLocaleDateString('vi-VN');
+        const categoryName = getCategoryName(post.category);
+        const tags = post.tags || [];
+        
+        html += `
+            <div class="blog-horizontal-card" onclick="window.openBlogPost('${id}')">
+                <div class="blog-card-image">
+                    <img src="${post.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800'}" 
+                         alt="${post.title}" 
+                         loading="lazy">
+                    <span class="blog-card-category">${categoryName}</span>
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-card-meta">
+                        <span class="blog-card-author">
+                            <i class="fas fa-user"></i> ${post.author || 'Admin'}
+                        </span>
+                        <span class="blog-card-date">
+                            <i class="far fa-calendar"></i> ${date}
+                        </span>
+                    </div>
+                    <h3 class="blog-card-title">${post.title || 'Bài viết mới'}</h3>
+                    <p class="blog-card-excerpt">${post.excerpt || 'Đang cập nhật nội dung...'}</p>
+                    
+                    ${tags.length > 0 ? `
+                        <div class="blog-card-tags">
+                            ${tags.slice(0, 2).map(tag => `<span class="blog-card-tag">#${tag}</span>`).join('')}
+                            ${tags.length > 2 ? `<span class="blog-card-tag">+${tags.length - 2}</span>` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    <a href="#" class="blog-read-more" onclick="window.openBlogPost('${id}'); event.stopPropagation(); return false;">
+                        Đọc tiếp <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        `;
+    });
+    
+    blogRow.innerHTML = html;
+}
+
+// ===== HÀM CẬP NHẬT BLOG TRANG CHỦ KHI CÓ THAY ĐỔI =====
+function setupHomepageBlogListener() {
+    if (!blogDatabase) return;
+    
+    blogDatabase.ref('blog/posts').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            blogData.posts = data;
+            localStorage.setItem('HTUTransport_blog', JSON.stringify({ posts: data }));
+            
+            // Render lại blog trên trang chủ nếu đang ở trang chủ
+            if (document.getElementById('blogRow')) {
+                renderHomepageBlog();
+            }
+            
+            // Cập nhật dữ liệu trong blog.js
+            if (typeof renderBlogPosts === 'function') {
+                renderBlogPosts();
+                updateCategoryCounts();
+            }
+        }
+    });
+}
+
+// ===== LẤY BÀI VIẾT MẪU CHO TRANG CHỦ =====
+function getSampleBlogPostsForHomepage() {
+    return {
+        'post1': {
+            title: 'Kinh Nghiệm Du Lịch Nha Trang 2024',
+            author: 'HTUTransport Team',
+            date: '2024-12-15',
+            category: 'travel',
+            image: 'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800',
+            excerpt: 'Khám phá những điểm đến hấp dẫn tại Nha Trang',
+            content: `<h2>Giới Thiệu Về Nha Trang</h2><p>Nha Trang - thành phố biển xinh đẹp...</p>`,
+            tags: ['nha trang', 'du lịch', 'biển', 'kinh nghiệm']
+        }
+    };
+}
 
 // ===== INITIALIZE WHEN PAGE LOADS =====
 document.addEventListener('DOMContentLoaded', initBlog);
 
-// ===== EXPORT FUNCTIONS =====
 if (typeof window !== 'undefined') {
     window.refreshBlogData = refreshBlogData;
     window.openBlogPost = openBlogPost;
@@ -853,4 +913,15 @@ if (typeof window !== 'undefined') {
     window.callFromBlog = callFromBlog;
     window.shareBlogPost = shareBlogPost;
     window.printBlogPost = printBlogPost;
+    
+    // Export hàm cho trang chủ
+    window.renderHomepageBlog = renderHomepageBlog;
+    window.getCategoryName = getCategoryName;
+    window.setupHomepageBlogListener = setupHomepageBlogListener;
+    window.getServicesData = function() {
+        if (window.serviceManager && window.serviceManager.servicesData) {
+            return window.serviceManager.servicesData;
+        }
+        return { services: {} };
+    };
 }

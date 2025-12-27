@@ -1,8 +1,24 @@
 
-
 // ===== GALLERY FUNCTIONS =====
 let galleryData = { featured: [] };
 let galleryDatabase = null;
+
+// Thêm hàm getCategoryName vào gallery.js
+function getCategoryName(category) {
+    const categories = {
+        'premium': 'Premium',
+        'family': 'Gia đình',
+        'business': 'Doanh nhân',
+        'group': 'Đoàn thể',
+        'airport': 'Sân bay',
+        'tour': 'Du lịch',
+        'wedding': 'Cưới hỏi',
+        'luxury': 'Sang trọng',
+        'vip': 'VIP',
+        'standard': 'Tiêu chuẩn'
+    };
+    return categories[category] || category || 'Dịch vụ';
+}
 
 // Khởi tạo gallery
 async function initGallery() {
