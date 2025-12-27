@@ -96,9 +96,6 @@ class TelegramBooking {
     const style = document.createElement('style');
     style.id = 'telegram-booking-css';
     style.textContent = `
-
-
-
 /* Đảm bảo body và html không có margin/padding */
 body, html {
     margin: 0 !important;
@@ -125,14 +122,14 @@ body, html {
     z-index: 2;
     max-width: 600px !important;
     margin: 0 auto !important;
-    padding: 40px 25px !important; /* Giảm thêm padding trái/phải */
+    padding: 40px 25px !important; 
     background: rgba(27, 26, 26, 0.95) !important;
     border-radius: 20px !important;
     border: 2px solid rgba(212, 175, 55, 0.3) !important;
     backdrop-filter: blur(10px) !important;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5) !important;
     box-sizing: border-box !important;
-    width: calc(100% - 0px) !important; /* Trừ đi padding container */
+    width: 100% !important;
 }
 
 /* ===============================
@@ -178,17 +175,11 @@ body, html {
     color: #fff !important;
 }
 
-.form-label i {
-    width: 20px !important;
-    text-align: center !important;
-    color: #d4af37 !important;
-}
-
 .form-input,
 select.form-input {
     width: 100% !important;
     padding: 14px 16px !important;
-    font-size: 15px !important;
+    font-size: 16px !important; /* Quan trọng: Chặn auto zoom iOS */
     color: #f8f1dd !important;
     background: rgba(68, 62, 36, 0.9) !important;
     border: 2px solid rgba(254, 248, 248, 0.1) !important;
@@ -196,18 +187,16 @@ select.form-input {
     transition: all 0.3s ease !important;
     box-sizing: border-box !important;
     -webkit-appearance: none !important;
-    -moz-appearance: none !important;
     appearance: none !important;
+    touch-action: manipulation !important; /* Giảm delay click */
 }
 
 .form-input:focus {
     outline: none !important;
     border-color: #d4af37 !important;
-    background: rgba(40, 40, 40, 0.95) !important;
     box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.2) !important;
 }
 
-/* Select custom arrow */
 select.form-input {
     cursor: pointer !important;
     padding-right: 45px !important;
@@ -217,219 +206,55 @@ select.form-input {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") !important;
 }
 
-.form-input::placeholder {
-    color: rgba(255, 255, 255, 0.98) !important;
-}
-
 /* ===============================
    SUBMIT BUTTON
 ================================ */
 .btn-submit {
     width: 100% !important;
-    margin-top: 10px !important;
     padding: 16px !important;
     font-size: 16px !important;
     font-weight: 700 !important;
-    letter-spacing: 0.5px !important;
     text-transform: uppercase !important;
     border: none !important;
     border-radius: 12px !important;
     cursor: pointer !important;
-    color: #1a1a1a !important;
     background: linear-gradient(135deg, #d4af37, #ffd700) !important;
-    transition: all 0.3s ease !important;
-    display: block !important;
-}
-
-.btn-submit:hover:not(:disabled) {
-    transform: translateY(-3px) !important;
-    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.4) !important;
-}
-
-.btn-submit:disabled {
-    opacity: 0.6 !important;
-    cursor: not-allowed !important;
+    color: #1a1a1a !important;
 }
 
 /* ===============================
-   POPUP
-================================ */
-.booking-popup {
-    position: fixed !important;
-    inset: 0 !important;
-    display: none !important;
-    justify-content: center !important;
-    align-items: center !important;
-    background: rgba(0, 0, 0, 0.85) !important;
-    backdrop-filter: blur(5px) !important;
-    z-index: 9999 !important;
-}
-
-.booking-popup.active {
-    display: flex !important;
-}
-
-.popup-content {
-    width: 90% !important;
-    max-width: 400px !important;
-    padding: 40px !important;
-    text-align: center !important;
-    background: #1a1a1a !important;
-    border-radius: 20px !important;
-    border: 2px solid #d4af37 !important;
-    transform: scale(0.7) !important;
-    transition: 0.3s ease !important;
-}
-
-.booking-popup.active .popup-content {
-    transform: scale(1) !important;
-}
-
-.popup-icon {
-    font-size: 60px !important;
-    margin-bottom: 20px !important;
-    color: #d4af37 !important;
-}
-
-.popup-title {
-    font-size: 24px !important;
-    font-weight: 700 !important;
-    margin-bottom: 10px !important;
-    color: #fff !important;
-}
-
-.popup-msg {
-    margin-bottom: 25px !important;
-    line-height: 1.6 !important;
-    color: #ccc !important;
-}
-
-.btn-close-popup {
-    padding: 12px 30px !important;
-    border: none !important;
-    border-radius: 8px !important;
-    font-weight: bold !important;
-    cursor: pointer !important;
-    text-transform: uppercase !important;
-    background: #d4af37 !important;
-    color: #000 !important;
-}
-
-/* ===============================
-   RESPONSIVE - FORCE STYLES
+   RESPONSIVE
 ================================ */
 @media (max-width: 768px) {
-    .quick-booking,
-    #booking.quick-booking,
-    section.quick-booking {
-        padding: 40px 15px !important; 
-        margin: 0 !important;
-        width: 100vw !important;
-        max-width: 100vw !important;
-        box-sizing: border-box !important;
-        overflow-x: hidden !important;
-    }
-    
-    /* Reset viewport */
-    body, html {
+    .quick-booking {
+        padding: 40px 15px !important;
         width: 100% !important;
-        max-width: 100% !important;
         overflow-x: hidden !important;
     }
-    
-    /* Fix cho iOS Safari */
-    @supports (-webkit-touch-callout: none) {
-        .quick-booking {
-            padding-left: max(15px, env(safe-area-inset-left)) !important;
-            padding-right: max(15px, env(safe-area-inset-right)) !important;
-        }
-    }
-    
+
     .booking-card {
         padding: 25px 18px !important;
-        max-width: 100% !important;
-        margin: 0 auto !important;
-        width: 100% !important;
-        border-radius: 16px !important;
-    }
-    
-    .booking-title {
-        font-size: 24px !important;
-        padding: 0 5px !important;
-        margin-bottom: 8px !important;
-        line-height: 1.3 !important;
-    }
-    
-    .booking-subtitle {
-        font-size: 14px !important;
-        padding: 0 5px !important;
-        margin-bottom: 25px !important;
-        line-height: 1.4 !important;
-    }
-    
-    .form-input,
-    select.form-input {
-        padding: 12px 14px !important;
-        font-size: 14px !important;
-        border-radius: 10px !important;
         width: 100% !important;
     }
-    
-    select.form-input {
-        padding-right: 40px !important;
-        background-position: right 14px center !important;
+
+    /* Ép font-size 16px cho tất cả input trên mobile để chặn zoom */
+    .form-input, 
+    select.form-input,
+    textarea.form-input {
+        font-size: 16px !important;
     }
-    
-    .btn-submit {
-        padding: 14px !important;
-        font-size: 15px !important;
-        border-radius: 10px !important;
-        width: 100% !important;
-    }
+
+    .booking-title { font-size: 24px !important; }
 }
 
 @media (max-width: 480px) {
-    .quick-booking,
-    #booking.quick-booking,
-    section.quick-booking {
-        padding: 30px 12px !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-    }
-    
-    .booking-card {
-        padding: 20px 15px !important;
-        border-radius: 14px !important;
-        border-width: 1.5px !important;
-    }
-    
-    .booking-title {
-        font-size: 20px !important;
-    }
-    
-    .booking-subtitle {
-        font-size: 13px !important;
-    }
-    
-    .form-input,
-    select.form-input {
-        padding: 11px 13px !important;
-        font-size: 13px !important;
-    }
-    
-    .btn-submit {
-        padding: 13px !important;
-        font-size: 14px !important;
-    }
+    .booking-card { padding: 20px 15px !important; }
+    .booking-title { font-size: 20px !important; }
 }
 
-/* Đảm bảo không bị các style khác ghi đè */
-*[class*="booking"], 
-*[id*="booking"] {
-    box-sizing: border-box !important;
-}
+/* Loại bỏ hoàn toàn khả năng zoom thủ công nếu cần (Cân nhắc) */
+/* input:focus { font-size: 16px !important; } */
 `;
-
     document.head.appendChild(style);
 }
     createBookingForm() {
