@@ -92,77 +92,413 @@ class TelegramBooking {
     }
 
     addStyles() {
-        if (document.getElementById('telegram-booking-css')) return;
-        const style = document.createElement('style');
-        style.id = 'telegram-booking-css';
-        style.textContent = `
-            :root { --champagne: #d4af37; --text-primary: #ffffff; --text-secondary: #b0b0b0; }
-            .quick-booking { padding: 60px 10px; background: linear-gradient(135deg, #1a1a1a, #0a0a0a); position: relative; overflow: hidden; font-family: 'Segoe UI', Roboto, sans-serif; }
-            .quick-booking::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><path fill="%23d4af37" fill-opacity="0.03" d="M0,0h1000v1000H0V0z M150,150h700v700H150V150z"/></svg>'); background-size: 50px; opacity: 0.3; z-index: 1; }
-            .booking-card { max-width: 600px; margin: 0 auto; background: rgba(20, 20, 20, 0.95); border-radius: 20px; border: 2px solid rgba(212, 175, 55, 0.3); padding: 40px; position: relative; z-index: 2; backdrop-filter: blur(10px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); box-sizing: border-box; }
-            .booking-title { color: var(--champagne); font-size: 32px; margin-bottom: 10px; font-weight: 700; background: linear-gradient(135deg, #d4af37, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-transform: uppercase; text-align: center; }
-            .booking-subtitle { color: var(--text-secondary); font-size: 16px; text-align: center; margin-bottom: 30px; }
-            .form-group { margin-bottom: 20px; }
-            .form-label { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-weight: 600; color: var(--text-primary); font-size: 14px; }
-            .form-label i { color: var(--champagne); width: 20px; text-align: center; }
-            .form-input, select.form-input { width: 100%; padding: 14px 18px; background: rgba(30, 30, 30, 0.9); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #fff; font-size: 15px; transition: all 0.3s ease; box-sizing: border-box; }
-            select.form-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 18px center; background-size: 16px; padding-right: 50px; cursor: pointer; }
-            .form-input:focus { outline: none; border-color: #d4af37; box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2); background: rgba(40, 40, 40, 0.95); }
-            .btn-submit { width: 100%; padding: 18px; font-size: 17px; font-weight: 700; margin-top: 10px; background: linear-gradient(135deg, #d4af37, #ffd700); border: none; border-radius: 12px; color: #1a1a1a; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px; }
-            .btn-submit:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(212, 175, 55, 0.4); }
-            .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    if (document.getElementById('telegram-booking-css')) return;
+    const style = document.createElement('style');
+    style.id = 'telegram-booking-css';
+    style.textContent = `
+/* ===============================
+   QUICK BOOKING SECTION - FORCE STYLES
+================================ */
+#booking.quick-booking,
+section.quick-booking,
+.quick-booking {
+    position: relative !important;
+    padding: 60px 15px !important; /* Tăng lên 15px */
+    margin: 0 !important;
+    background: linear-gradient(135deg, #000000ff, #0a0a0a) !important;
+    overflow: hidden !important;
+    font-family: 'Segoe UI', Roboto, sans-serif !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    left: 0 !important;
+    right: 0 !important;
+}
 
-            /* Popup Styles Gốc */
-            .booking-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(5px); }
-            .popup-content { background: #1a1a1a; border: 2px solid var(--champagne); border-radius: 20px; padding: 40px; max-width: 400px; width: 90%; text-align: center; transform: scale(0.7); transition: 0.3s ease; }
-            .booking-popup.active { display: flex; }
-            .booking-popup.active .popup-content { transform: scale(1); }
-            .popup-icon { font-size: 60px; color: var(--champagne); margin-bottom: 20px; }
-            .popup-title { color: #fff; font-size: 24px; margin-bottom: 10px; font-weight: 700; }
-            .popup-msg { color: var(--text-secondary); margin-bottom: 25px; line-height: 1.6; }
-            .btn-close-popup { padding: 12px 30px; background: var(--champagne); border: none; border-radius: 8px; color: #000; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+/* Reset mọi container cha */
+#booking,
+section#booking,
+body > section,
+body > div > section {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
 
-            @media (max-width: 768px) { .booking-card { padding: 25px 20px; } .booking-title { font-size: 26px; } }
-        `;
-        document.head.appendChild(style);
+/* Đảm bảo body và html không có margin/padding */
+body, html {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+.quick-booking::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1000'><path fill='%23d4af37' fill-opacity='0.03' d='M0,0h1000v1000H0V0z M150,150h700v700H150V150z'/></svg>");
+    background-size: 50px;
+    opacity: 0.3;
+    z-index: 1;
+}
+
+/* ===============================
+   BOOKING CARD
+================================ */
+.booking-card {
+    position: relative !important;
+    z-index: 2;
+    max-width: 600px !important;
+    margin: 0 auto !important;
+    padding: 40px 25px !important; /* Giảm thêm padding trái/phải */
+    background: rgba(27, 26, 26, 0.95) !important;
+    border-radius: 20px !important;
+    border: 2px solid rgba(212, 175, 55, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5) !important;
+    box-sizing: border-box !important;
+    width: calc(100% - 0px) !important; /* Trừ đi padding container */
+}
+
+/* ===============================
+   TITLES
+================================ */
+.booking-title {
+    text-align: center !important;
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    margin-bottom: 10px !important;
+    text-transform: uppercase !important;
+    background: linear-gradient(135deg, #d4af37, #ffd700) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    padding: 0 10px !important;
+    word-break: break-word !important;
+}
+
+.booking-subtitle {
+    text-align: center !important;
+    font-size: 16px !important;
+    margin-bottom: 30px !important;
+    color: rgba(255, 255, 255, 1) !important;
+    padding: 0 10px !important;
+    word-break: break-word !important;
+}
+
+/* ===============================
+   FORM
+================================ */
+.form-group {
+    margin-bottom: 20px !important;
+    width: 100% !important;
+}
+
+.form-label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-bottom: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #fff !important;
+}
+
+.form-label i {
+    width: 20px !important;
+    text-align: center !important;
+    color: #d4af37 !important;
+}
+
+.form-input,
+select.form-input {
+    width: 100% !important;
+    padding: 14px 16px !important;
+    font-size: 15px !important;
+    color: #f8f1dd !important;
+    background: rgba(68, 62, 36, 0.9) !important;
+    border: 2px solid rgba(254, 248, 248, 0.1) !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    box-sizing: border-box !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+.form-input:focus {
+    outline: none !important;
+    border-color: #d4af37 !important;
+    background: rgba(40, 40, 40, 0.95) !important;
+    box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.2) !important;
+}
+
+/* Select custom arrow */
+select.form-input {
+    cursor: pointer !important;
+    padding-right: 45px !important;
+    background-repeat: no-repeat !important;
+    background-position: right 16px center !important;
+    background-size: 16px !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") !important;
+}
+
+.form-input::placeholder {
+    color: rgba(255, 255, 255, 0.98) !important;
+}
+
+/* ===============================
+   SUBMIT BUTTON
+================================ */
+.btn-submit {
+    width: 100% !important;
+    margin-top: 10px !important;
+    padding: 16px !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    border: none !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    color: #1a1a1a !important;
+    background: linear-gradient(135deg, #d4af37, #ffd700) !important;
+    transition: all 0.3s ease !important;
+    display: block !important;
+}
+
+.btn-submit:hover:not(:disabled) {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.4) !important;
+}
+
+.btn-submit:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+}
+
+/* ===============================
+   POPUP
+================================ */
+.booking-popup {
+    position: fixed !important;
+    inset: 0 !important;
+    display: none !important;
+    justify-content: center !important;
+    align-items: center !important;
+    background: rgba(0, 0, 0, 0.85) !important;
+    backdrop-filter: blur(5px) !important;
+    z-index: 9999 !important;
+}
+
+.booking-popup.active {
+    display: flex !important;
+}
+
+.popup-content {
+    width: 90% !important;
+    max-width: 400px !important;
+    padding: 40px !important;
+    text-align: center !important;
+    background: #1a1a1a !important;
+    border-radius: 20px !important;
+    border: 2px solid #d4af37 !important;
+    transform: scale(0.7) !important;
+    transition: 0.3s ease !important;
+}
+
+.booking-popup.active .popup-content {
+    transform: scale(1) !important;
+}
+
+.popup-icon {
+    font-size: 60px !important;
+    margin-bottom: 20px !important;
+    color: #d4af37 !important;
+}
+
+.popup-title {
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    margin-bottom: 10px !important;
+    color: #fff !important;
+}
+
+.popup-msg {
+    margin-bottom: 25px !important;
+    line-height: 1.6 !important;
+    color: #ccc !important;
+}
+
+.btn-close-popup {
+    padding: 12px 30px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    text-transform: uppercase !important;
+    background: #d4af37 !important;
+    color: #000 !important;
+}
+
+/* ===============================
+   RESPONSIVE - FORCE STYLES
+================================ */
+@media (max-width: 768px) {
+    .quick-booking,
+    #booking.quick-booking,
+    section.quick-booking {
+        padding: 40px 15px !important; 
+        margin: 0 !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
     }
-
-    createBookingForm() {
-        let container = document.getElementById('booking');
-        if (!container) {
-            container = document.createElement('section');
-            container.id = 'booking'; container.className = 'quick-booking';
-            document.body.appendChild(container);
+    
+    /* Reset viewport */
+    body, html {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* Fix cho iOS Safari */
+    @supports (-webkit-touch-callout: none) {
+        .quick-booking {
+            padding-left: max(15px, env(safe-area-inset-left)) !important;
+            padding-right: max(15px, env(safe-area-inset-right)) !important;
         }
-        container.innerHTML = `
-        <div class="booking-card">
-            <div class="booking-header">
-                <h2 id="bookingTitle" class="booking-title">Đặt Xe Nhanh Chóng - Nhận Ưu Đãi Ngay</h2>
-                        <p class="booking-subtitle">Chỉ cần điền thông tin, chúng tôi sẽ gọi lại tư vấn ngay</p>
-            </div>
-            <form id="bookingForm">
-                <div class="form-group"><label class="form-label"><i class="fas fa-car"></i> Loại Xe</label>
-                    <select id="carType" class="form-input">${this.vehicleTypes.map(t => `<option value="${t}">${t}</option>`).join('')}</select>
-                </div>
-                <div class="form-group"><label class="form-label"><i class="fas fa-phone"></i> Số Điện Thoại *</label>
-                    <input type="tel" id="customerPhone" class="form-input" placeholder="Nhập SĐT..." required autocomplete="off">
-                </div>
-                <div class="form-group"><label class="form-label"><i class="fas fa-user"></i> Họ Tên Khách Hàng</label>
-                    <input type="text" id="customerName" class="form-input" placeholder="Tên của bạn...">
-                </div>
-                <div class="form-group"><label class="form-label"><i class="fas fa-map-marker-alt"></i> Điểm Đón *</label>
-                    <input type="text" id="pickupLocation" class="form-input" placeholder="Bạn đang ở đâu?" required>
-                </div>
-                <div class="form-group"><label class="form-label"><i class="fas fa-flag-checkered"></i> Điểm Đến</label>
-                    <input type="text" id="dropoffLocation" class="form-input" placeholder="Bạn muốn đi đâu?">
-                </div>
-                <div class="form-group"><label class="form-label"><i class="fas fa-sticky-note"></i> Ghi Chú Yêu Cầu</label>
-                    <textarea id="customerNote" class="form-input" rows="2" placeholder="Yêu cầu thêm (nếu có)..."></textarea>
-                </div>
-                <button type="submit" id="bookingSubmitBtn" class="btn-submit">Gửi Yêu Cầu Đặt Xe</button>
-            </form>
-        </div>`;
     }
+    
+    .booking-card {
+        padding: 25px 18px !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+        border-radius: 16px !important;
+    }
+    
+    .booking-title {
+        font-size: 24px !important;
+        padding: 0 5px !important;
+        margin-bottom: 8px !important;
+        line-height: 1.3 !important;
+    }
+    
+    .booking-subtitle {
+        font-size: 14px !important;
+        padding: 0 5px !important;
+        margin-bottom: 25px !important;
+        line-height: 1.4 !important;
+    }
+    
+    .form-input,
+    select.form-input {
+        padding: 12px 14px !important;
+        font-size: 14px !important;
+        border-radius: 10px !important;
+        width: 100% !important;
+    }
+    
+    select.form-input {
+        padding-right: 40px !important;
+        background-position: right 14px center !important;
+    }
+    
+    .btn-submit {
+        padding: 14px !important;
+        font-size: 15px !important;
+        border-radius: 10px !important;
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .quick-booking,
+    #booking.quick-booking,
+    section.quick-booking {
+        padding: 30px 12px !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    
+    .booking-card {
+        padding: 20px 15px !important;
+        border-radius: 14px !important;
+        border-width: 1.5px !important;
+    }
+    
+    .booking-title {
+        font-size: 20px !important;
+    }
+    
+    .booking-subtitle {
+        font-size: 13px !important;
+    }
+    
+    .form-input,
+    select.form-input {
+        padding: 11px 13px !important;
+        font-size: 13px !important;
+    }
+    
+    .btn-submit {
+        padding: 13px !important;
+        font-size: 14px !important;
+    }
+}
+
+/* Đảm bảo không bị các style khác ghi đè */
+*[class*="booking"], 
+*[id*="booking"] {
+    box-sizing: border-box !important;
+}
+`;
+
+    document.head.appendChild(style);
+}
+    createBookingForm() {
+    let container = document.getElementById('booking');
+    if (!container) {
+        container = document.createElement('section');
+        container.id = 'booking'; 
+        container.className = 'quick-booking'; // Đảm bảo có class này
+        document.body.appendChild(container);
+    } else {
+        // Nếu đã có container, đảm bảo nó có class đúng
+        container.className = 'quick-booking';
+    }
+    container.innerHTML = `
+    <div class="booking-card">
+        <div class="booking-header">
+            <h2 id="bookingTitle" class="booking-title">Đặt Xe Nhanh Chóng</h2>
+            <p class="booking-subtitle">Chỉ cần điền thông tin, chúng tôi sẽ liên hệ tư vấn ngay</p>
+        </div>
+        <form id="bookingForm">
+            <div class="form-group">
+                <select id="carType" class="form-input">${this.vehicleTypes.map(t => `<option value="${t}">${t}</option>`).join('')}</select>
+            </div>
+            <div class="form-group">
+                <input type="tel" id="customerPhone" class="form-input" placeholder="Nhập SĐT..." required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <input type="text" id="customerName" class="form-input" placeholder="Họ Tên của bạn...">
+            </div>
+            <div class="form-group">
+                <input type="text" id="pickupLocation" class="form-input" placeholder="Bạn đang ở đâu?" required>
+            </div>
+            <div class="form-group">
+                <input type="text" id="dropoffLocation" class="form-input" placeholder="Bạn muốn đi đâu?">
+            </div>
+            <div class="form-group">
+                <textarea id="customerNote" class="form-input" rows="2" placeholder="Yêu cầu thêm (nếu có)..."></textarea>
+            </div>
+            <button type="submit" id="bookingSubmitBtn" class="btn-submit">Gửi Yêu Cầu Đặt Xe</button>
+        </form>
+    </div>`;
+}
 
     createPopupElement() {
         const popup = document.createElement('div');

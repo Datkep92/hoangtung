@@ -7,7 +7,9 @@ class StandaloneFooter {
             companyName: 'HTU Transport',
             phoneNumber: '0567033888',
             email: 'cskh@htutransport.com',
-            address: 'TP. Nha Trang, Khánh Hòa',
+            address: '62 Hải Thượng Lãn Ông, Phan Rang, Khánh Hòa',
+            address2: '76 Nguyễn Tất Thành, Nha Trang, Khánh Hòa',
+            address3: '29 Ngô Quyền, Đà Lạt, Lâm Đồng',
             copyrightYear: new Date().getFullYear(),
             designer: 'Datkep92',
             socialLinks: {
@@ -43,12 +45,18 @@ class StandaloneFooter {
 
                     <div class="standalone-footer-top">
                         <div class="standalone-footer-section" itemscope itemtype="https://schema.org/Organization">
-                            <div class="standalone-footer-logo">
-                                <i class="fas fa-crown"></i>
-                                <span>${this.options.companyName}<span>Transport</span></span>
-                            </div>
+                            <div class="logo" itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
+            <meta itemprop="name" content="Hà Tùng">
+            <div class="logo-icon">
+                <img src="https://raw.githubusercontent.com/Datkep92/hoangtung/main/images/htu_vuong512notext.jpg" 
+                     alt="HTU Transport Logo" 
+                     width="50" 
+                     height="50">
+            </div>
+            <div class="logo-text">HTU<span>Transport</span></div>
+        </div>
                             <p class="standalone-footer-desc">
-                                Đơn vị vận tải cao cấp hàng đầu khu vực miền Trung - Tây Nguyên
+                                Đơn vị vận tải hành khách hàng đầu khu vực miền Trung - Tây Nguyên
                             </p>
                             <div class="standalone-social-links">
                                 ${this.renderSocialLinks()}
@@ -64,6 +72,8 @@ class StandaloneFooter {
                                     </a>
                                 </p>
                                 <p><i class="fas fa-map-marker-alt"></i>${this.options.address}</p>
+                                <p><i class="fas fa-map-marker-alt"></i>${this.options.address2}</p>
+                                <p><i class="fas fa-map-marker-alt"></i>${this.options.address3}</p>
                                 <p><i class="fas fa-clock"></i>Hoạt động 24/7</p>
                                 <p><i class="fas fa-envelope"></i>
                                     <a href="mailto:${this.options.email}">
@@ -80,16 +90,7 @@ class StandaloneFooter {
                             </ul>
                         </div>
 
-                        <div class="standalone-footer-section">
-                            <h4 class="standalone-footer-heading">Dịch Vụ</h4>
-                            <ul class="standalone-footer-services">
-                                <li><i class="fas fa-plane"></i> Đưa đón sân bay</li>
-                                <li><i class="fas fa-car"></i> Xe du lịch</li>
-                                <li><i class="fas fa-calendar-alt"></i> Xe hợp đồng</li>
-                                <li><i class="fas fa-heart"></i> Xe cưới</li>
-                                <li><i class="fas fa-bus"></i> Đưa đón công ty</li>
-                            </ul>
-                        </div>
+                        
                     </div>
 
                     <div class="standalone-footer-divider">
@@ -526,6 +527,374 @@ class StandaloneFooter {
                 --text-secondary: #cccccc;
                 --text-tertiary: #999999;
             }
+            
+            /* Media Queries */
+            @media (max-width: 768px) {
+                .standalone-footer-top {
+                    flex-direction: column;
+                }
+                
+                .standalone-footer-services {
+                    flex-direction: column;
+                }
+            }
+                /* ===============================
+   STANDALONE FOOTER LINKS STYLES
+================================ */
+
+/* Social Links */
+.standalone-social-links {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.standalone-social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    color: var(--text-secondary);
+    font-size: 18px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.standalone-social-links a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(212, 175, 55, 0.1), 
+        transparent);
+    transition: left 0.6s ease;
+}
+
+.standalone-social-links a:hover {
+    background: var(--champagne);
+    color: var(--primary-black);
+    border-color: var(--champagne);
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: 
+        0 10px 20px rgba(212, 175, 55, 0.3),
+        0 0 0 2px rgba(212, 175, 55, 0.1);
+}
+
+.standalone-social-links a:hover::before {
+    left: 100%;
+}
+
+/* Zalo Icon Special Style */
+.standalone-zalo-icon {
+    font-weight: 700;
+    font-size: 16px;
+    color: #0068FF;
+    transition: color 0.3s ease;
+}
+
+.standalone-social-links a:hover .standalone-zalo-icon {
+    color: var(--primary-black);
+}
+
+/* Footer Links List */
+.standalone-footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.standalone-footer-links li {
+    margin-bottom: 14px;
+    position: relative;
+    padding-left: 0;
+    transition: all 0.3s ease;
+}
+
+.standalone-footer-links li::before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    background: var(--champagne);
+    border-radius: 50%;
+    transform: translateY(-50%) scale(0);
+    transition: transform 0.3s ease;
+}
+
+.standalone-footer-links li:hover::before {
+    transform: translateY(-50%) scale(1);
+}
+
+.standalone-footer-links a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 8px 0;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.standalone-footer-links a i {
+    color: var(--champagne);
+    font-size: 14px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.standalone-footer-links li:hover a {
+    color: var(--champagne);
+    transform: translateX(8px);
+}
+
+.standalone-footer-links li:hover a i {
+    background: var(--champagne);
+    color: var(--primary-black);
+    transform: rotate(-10deg) scale(1.1);
+}
+
+/* Quick Services Links */
+.standalone-footer-services {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.standalone-footer-services li {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.standalone-footer-services li:hover {
+    color: var(--champagne);
+    transform: translateX(5px);
+}
+
+.standalone-footer-services li i {
+    color: var(--champagne);
+    font-size: 12px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.standalone-footer-services li:hover i {
+    background: var(--champagne);
+    color: var(--primary-black);
+    transform: rotate(5deg);
+}
+
+/* Contact Links */
+.standalone-contact-info a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    padding-bottom: 2px;
+}
+
+.standalone-contact-info a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--champagne);
+    transition: width 0.3s ease;
+}
+
+.standalone-contact-info a:hover {
+    color: var(--champagne);
+}
+
+.standalone-contact-info a:hover::after {
+    width: 100%;
+}
+
+/* Back to Top Button */
+.standalone-back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--champagne), #b8860b);
+    border: none;
+    border-radius: 50%;
+    color: var(--primary-black);
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(30px);
+    box-shadow: 
+        0 8px 25px rgba(212, 175, 55, 0.3),
+        inset 0 2px 0 rgba(255, 255, 255, 0.2);
+}
+
+.standalone-back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.standalone-back-to-top:hover {
+    background: linear-gradient(135deg, #ffd700, var(--champagne));
+    transform: translateY(-8px) scale(1.1);
+    box-shadow: 
+        0 15px 35px rgba(212, 175, 55, 0.5),
+        inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.standalone-back-to-top:active {
+    transform: translateY(-4px) scale(1.05);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .standalone-social-links {
+        gap: 10px;
+        justify-content: center;
+    }
+    
+    .standalone-social-links a {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .standalone-footer-links a {
+        font-size: 13px;
+        gap: 10px;
+    }
+    
+    .standalone-footer-services li {
+        font-size: 13px;
+        gap: 10px;
+    }
+    
+    .standalone-back-to-top {
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
+        bottom: 20px;
+        right: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .standalone-social-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .standalone-social-links a {
+        width: 36px;
+        height: 36px;
+        font-size: 15px;
+    }
+    
+    .standalone-footer-links li {
+        margin-bottom: 10px;
+    }
+    
+    .standalone-footer-services li {
+        margin-bottom: 8px;
+    }
+}
+
+/* Animation for links */
+@keyframes linkFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.standalone-footer-links li {
+    animation: linkFadeIn 0.5s ease-out;
+    animation-fill-mode: both;
+}
+
+.standalone-footer-links li:nth-child(1) { animation-delay: 0.1s; }
+.standalone-footer-links li:nth-child(2) { animation-delay: 0.2s; }
+.standalone-footer-links li:nth-child(3) { animation-delay: 0.3s; }
+
+.standalone-footer-services li {
+    animation: linkFadeIn 0.5s ease-out;
+    animation-fill-mode: both;
+}
+
+.standalone-footer-services li:nth-child(1) { animation-delay: 0.1s; }
+.standalone-footer-services li:nth-child(2) { animation-delay: 0.2s; }
+.standalone-footer-services li:nth-child(3) { animation-delay: 0.3s; }
+.standalone-footer-services li:nth-child(4) { animation-delay: 0.4s; }
+.standalone-footer-services li:nth-child(5) { animation-delay: 0.5s; }
+
+/* Hover effects for contact info */
+.standalone-contact-info p {
+    position: relative;
+    padding-left: 30px;
+}
+
+.standalone-contact-info i {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    text-align: center;
+    color: var(--champagne);
+    transition: all 0.3s ease;
+}
+
+.standalone-contact-info p:hover i {
+    color: #ffd700;
+    transform: translateY(-50%) scale(1.2);
+}
         `;
         
         const style = document.createElement('style');

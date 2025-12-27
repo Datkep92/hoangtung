@@ -80,142 +80,174 @@ class StandaloneTranslate {
     }
     
     injectLanguageCSS() {
-        if (document.getElementById('standalone-language-css')) return;
-        
-        const css = `
-            /* Language Selector CSS */
-            .header-actions {
-                display: flex;
-                align-items: center;
-                gap: 15px;
-            }
-            
-            .language-selector {
-                position: relative;
-                display: inline-block;
-            }
-            
-            .language-btn {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                background: rgba(212, 175, 55, 0.1);
-                border: 1px solid rgba(212, 175, 55, 0.3);
-                border-radius: 8px;
-                padding: 8px 12px;
-                color: var(--champagne);
-                font-weight: 600;
-                font-size: 14px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                min-width: 80px;
-                justify-content: space-between;
-            }
-            
-            .language-btn:hover {
-                background: rgba(212, 175, 55, 0.2);
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
-            }
-            
-            .language-dropdown {
-                position: absolute;
-                top: calc(100% + 5px);
-                right: 0;
-                background: #1a1a1a;
-                border: 1px solid rgba(212, 175, 55, 0.3);
-                border-radius: 10px;
-                min-width: 180px;
-                padding: 8px 0;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-                display: none;
-                z-index: 1000;
-            }
-            
-            .language-dropdown.show {
-                display: block;
-            }
-            
-            .language-option {
-                display: flex;
-                align-items: center;
-                padding: 10px 15px;
-                color: var(--text-primary);
-                text-decoration: none;
-                transition: all 0.2s ease;
-                cursor: pointer;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            }
-            
-            .language-option:last-child {
-                border-bottom: none;
-            }
-            
-            .language-option:hover {
-                background: rgba(212, 175, 55, 0.1);
-            }
-            
-            .language-option.active {
-                background: rgba(212, 175, 55, 0.15);
-                color: var(--champagne);
-            }
-            
-            .language-flag {
-                font-size: 18px;
-                margin-right: 10px;
-                width: 24px;
-            }
-            
-            .language-name {
-                flex: 1;
-                font-size: 14px;
-            }
-            
-            .language-code {
-                font-size: 12px;
-                font-weight: 700;
-                color: var(--champagne);
-                background: rgba(212, 175, 55, 0.1);
-                padding: 2px 8px;
-                border-radius: 4px;
-            }
-            
-            .online-indicator {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                background: rgba(76, 175, 80, 0.1);
-                border: 1px solid rgba(76, 175, 80, 0.3);
-                border-radius: 20px;
-                padding: 6px 12px;
-                color: #4CAF50;
-                font-size: 12px;
-                font-weight: 600;
-            }
-            
-            .online-count {
-                font-size: 13px;
-            }
-            
-            /* Google Translate Protection CSS */
-            .goog-te-banner-frame,
-            .skiptranslate,
-            .goog-te-menu-value,
-            .goog-te-gadget {
-                display: none !important;
-            }
-            
-            body {
-                top: 0 !important;
-                position: static !important;
-            }
-        `;
-        
-        const style = document.createElement('style');
-        style.id = 'standalone-language-css';
-        style.textContent = css;
-        document.head.appendChild(style);
+    if (document.getElementById('standalone-language-css')) return;
+
+    const css = `
+/* =========================
+   HEADER & OVERFLOW FIX
+========================= */
+header,
+.header,
+.header-inner,
+.header-actions,
+nav {
+    overflow: visible !important;
+    transform: none !important;
+    filter: none !important;
+}
+
+/* =========================
+   LANGUAGE SELECTOR
+========================= */
+.language-selector {
+    position: relative;
+    display: inline-block;
+    margin-right: 10px;
+    z-index: 2000;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.language-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: var(--champagne);
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    min-width: 60px;
+    height: 32px;
+    justify-content: space-between;
+}
+
+.language-btn i {
+    font-size: 12px;
+}
+
+/* =========================
+   DROPDOWN - DESKTOP
+========================= */
+.language-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: #1a1a1a;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 10px;
+    min-width: 180px;
+    padding: 8px 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    display: none;
+    z-index: 3000;
+}
+
+.language-dropdown.show {
+    display: block;
+}
+
+/* =========================
+   OPTIONS
+========================= */
+.language-option {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.language-option:last-child {
+    border-bottom: none;
+}
+
+.language-option:hover {
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.language-flag {
+    font-size: 18px;
+    width: 24px;
+    margin-right: 10px;
+}
+
+.language-name {
+    flex: 1;
+    font-size: 14px;
+}
+
+.language-code {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--champagne);
+    background: rgba(212, 175, 55, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* =========================
+   ONLINE INDICATOR
+========================= */
+.online-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 16px;
+    padding: 4px 10px;
+    color: var(--champagne);
+    font-size: 12px;
+    font-weight: 600;
+    height: 28px;
+}
+
+.online-count {
+    font-size: 12px;
+}
+
+/* =========================
+   🔥 MOBILE FIX (QUAN TRỌNG)
+========================= */
+@media (max-width: 768px) {
+    .language-dropdown {
+        position: fixed !important;
+        top: 60px !important;       /* ngay dưới header */
+        right: 10px !important;
+        left: auto !important;
+        max-width: calc(100vw - 20px);
+        width: 220px;
+        z-index: 9999;
     }
+}
+
+/* =========================
+   GOOGLE TRANSLATE HIDE
+========================= */
+.goog-te-banner-frame,
+.skiptranslate,
+.goog-te-menu-value,
+.goog-te-gadget {
+    display: none !important;
+}
+
+body {
+    top: 0 !important;
+    position: static !important;
+}
+`;
+
+    const style = document.createElement('style');
+    style.id = 'standalone-language-css';
+    style.textContent = css;
+    document.head.appendChild(style);
+}
     
     // ===== CÁC PHƯƠNG THỨC CŨ GIỮ NGUYÊN =====
     setupEventDelegation() {

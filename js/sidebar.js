@@ -1,5 +1,3 @@
-// sidebar-standalone.js
-
 class StandaloneSidebar {
     constructor() {
         this.isOpen = false;
