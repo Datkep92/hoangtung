@@ -138,6 +138,7 @@ function renderGallery() {
             <div class="gallery-image-container">
                 <img src="${item.image}" alt="${item.title}" class="gallery-image" loading="lazy"
                      onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800'">
+                <div class="gallery-category-badge">${getCategoryName(item.category)}</div>
             </div>
             <div class="gallery-info">
                 <h3 class="gallery-title">${item.title}</h3>

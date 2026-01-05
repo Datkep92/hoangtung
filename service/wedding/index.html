@@ -181,16 +181,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" 
           rel="stylesheet">
     
-    <link rel="stylesheet" href="/css/style.css" media="all">
+<link rel="stylesheet" href="/css/style.css" media="all">
 <link rel="stylesheet" href="/css/chatbot.css" media="all">
 <link rel="stylesheet" href="/css/service.css" media="all">
 <link rel="stylesheet" href="/css/pricing.css" media="all">
 <link rel="stylesheet" href="/css/sidebar.css" media="all">
-<link rel="stylesheet" href="/service/travel/travel.css" media="all">
+<link rel="stylesheet" href="/service/wedding/wedding.css" media="all">
 <link rel="stylesheet" href="/css/blog.css" media="all">
 
 </head>
-<body class="travel-body">
+<body>
+
 <header class="app-header" role="banner">
     <div class="header-content container">
         
@@ -246,152 +247,161 @@
     <!-- HẾT SỬA -->
 </div>
 
-<!-- Fixed Destination Tabs -->
-<div class="destination-tabs">
-    <button class="dest-tab active" data-destination="phanrang">
-        🏖️ Phan Rang
+<!-- Main Tabs -->
+<div class="main-tabs">
+    <button class="main-tab wedding" data-section="wedding">
+        <span class="tab-icon">💍</span>
+        Cưới Hỏi
     </button>
-    <button class="dest-tab" data-destination="nhatrang">
-        🌊 Nha Trang
-    </button>
-    <button class="dest-tab" data-destination="dalat">
-        🏞️ Đà Lạt
+    <button class="main-tab event" data-section="event">
+        <span class="tab-icon">🎪</span>
+        Sự Kiện
     </button>
 </div>
 
-<!-- Phan Rang Content -->
-<section id="phanrang-content" class="destination-content active luxury-hero">
-    <div class="destination-title">
-        <h2>🏖️ PHAN RANG</h2>
-        <p class="destination-tagline">Biển hoang sơ - Văn hóa Chăm Pa cổ kính - Sa mạc cát trắng</p>
+<!-- ===== WEDDING SECTION ===== -->
+<section id="wedding-section" class="content-section service-hero wedding-hero">
+    <div class="service-title">
+        <div class="title-decoration">
+            <div class="decoration-line"></div>
+            <div class="decoration-icon">💍</div>
+            <div class="decoration-line"></div>
+        </div>
+        <h2>DỊCH VỤ CƯỚI HỎI</h2>
+        <p class="service-tagline">Trọn vẹn yêu thương - Sang trọng đẳng cấp - Kỷ niệm trọn đời</p>
     </div>
 
-    <div class="premium-showcase">
-        <img src="https://images.unsplash.com/photo-1593693399746-35f8afc4d8a4?auto=format&fit=crop&w=1400&q=80" 
-             alt="Vịnh Vĩnh Hy Phan Rang" class="showcase-image">
+    <div class="luxury-showcase">
+        <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1400&q=80" 
+             alt="Xe hoa cưới Mercedes" class="showcase-image">
         <div class="showcase-overlay">
-            <div class="showcase-caption">VỊNH VĨNH HY</div>
-            <div class="showcase-subtitle">"Vịnh đẹp nhất miền Trung - Nước trong xanh như ngọc"</div>
+            <div class="showcase-caption">XE HOA MERCEDES E-CLASS</div>
+            <div class="showcase-subtitle">"Xe hoa sang trọng - Khởi đầu hạnh phúc viên mãn"</div>
         </div>
     </div>
 
-    <div class="luxury-attractions">
-        <h3 class="attractions-title">ĐỊA ĐIỂM NỔI BẬT</h3>
+    <div class="service-features">
+        <h3 class="features-title">DỊCH VỤ TOÀN DIỆN</h3>
         
-        <div class="attraction-item">
-            <div class="attraction-name"><i class="fas fa-water"></i> Vịnh Vĩnh Hy</div>
-            <div class="attraction-desc">Vịnh biển hoang sơ với làn nước trong xanh, bãi cát trắng mịn, ít khách du lịch, cảnh quan thiên nhiên nguyên sơ.</div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-car-side"></i>
+            </div>
+            <div class="feature-content">
+                <h4 class="feature-name">Xe Hoa Cao Cấp</h4>
+                <p class="feature-desc">Mercedes E-Class, BMW 5 Series, Lexus ES - Trang trí hoa tươi theo yêu cầu, phù hợp chủ đề đám cưới.</p>
+            </div>
         </div>
         
-        <div class="attraction-item">
-            <div class="attraction-name"><i class="fas fa-mountain"></i> Hang Rái</div>
-            <div class="attraction-desc">Địa hình đá núi độc đáo ven biển, view hoàng hôn tuyệt đẹp, điểm check-in lý tưởng cho nhiếp ảnh gia.</div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="feature-content">
+                <h4 class="feature-name">Xe Đón Dâu & Khách Mời</h4>
+                <p class="feature-desc">Đoàn xe đồng bộ 4-8 chiếc, tài xế mặc vest lịch sự, lịch trình chi tiết và đúng giờ tuyệt đối.</p>
+            </div>
         </div>
         
-        <div class="attraction-item">
-            <div class="attraction-name"><i class="fas fa-landmark"></i> Tháp Chàm Poklong Garai</div>
-            <div class="attraction-desc">Di sản văn hóa Chăm Pa 700 năm tuổi, kiến trúc gạch đỏ đặc trưng, biểu tượng văn hóa của Ninh Thuận.</div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-gem"></i>
+            </div>
+            <div class="feature-content">
+                <h4 class="feature-name">Combo Trọn Gói</h4>
+                <p class="feature-desc">Xe + trang trí + tài xế + hỗ trợ lịch trình cưới - Tiết kiệm 15% so với đặt lẻ từng dịch vụ.</p>
+            </div>
         </div>
         
-        <div class="attraction-item">
-            <div class="attraction-name"><i class="fas fa-paw"></i> Đồi cừu Ninh Thuận</div>
-            <div class="attraction-desc">Cảnh quan như châu Âu với những đàn cừu trên đồi cỏ xanh, góc sống ảo đẹp mê ly.</div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-headset"></i>
+            </div>
+            <div class="feature-content">
+                <h4 class="feature-name">Hỗ Trợ 24/7</h4>
+                <p class="feature-desc">Đội ngũ hỗ trợ chuyên nghiệp luôn sẵn sàng, xử lý mọi tình huống trong ngày trọng đại của bạn.</p>
+            </div>
         </div>
     </div>
-
-    <button class="luxury-book-btn" onclick="bookDestination('Phan Rang')">
-        <i class="fas fa-gem"></i> ĐẶT XE PHAN RANG CAO CẤP
-    </button>
 </section>
 
-<!-- Nha Trang Content -->
-<section id="nhatrang-content" class="destination-content luxury-hero">
-    <div class="destination-title">
-        <h2>🌊 NHA TRANG</h2>
-        <p class="destination-tagline">Thành phố biển sôi động - Vịnh đẹp nhất thế giới - Nghỉ dưỡng đẳng cấp</p>
+<!-- ===== EVENT SECTION ===== -->
+<section id="event-section" class="content-section service-hero event-hero">
+    <div class="service-title">
+        <div class="title-decoration">
+            <div class="decoration-line"></div>
+            <div class="decoration-icon">🎪</div>
+            <div class="decoration-line"></div>
+        </div>
+        <h2>DỊCH VỤ SỰ KIỆN</h2>
+        <p class="service-tagline">Chuyên nghiệp - Tin cậy - Linh hoạt - Đúng hẹn tuyệt đối</p>
     </div>
 
-    <div class="premium-showcase">
-        <img src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1400&q=80" 
-             alt="Vịnh Nha Trang" class="showcase-image">
+    <div class="luxury-showcase">
+        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1400&q=80" 
+             alt="Xe sự kiện doanh nghiệp" class="showcase-image">
         <div class="showcase-overlay">
-            <div class="showcase-caption">VỊNH NHA TRANG</div>
-            <div class="showcase-subtitle">"Một trong 29 vịnh đẹp nhất thế giới - Biển xanh cát trắng"</div>
+            <div class="showcase-caption">XE SỰ KIỆN MERCEDES SPRINTER</div>
+            <div class="showcase-subtitle">"Vận chuyển chuyên nghiệp - Đối tác tin cậy của doanh nghiệp"</div>
         </div>
     </div>
 
-    <div class="luxury-attractions">
-        <h3 class="attractions-title">ĐỊA ĐIỂM NỔI BẬT</h3>
+    <div class="service-features">
+        <h3 class="features-title">DỊCH VỤ ĐA DẠNG</h3>
         
-        <div class="attraction-item">
-            <div class="attraction-name"><i class="fas fa-umbrella-beach"></i> Bãi biển Nha Trang</div>
-            <div class="attraction-desc">Bãi tắm dài 7km với cát trắng mịn, nước biển trong xanh, hàng dừa xanh mát, lý tưởng cho nghỉ dưỡng.</div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-bus"></i>
+            </div>
+            <div class="feature-content">
+                <h4 class="feature-name">Đưa Đón Nhân Viên</h4>
+                <p class="feature-desc">Theo ca, theo tuyến cố định - Đón tận nơi, trả tận nhà - Phục vụ cả cuối tuần và ngày lễ.</p>
+            </div>
         </div>
         
-        <div class="attraction-item">
-            <div class="attraction-name"><i class="fas fa-fish"></i> Hòn Mun</div>
-            <div class="attraction-desc">Đảo san hô đa dạng bậc nhất Việt Nam, thiên đường lặn biển ngắm san hô và sinh vật biển phong phú.</div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-conference"></i>
+            </div>
+            <div class="feature-content">
+                <h4 class="feature-name">Hội Nghị - Hội Thảo</h4>
+                <p class="feature-desc">Đón đại biểu, khách mời VIP - Xe đón sân bay, khách sạn - Phục vụ đoàn từ 10-200 người.</p>
+            </div>
         </div>
         
-        <div class="attraction-item">
-            <div class="attraction-name"><i class="fas fa-ferris-wheel"></i> Vinpearl Land</div>
-            <div class="attraction-desc">Tổ hợp vui chơi giải trí đẳng cấp với cáp treo vượt biển dài nhất thế giới, công viên nước, thủy cung.</div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="feature-content">
+                <h4 class="feature-name">Team Building</h4>
+                <p class="feature-desc">Vận chuyển đoàn thể an toàn - Linh hoạt địa điểm trong và ngoài thành phố - Hỗ trợ tổ chức trọn gói.</p>
+            </div>
         </div>
         
-        <div class="attraction-item">
-            <div class="attraction-name"><i class="fas fa-utensils"></i> Chợ đêm Nha Trang</div>
-            <div class="attraction-desc">Thiên đường ẩm thực đường phố với hải sản tươi sống, đặc sản địa phương, không khí sôi động về đêm.</div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-glass-cheers"></i>
+            </div>
+            <div class="feature-content">
+                <h4 class="feature-name">Sự Kiện Đặc Biệt</h4>
+                <p class="feature-desc">Tiệc tất niên, khai trương, lễ kỷ niệm, động thổ - Xe trang trí theo chủ đề sự kiện.</p>
+            </div>
         </div>
     </div>
 
-    <button class="luxury-book-btn" onclick="bookDestination('Nha Trang')">
-        <i class="fas fa-gem"></i> ĐẶT XE NHA TRANG CAO CẤP
-    </button>
-</section>
-
-<!-- Đà Lạt Content -->
-<section id="dalat-content" class="destination-content luxury-hero">
-    <div class="destination-title">
-        <h2>🏞️ ĐÀ LẠT</h2>
-        <p class="destination-tagline">Thành phố ngàn hoa - Khí hậu ôn hòa - Kiến trúc cổ điển</p>
+    <div class="luxury-price-box">
+        <div class="price-label">Báo Giá Theo Yêu Cầu</div>
+        <div class="price-value">LIÊN HỆ</div>
+        <div class="price-note">Nhận báo giá chi tiết trong 30 phút sau khi nhận yêu cầu</div>
     </div>
 
-    <div class="premium-showcase">
-        <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1400&q=80" 
-             alt="Rừng thông Đà Lạt" class="showcase-image">
-        <div class="showcase-overlay">
-            <div class="showcase-caption">RỪNG THÔNG ĐÀ LẠT</div>
-            <div class="showcase-subtitle">"Thành phố mộng mơ giữa cao nguyên - Không khí trong lành quanh năm"</div>
-        </div>
+    <div class="luxury-actions">
+        <button class="luxury-btn luxury-btn-primary" onclick="bookEvent()">
+            <i class="fas fa-file-alt"></i>
+            GỬI YÊU CẦU BÁO GIÁ
+        </button>
     </div>
-
-    <div class="luxury-attractions">
-        <h3 class="attractions-title">ĐỊA ĐIỂM NỔI BẬT</h3>
-        
-        <div class="attraction-item">
-            <div class="attraction-name"><i class="fas fa-lake"></i> Hồ Xuân Hương</div>
-            <div class="attraction-desc">Trái tim của Đà Lạt, hồ nước thơ mộng giữa lòng thành phố, địa điểm dạo bộ lý tưởng với view núi đồi.</div>
-        </div>
-        
-        <div class="attraction-item">
-            <div class="attraction-name"><i class="fas fa-tree"></i> Đồi thông & Rừng thông</div>
-            <div class="attraction-desc">Không khí trong lành với mùi thơm của nhựa thông, view toàn cảnh thành phố từ trên cao.</div>
-        </div>
-        
-        <div class="attraction-item">
-            <div class="attraction-name"><i class="fas fa-store"></i> Chợ Đà Lạt</div>
-            <div class="attraction-desc">Thiên đường ẩm thực cao nguyên với đặc sản: dâu tây, atiso, trà, mứt các loại và hoa tươi bốn mùa.</div>
-        </div>
-        
-        <div class="attraction-item">
-            <div class="attraction-name"><i class="fas fa-waterfall"></i> Thác Datanla</div>
-            <div class="attraction-desc">Thác nước đẹp giữa rừng thông, có máng trượt rừng độc đáo, không khí mát lạnh quanh năm.</div>
-        </div>
-    </div>
-
-    <button class="luxury-book-btn" onclick="bookDestination('Đà Lạt')">
-        <i class="fas fa-gem"></i> ĐẶT XE ĐÀ LẠT CAO CẤP
-    </button>
 </section>
 <div id="booking"></div>
 <!-- Benefits Section -->
@@ -485,51 +495,122 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics-compat.js"></script>
+
 <script>
-    // Tab Switching
-    document.querySelectorAll('.dest-tab').forEach(tab => {
+    // Main Tab Switching
+    document.querySelectorAll('.main-tab').forEach(tab => {
         tab.addEventListener('click', function() {
-            const destination = this.dataset.destination;
+            const section = this.dataset.section;
             
             // Update active tab
-            document.querySelectorAll('.dest-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.main-tab').forEach(t => {
+                t.classList.remove('active');
+            });
             this.classList.add('active');
             
+            // Update bottom nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.section === section) {
+                    item.classList.add('active');
+                }
+            });
+            
             // Show corresponding content
-            document.querySelectorAll('.destination-content').forEach(content => {
+            document.querySelectorAll('.content-section').forEach(content => {
                 content.classList.remove('active');
             });
-            document.getElementById(`${destination}-content`).classList.add('active');
+            document.getElementById(`${section}-section`).classList.add('active');
+            
+            // Reset to first destination if travel section
+            if (section === 'travel') {
+                showDestination('phanrang');
+            }
             
             // Smooth scroll to top of content
             window.scrollTo({
-                top: document.querySelector('.destination-tabs').offsetTop,
+                top: document.querySelector('.main-tabs').offsetTop,
                 behavior: 'smooth'
             });
         });
     });
 
-    // Scroll to booking function
-    function scrollToBooking() {
-        document.getElementById('booking').scrollIntoView({
-            behavior: 'smooth'
+    // Destination Tab Switching (for travel section)
+    function showDestination(destination) {
+        // Update active destination tab
+        document.querySelectorAll('.dest-tab').forEach(tab => {
+            tab.classList.remove('active');
+            if (tab.dataset.destination === destination) {
+                tab.classList.add('active');
+            }
         });
+        
+        // Show corresponding destination content
+        document.querySelectorAll('.destination-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById(`${destination}-content`).classList.add('active');
     }
 
-    // Book destination function
-    function bookDestination(destination) {
-        // This will be integrated with booking-telegram.js
-        console.log(`Booking ${destination}`);
-        // Trigger booking modal or redirect
-        scrollToBooking();
-        
-        // You can integrate with existing booking system here
-        // Example: window.location.href = `/book?destination=${encodeURIComponent(destination)}`;
+    // Add click events to destination tabs
+    document.querySelectorAll('.dest-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const destination = this.dataset.destination;
+            showDestination(destination);
+        });
+    });
+
+    // Bottom Navigation
+    document.querySelectorAll('.nav-item[data-section]').forEach(item => {
+        item.addEventListener('click', function() {
+            const section = this.dataset.section;
+            const tab = document.querySelector(`.main-tab[data-section="${section}"]`);
+            if (tab) {
+                tab.click();
+            }
+        });
+    });
+
+    // Booking functions
+    function scrollToBooking() {
+        // Implement scroll to booking section
+        console.log('Scroll to booking');
+        // You can integrate with existing booking system
+    }
+
+    function bookTravel(destination) {
+        console.log(`Booking travel to ${destination}`);
+        // Implement travel booking
+    }
+
+    function bookWedding() {
+        console.log('Booking wedding service');
+        // Implement wedding booking
+    }
+
+    function bookEvent() {
+        console.log('Booking event service');
+        // Implement event booking
+    }
+
+    function viewTravelDetails(destination) {
+        console.log(`View details for ${destination}`);
+        // Implement view details
+    }
+
+    function viewWeddingGallery() {
+        console.log('View wedding gallery');
+        // Implement gallery view
+    }
+
+    function downloadEventBrochure() {
+        console.log('Download event brochure');
+        // Implement brochure download
     }
 
     // Sticky tabs behavior
     window.addEventListener('scroll', function() {
-        const tabs = document.querySelector('.destination-tabs');
+        const tabs = document.querySelector('.main-tabs');
         const heroBottom = document.querySelector('.header-cta').offsetHeight;
         
         if (window.scrollY > heroBottom) {
@@ -539,22 +620,29 @@
         }
     });
 
-    // Initialize with first tab active
+    // Initialize
     document.addEventListener('DOMContentLoaded', function() {
-        // Ensure first tab is active
-        const firstTab = document.querySelector('.dest-tab');
-        if (firstTab) {
-            firstTab.click();
+        // Show travel section by default
+        const travelTab = document.querySelector('.main-tab.travel');
+        if (travelTab) {
+            travelTab.click();
         }
         
-        // Add subtle animations
-        const attractionItems = document.querySelectorAll('.attraction-item');
-        attractionItems.forEach((item, index) => {
-            item.style.animationDelay = `${index * 0.1}s`;
-        });
+        // Show bottom nav on mobile
+        if (window.innerWidth <= 768) {
+            document.querySelector('.bottom-nav').style.display = 'block';
+        }
+    });
+
+    // Responsive check
+    window.addEventListener('resize', function() {
+        if (window.innerWidth <= 768) {
+            document.querySelector('.bottom-nav').style.display = 'block';
+        } else {
+            document.querySelector('.bottom-nav').style.display = 'none';
+        }
     });
 </script>
-
 <!-- Existing JS files (keep as is) -->
 <script src="/js/language.js" defer></script>
 <script src="/js/pricing.js" defer></script>
@@ -563,7 +651,6 @@
 <script src="/js/booking-telegram.js" defer></script>
 <script src="/js/footer-standalone.js" defer></script>
 <script src="/js/blog.js" defer></script>
-
 
 </body>
 </html>
